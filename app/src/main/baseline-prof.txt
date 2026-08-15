@@ -1,0 +1,13 @@
+HSPLandroidx/compose/runtime/ComposerImpl;->*(**)**
+HSPLandroidx/compose/runtime/CompositionImpl;->*(**)**
+HSPLandroidx/compose/ui/platform/AndroidComposeView;->*(**)**
+HSPLandroidx/compose/material3/**;->*(**)**
+HSPLandroidx/navigation/compose/**;->*(**)**
+HSPLandroidx/lifecycle/**;->*(**)**
+HSPLandroidx/hilt/**;->*(**)**
+HSPLcom/appvexis/peptidetracker/MainActivity;->*(**)**
+HSPLcom/appvexis/peptidetracker/PepLogApplication;->*(**)**
+HSPLcom/appvexis/peptidetracker/navigation/**;->*(**)**
+HSPLcom/appvexis/peptidetracker/feature/dashboard/**;->*(**)**
+HSPLcom/appvexis/peptidetracker/core/ui/**;->*(**)**
+HSPLcom/appvexis/peptidetracker/core/database/**;->*(**)**

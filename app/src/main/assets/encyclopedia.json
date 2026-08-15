@@ -1,0 +1,3352 @@
+[
+  {
+    "id": "anamorelin",
+    "name": "Anamorelin",
+    "category": "GH Secretagogues",
+    "description": "An oral ghrelin receptor agonist that stimulates GH and IGF-1 release, used to treat cachexia, anorexia, and muscle wasting in cancer patients.",
+    "halfLifeHours": 7.0,
+    "halfLifeDisplay": "7 hours",
+    "adminRoute": "Oral",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "50 mg - 100 mg per day",
+    "storageInfo": "Store at room temperature in a dry container.",
+    "sideEffects": [
+      "Hyperglycemia",
+      "nausea",
+      "mild transient headache"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Congestive heart failure",
+      "severe cardiac arrhythmias"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "Oral ghrelin receptor agonist that stimulates GH and IGF-1 release and increases appetite signaling for cancer cachexia.",
+    "legalStatus": "Approved (Japan - Adlumiz)",
+    "researchEvidence": "Phase III Clinical Trial (Approved in Japan)",
+    "peptideClass": "GH Secretagogue (Non-peptide)",
+    "cycleRecommendation": "As prescribed (continuous)",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "cjc1295nodac",
+    "name": "CJC-1295 (no DAC)",
+    "category": "GH Secretagogues",
+    "description": "Also known as Mod GRF 1-29, a short-acting Growth Hormone Releasing Hormone (GHRH) analog that mimics physiological growth hormone pulses when paired with a GHRP.",
+    "halfLifeHours": 0.5,
+    "halfLifeDisplay": "30 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "1-3x daily",
+    "typicalDoseRange": "100 mcg per injection",
+    "storageInfo": "Store reconstituted vial in refrigerator; sensitive to mechanical agitation.",
+    "sideEffects": [
+      "Temporary facial flushing",
+      "warmth",
+      "mild lightheadedness",
+      "headache"
+    ],
+    "synergies": [
+      "Ipamorelin",
+      "GHRP-2",
+      "GHRP-6"
+    ],
+    "contraindications": [
+      "Active malignancy",
+      "pituitary tumors"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "Modified GRF (1-29) analog that mimics natural GHRH pulses, binding to GHRH receptors on somatotroph cells to stimulate GH secretion.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "GHRH",
+    "cycleRecommendation": "12-16 weeks on, 4 weeks off",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "cjc1295dac",
+    "name": "CJC-1295 (with DAC)",
+    "category": "GH Secretagogues",
+    "description": "Growth Hormone Releasing Hormone (GHRH) analog with Drug Affinity Complex (DAC) which binds to plasma albumin, extending its activity to stimulate growth hormone release over several days.",
+    "halfLifeHours": 168.0,
+    "halfLifeDisplay": "6-8 days (168 hours)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "1-2x weekly",
+    "typicalDoseRange": "1000 mcg - 2000 mcg per week",
+    "storageInfo": "Refrigerate reconstituted vial (2-8°C) and use within 28 days.",
+    "sideEffects": [
+      "Flushing",
+      "mild headache",
+      "injection site irritation",
+      "mild water retention"
+    ],
+    "synergies": [
+      "Ipamorelin",
+      "Sermorelin"
+    ],
+    "contraindications": [
+      "Active oncology",
+      "history of pituitary adenoma"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "GHRH analog with Drug Affinity Complex (DAC) that binds albumin for extended activity, stimulating pulsatile GH release from the anterior pituitary.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "GHRH",
+    "cycleRecommendation": "12-16 weeks on, 4 weeks off",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "capromorelin",
+    "name": "Capromorelin",
+    "category": "GH Secretagogues",
+    "description": "An oral growth hormone secretagogue that increases GH levels and appetite. Extensively studied in veterinary medicine and clinical research.",
+    "halfLifeHours": 2.5,
+    "halfLifeDisplay": "2.5 hours",
+    "adminRoute": "Oral",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "20 mg - 40 mg per day",
+    "storageInfo": "Store at room temperature in a dark container.",
+    "sideEffects": [
+      "Somnolence",
+      "transient hyperglycemia",
+      "increased hunger"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Active malignancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "Oral ghrelin receptor agonist that increases GH levels and appetite, extensively studied in veterinary medicine.",
+    "legalStatus": "FDA-Approved (Veterinary - Entyce)",
+    "researchEvidence": "Phase II (Human) / Approved (Veterinary)",
+    "peptideClass": "GH Secretagogue (Non-peptide)",
+    "cycleRecommendation": "Not established for humans",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "follistatin344",
+    "name": "Follistatin 344",
+    "category": "GH Secretagogues",
+    "description": "A synthetic isoform of follistatin, a naturally occurring glycoprotein that acts as a potent inhibitor of myostatin and activin. By binding and neutralizing myostatin (the primary negative regulator of muscle growth), follistatin 344 removes the brake on muscle development, potentially allowing for increased hypertrophy.",
+    "halfLifeHours": 8.0,
+    "halfLifeDisplay": "8 hours (estimated)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily (during loading) or 3x weekly",
+    "typicalDoseRange": "100 mcg - 300 mcg daily",
+    "storageInfo": "Store reconstituted solution at 2-8°C. Sensitive to agitation — do not shake.",
+    "sideEffects": [
+      "Joint/tendon strain (rapid muscle growth)",
+      "Mild fatigue",
+      "Injection site reaction"
+    ],
+    "synergies": [
+      "IGF-1 LR3",
+      "MK-677",
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Active or history of malignancy",
+      "Cardiovascular disease",
+      "Pregnancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues",
+      "Healing & Recovery"
+    ],
+    "aliases": [
+      "FS-344",
+      "Follistatin"
+    ],
+    "mechanismOfAction": "Acts as a ligand trap for TGF-β superfamily members, primarily myostatin and activin A. Binding neutralizes their negative regulatory effect on skeletal muscle, allowing increased muscle protein synthesis and satellite cell activation.",
+    "legalStatus": "Research Chemical / WADA Banned (Gene doping category)",
+    "researchEvidence": "Phase I Clinical Trial (Gene therapy for muscular dystrophy)",
+    "peptideClass": "Myostatin Inhibitor",
+    "cycleRecommendation": "10-30 day cycles, 4-8 weeks off",
+    "onsetDays": "14-28"
+  },
+  {
+    "id": "ghrp2",
+    "name": "GHRP-2 (Pralmorelin)",
+    "category": "GH Secretagogues",
+    "description": "Growth Hormone Releasing Peptide-2 is a synthetic ghrelin agonist that acts on the hypothalamus and pituitary to stimulate growth hormone release, with moderate appetite stimulation. Also marketed as a diagnostic agent (Pralmorelin) in Japan for evaluating pituitary GH secretion.",
+    "halfLifeHours": 0.5,
+    "halfLifeDisplay": "30 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "1-3x daily",
+    "typicalDoseRange": "100 mcg per dose",
+    "storageInfo": "Keep reconstituted solution in refrigerator. Protect from mechanical shock.",
+    "sideEffects": [
+      "Mild increase in appetite",
+      "temporary rise in prolactin and cortisol at high doses"
+    ],
+    "synergies": [
+      "CJC-1295 (no DAC)"
+    ],
+    "contraindications": [
+      "Pituitary adenoma",
+      "active malignancy"
+    ],
+    "isBookmarked": false,
+    "aliases": [
+      "Pralmorelin"
+    ],
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "Synthetic hexapeptide ghrelin receptor agonist that acts on hypothalamus and pituitary to stimulate GH release with moderate appetite stimulation.",
+    "legalStatus": "Research Chemical (Diagnostic in Japan)",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "GHRP",
+    "cycleRecommendation": "8-12 weeks on, 4 weeks off",
+    "onsetDays": "3-7"
+  },
+  {
+    "id": "ghrp6",
+    "name": "GHRP-6",
+    "category": "GH Secretagogues",
+    "description": "Growth Hormone Releasing Peptide-6 stimulates growth hormone secretion and induces a significant appetite increase via activation of the ghrelin receptor.",
+    "halfLifeHours": 0.25,
+    "halfLifeDisplay": "15-20 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "1-3x daily",
+    "typicalDoseRange": "100 mcg per dose",
+    "storageInfo": "Refrigerate (2-8°C) after reconstitution. Stable up to 28 days.",
+    "sideEffects": [
+      "Significant increase in hunger",
+      "mild water retention",
+      "flushing"
+    ],
+    "synergies": [
+      "CJC-1295 (no DAC)"
+    ],
+    "contraindications": [
+      "Diabetes (due to appetite stimulation)",
+      "active oncology"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "Synthetic hexapeptide ghrelin receptor agonist that stimulates GH secretion and significantly increases appetite via ghrelin pathway activation.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical / Phase I",
+    "peptideClass": "GHRP",
+    "cycleRecommendation": "8-12 weeks on, 4 weeks off",
+    "onsetDays": "1-3",
+    "aliases": []
+  },
+  {
+    "id": "hexarelin",
+    "name": "Hexarelin",
+    "category": "GH Secretagogues",
+    "description": "A potent synthetic hexapeptide GHRP that stimulates growth hormone release while showing cardioprotective properties. It has a high resistance to enzymatic degradation. Examorelin is the International Nonproprietary Name (INN) for Hexarelin.",
+    "halfLifeHours": 1.2,
+    "halfLifeDisplay": "70 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "100 mcg per dose",
+    "storageInfo": "Store reconstituted solution in refrigerator.",
+    "sideEffects": [
+      "Facial flushing",
+      "mild increase in cortisol and prolactin",
+      "injection site discomfort"
+    ],
+    "synergies": [
+      "CJC-1295 (no DAC)"
+    ],
+    "contraindications": [
+      "Pituitary neoplasms",
+      "active malignancy"
+    ],
+    "isBookmarked": false,
+    "aliases": [
+      "Examorelin"
+    ],
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "Potent synthetic hexapeptide GHRP that stimulates GH release via ghrelin receptor agonism, with additional cardioprotective properties through CD36 receptor interaction.",
+    "legalStatus": "Research Chemical / WADA Banned",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "GHRP",
+    "cycleRecommendation": "4-8 weeks on, 4 weeks off (desensitization)",
+    "onsetDays": "1-3"
+  },
+  {
+    "id": "igf1des",
+    "name": "IGF-1 DES (1-3)",
+    "category": "GH Secretagogues",
+    "description": "A truncated analog of IGF-1 lacking the first three N-terminal amino acids. This modification reduces IGFBP affinity by over 100-fold, making it approximately 10 times more potent than native IGF-1 at the receptor level. Very short half-life makes it primarily a locally-acting agent.",
+    "halfLifeHours": 0.4,
+    "halfLifeDisplay": "20-30 minutes",
+    "adminRoute": "Subcutaneous or Intramuscular Injection",
+    "typicalFrequency": "Multiple times daily (pre/post-workout)",
+    "typicalDoseRange": "50 mcg - 100 mcg per injection site",
+    "storageInfo": "Store reconstituted solution at 2-8°C. Use within 24 hours.",
+    "sideEffects": [
+      "Hypoglycemia (rapid onset)",
+      "Injection site pain/redness",
+      "Local tissue swelling"
+    ],
+    "synergies": [
+      "IGF-1 LR3",
+      "CJC-1295",
+      "Ipamorelin"
+    ],
+    "contraindications": [
+      "Active malignancy",
+      "Diabetes",
+      "History of tumors"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "aliases": [
+      "Des(1-3) IGF-1",
+      "DES IGF-1"
+    ],
+    "mechanismOfAction": "N-terminal truncation eliminates IGFBP binding, allowing direct IGF-1R activation at injection site. Activates PI3K/Akt/mTOR for localized protein synthesis, satellite cell activation, and amino acid uptake with minimal systemic effects.",
+    "legalStatus": "Research Chemical / WADA Banned",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "IGF-1 Analog",
+    "cycleRecommendation": "4 weeks on, 4 weeks off",
+    "onsetDays": "1-3 (localized)"
+  },
+  {
+    "id": "igf1lr3",
+    "name": "IGF-1 LR3",
+    "category": "GH Secretagogues",
+    "description": "Long R3 Insulin-Like Growth Factor-1 is a synthetic 83-amino acid analog of human IGF-1 with an arginine substitution at position 3 and a 13-amino acid N-terminal extension. These modifications reduce IGFBP binding, resulting in a dramatically extended half-life (~20-30 hours vs. 12-15 minutes for native IGF-1) and higher bioavailability.",
+    "halfLifeHours": 25.0,
+    "halfLifeDisplay": "20-30 hours",
+    "adminRoute": "Subcutaneous or Intramuscular Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "20 mcg - 80 mcg per day",
+    "storageInfo": "Store reconstituted solution at 2-8°C. Avoid repeated freeze-thaw cycles.",
+    "sideEffects": [
+      "Hypoglycemia (significant risk)",
+      "Edema",
+      "Joint pain",
+      "Jaw/hand growth (prolonged use)",
+      "Potential tumor growth stimulation"
+    ],
+    "synergies": [
+      "CJC-1295",
+      "Ipamorelin",
+      "MK-677"
+    ],
+    "contraindications": [
+      "Active or history of malignancy",
+      "Diabetes (hypoglycemia risk)",
+      "Organ enlargement"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "aliases": [
+      "Long R3 IGF-1",
+      "LR3-IGF-1"
+    ],
+    "mechanismOfAction": "Binds IGF-1 receptor with high affinity (reduced IGFBP sequestration), activating PI3K/Akt/mTOR signaling cascade for protein synthesis, satellite cell activation, amino acid uptake, and anti-apoptotic effects.",
+    "legalStatus": "Research Chemical / WADA Banned",
+    "researchEvidence": "Phase I/II Clinical Trial (IGF-1 analogs)",
+    "peptideClass": "IGF-1 Analog",
+    "cycleRecommendation": "4-6 weeks on, 4-6 weeks off (receptor desensitization)",
+    "onsetDays": "3-7"
+  },
+  {
+    "id": "ipamorelin",
+    "name": "Ipamorelin",
+    "category": "GH Secretagogues",
+    "description": "A selective Growth Hormone Releasing Peptide (GHRP) agonist of the ghrelin receptor. Stimulates GH secretion without increasing appetite, cortisol, or prolactin.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "1-3x daily",
+    "typicalDoseRange": "100 mcg - 250 mcg per dose",
+    "storageInfo": "Store in refrigerator (2-8°C) after reconstitution. Use within 28 days.",
+    "sideEffects": [
+      "Headache",
+      "lightheadedness",
+      "temporary injection site redness"
+    ],
+    "synergies": [
+      "CJC-1295 (no DAC)",
+      "Sermorelin"
+    ],
+    "contraindications": [
+      "Pituitary neoplasms",
+      "active malignancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "Selective ghrelin receptor (GHSR) agonist that stimulates GH release without significantly affecting cortisol, prolactin, or appetite.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "GHRP",
+    "cycleRecommendation": "8-12 weeks on, 4 weeks off",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "mk677",
+    "name": "MK-677 (Ibutamoren)",
+    "category": "GH Secretagogues",
+    "description": "An orally active, non-peptide ghrelin receptor agonist that mimics the growth hormone-stimulating action of ghrelin. Promotes fat-free mass and bone mineral density.",
+    "halfLifeHours": 24.0,
+    "halfLifeDisplay": "24 hours",
+    "adminRoute": "Oral",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "10 mg - 25 mg per day",
+    "storageInfo": "Store in a cool, dry place at room temperature in a sealed container.",
+    "sideEffects": [
+      "Increased appetite",
+      "temporary lethargy",
+      "mild water retention",
+      "muscle cramps"
+    ],
+    "synergies": [
+      "CJC-1295",
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Impaired glucose tolerance",
+      "active malignancy",
+      "heart failure"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "Non-peptide oral ghrelin receptor agonist that mimics ghrelin signaling to increase GH and IGF-1 levels.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "GH Secretagogue (Non-peptide)",
+    "cycleRecommendation": "8-12 weeks on, 4 weeks off",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "macimorelin",
+    "name": "Macimorelin",
+    "category": "GH Secretagogues",
+    "description": "An FDA-approved oral ghrelin agonist used as a diagnostic agent to detect adult growth hormone deficiency.",
+    "halfLifeHours": 4.0,
+    "halfLifeDisplay": "4 hours",
+    "adminRoute": "Oral (Suspension)",
+    "typicalFrequency": "Single diagnostic dose",
+    "typicalDoseRange": "0.5 mg/kg body weight",
+    "storageInfo": "Store lyophilized powder at room temperature. Reconstitute immediately before use.",
+    "sideEffects": [
+      "Dysgeusia (taste disturbance)",
+      "dizziness",
+      "headache",
+      "fatigue"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Concomitant use of drugs known to prolong QT interval"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "Oral ghrelin receptor agonist used diagnostically to stimulate GH release for detection of adult GH deficiency.",
+    "legalStatus": "FDA-Approved (Macrilen)",
+    "researchEvidence": "Phase III Clinical Trial (Approved)",
+    "peptideClass": "GH Secretagogue (Non-peptide)",
+    "cycleRecommendation": "Single diagnostic dose",
+    "onsetDays": "N/A (diagnostic)",
+    "aliases": []
+  },
+  {
+    "id": "sermorelin",
+    "name": "Sermorelin",
+    "category": "GH Secretagogues",
+    "description": "A Growth Hormone Releasing Hormone (GHRH) fragment consisting of the first 29 amino acids. Promotes natural GH production by the pituitary gland. Indirectly supports sexual drive and energy profiles via increased natural GH levels.",
+    "halfLifeHours": 0.25,
+    "halfLifeDisplay": "10-20 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily (before sleep)",
+    "typicalDoseRange": "200 mcg - 500 mcg per day",
+    "storageInfo": "Refrigerate reconstituted solution. Protect from direct light.",
+    "sideEffects": [
+      "Facial flushing",
+      "injection site pain",
+      "headache",
+      "drowsiness"
+    ],
+    "synergies": [
+      "Ipamorelin",
+      "CJC-1295"
+    ],
+    "contraindications": [
+      "Pituitary tumors",
+      "active cancer"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues",
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "GHRH fragment (1-29) that binds GHRH receptors on pituitary somatotrophs, promoting natural pulsatile GH production.",
+    "legalStatus": "Previously FDA-Approved (Geref)",
+    "researchEvidence": "Clinical (Previously Approved)",
+    "peptideClass": "GHRH",
+    "cycleRecommendation": "3-6 months continuous",
+    "onsetDays": "14-30",
+    "aliases": []
+  },
+  {
+    "id": "tabimorelin",
+    "name": "Tabimorelin",
+    "category": "GH Secretagogues",
+    "description": "An orally active growth hormone secretagogue which acts on ghrelin receptors to stimulate systemic GH release in clinical trials.",
+    "halfLifeHours": 3.2,
+    "halfLifeDisplay": "3 hours",
+    "adminRoute": "Oral",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "10 mg - 30 mg per day",
+    "storageInfo": "Store at room temperature in a dry environment.",
+    "sideEffects": [
+      "Mild headache",
+      "increased appetite"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Pituitary tumor",
+      "active malignancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "Oral GH secretagogue acting via ghrelin receptor agonism to stimulate systemic GH release.",
+    "legalStatus": "Research Chemical (Discontinued)",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "GH Secretagogue (Non-peptide)",
+    "cycleRecommendation": "Not established",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "tesamorelin",
+    "name": "Tesamorelin",
+    "category": "GH Secretagogues",
+    "description": "An FDA-approved Growth Hormone Releasing Hormone (GHRH) analog indicated for reducing excess abdominal fat in HIV-infected patients with lipodystrophy.",
+    "halfLifeHours": 0.63,
+    "halfLifeDisplay": "38 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "1.0 mg - 2.0 mg per day",
+    "storageInfo": "Store in refrigerator. Protect reconstituted solution from light.",
+    "sideEffects": [
+      "Arthralgia",
+      "injection site reactions",
+      "muscle pain",
+      "peripheral edema"
+    ],
+    "synergies": [
+      "Ipamorelin"
+    ],
+    "contraindications": [
+      "Pregnancy",
+      "active malignancy",
+      "history of pituitary tumor"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "GH Secretagogues"
+    ],
+    "mechanismOfAction": "GHRH analog that stimulates pituitary GH release, reducing visceral adipose tissue in HIV-associated lipodystrophy.",
+    "legalStatus": "FDA-Approved (Egrifta)",
+    "researchEvidence": "Phase III Clinical Trial (Approved)",
+    "peptideClass": "GHRH",
+    "cycleRecommendation": "As prescribed (continuous)",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "ara290",
+    "name": "ARA-290 (Cibinetide)",
+    "category": "Healing & Recovery",
+    "description": "A synthetic peptide modeled from erythropoietin (EPO) structure that targets the innate repair receptor to reduce pain and promote tissue healing in neuropathy.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "1.0 mg - 4.0 mg per day",
+    "storageInfo": "Store reconstituted solution at 2-8°C. Protect from light.",
+    "sideEffects": [
+      "Mild nausea",
+      "headache",
+      "temporary blood pressure variations"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Severe uncontrolled hypertension"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "EPO-derived peptide that activates the innate repair receptor (heterodimer of EPOR and CD131), promoting tissue healing and reducing neuropathic pain.",
+    "legalStatus": "Investigational",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "Tissue Repair Peptide",
+    "cycleRecommendation": "28-day cycles",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "acsdkp",
+    "name": "Ac-SDKP",
+    "category": "Healing & Recovery",
+    "description": "A naturally occurring tetrapeptide that inhibits cardiac fibrosis, promotes angiogenesis, and modulates inflammation in cardiovascular tissues.",
+    "halfLifeHours": 0.8,
+    "halfLifeDisplay": "48 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "500 mcg - 1000 mcg daily",
+    "storageInfo": "Store in refrigerator at 2-8°C.",
+    "sideEffects": [
+      "Mild headache",
+      "local irritation"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Co-administration with ACE inhibitors (can spike peptide levels)"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "Endogenous tetrapeptide that inhibits cardiac fibrosis by blocking TGF-β/Smad signaling and promotes angiogenesis via VEGF pathway activation.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Anti-fibrotic Peptide",
+    "cycleRecommendation": "Not established",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "bpc157",
+    "name": "BPC-157",
+    "category": "Healing & Recovery",
+    "description": "Body Protection Compound-157 is a synthetic peptide derived from human gastric juice. Preclinical trials show it accelerates tendon, ligament, muscle, and gut healing.",
+    "halfLifeHours": 0.35,
+    "halfLifeDisplay": "~20 minutes (biological effects persist 24+ hours)",
+    "adminRoute": "Subcutaneous Injection, Oral",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "250 mcg - 500 mcg per day",
+    "storageInfo": "Store reconstituted vial in refrigerator (2-8°C). Lyophilized powder in freezer.",
+    "sideEffects": [
+      "Mild nausea",
+      "headache",
+      "transient lightheadedness"
+    ],
+    "synergies": [
+      "TB-500",
+      "GHK-Cu"
+    ],
+    "contraindications": [
+      "Active oncology",
+      "hypersensitivity"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "Gastric pentadecapeptide that activates VEGFR2, FAK-paxillin, and ERK1/2 pathways promoting angiogenesis, tendon/ligament repair, and anti-inflammatory signaling. Modulates the nitric oxide system.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only (Extensive animal studies)",
+    "peptideClass": "Gastric Peptide",
+    "cycleRecommendation": "4-6 weeks on, 2 weeks off",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "bpc157arg",
+    "name": "BPC-157 Arginate (Stable)",
+    "category": "Healing & Recovery",
+    "description": "A salt-stabilized form of BPC-157 using L-Arginine. Resistant to gastric acid degradation, making it highly effective for oral administration.",
+    "halfLifeHours": 6.0,
+    "halfLifeDisplay": "6 hours (gastric stability extended)",
+    "adminRoute": "Oral",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "250 mcg - 500 mcg per dose",
+    "storageInfo": "Store in dry place at room temperature. Highly stable.",
+    "sideEffects": [
+      "Mild stomach growling",
+      "nausea"
+    ],
+    "synergies": [
+      "KPV",
+      "Larazotide"
+    ],
+    "contraindications": [
+      "Active malignancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "L-Arginine salt form of BPC-157 with enhanced gastric acid resistance, maintaining the same VEGFR2/FAK/ERK signaling cascade as standard BPC-157.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Gastric Peptide",
+    "cycleRecommendation": "4-6 weeks on, 2 weeks off",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "chrg_peptide",
+    "name": "Chondrogenesis Peptide (Cartilage)",
+    "category": "Healing & Recovery",
+    "description": "A peptide derived from growth factor structures that stimulates cartilage matrix synthesis and chondrocyte differentiation.",
+    "halfLifeHours": 1.5,
+    "halfLifeDisplay": "1.5 hours",
+    "adminRoute": "Intra-articular or Subcutaneous",
+    "typicalFrequency": "Weekly",
+    "typicalDoseRange": "1.0 mg - 2.0 mg weekly",
+    "storageInfo": "Store reconstituted solution at 2-8°C.",
+    "sideEffects": [
+      "Joint pain (intra-articular)",
+      "local swelling"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Active joint infections"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "Growth factor-derived peptide that stimulates SOX9 and type II collagen expression in chondrocytes, promoting cartilage matrix synthesis.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Growth Factor Peptide",
+    "cycleRecommendation": "8-12 week cycles",
+    "onsetDays": "28-56",
+    "aliases": []
+  },
+  {
+    "id": "alglutide_gut",
+    "name": "Glutamine Peptide (Gut Recovery)",
+    "category": "Healing & Recovery",
+    "description": "Peptide-bound glutamine offering superior absorption for mucosal repair in inflammatory bowel conditions.",
+    "halfLifeHours": 1.0,
+    "halfLifeDisplay": "1 hour",
+    "adminRoute": "Oral",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "5.0 g - 10.0 g per day",
+    "storageInfo": "Store in dry cool space.",
+    "sideEffects": [
+      "Mild bloating"
+    ],
+    "synergies": [
+      "BPC-157",
+      "Larazotide"
+    ],
+    "contraindications": [
+      "Kidney failure"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "Peptide-bound glutamine that provides superior absorption for mucosal repair by serving as primary fuel for enterocytes and supporting tight junction integrity.",
+    "legalStatus": "Dietary Supplement",
+    "researchEvidence": "Clinical Evidence (Nutrition studies)",
+    "peptideClass": "Nutritional Peptide",
+    "cycleRecommendation": "Continuous",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "kpv",
+    "name": "KPV",
+    "category": "Healing & Recovery",
+    "description": "A tripeptide (Lys-Pro-Val) derived from alpha-MSH. Acts as a potent anti-inflammatory agent, especially in gastrointestinal inflammatory disorders and skin healing.",
+    "halfLifeHours": 1.5,
+    "halfLifeDisplay": "1.5 hours",
+    "adminRoute": "Subcutaneous, Oral, Topical",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "200 mcg - 500 mcg daily",
+    "storageInfo": "Refrigerate reconstituted vials. Stable topically at room temp.",
+    "sideEffects": [
+      "Mild localized irritation if topical",
+      "injection site pain"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "C-terminal tripeptide of alpha-MSH that inhibits NF-κB signaling and pro-inflammatory cytokines (IL-6, TNF-α) without melanocortin receptor binding.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Anti-inflammatory Peptide",
+    "cycleRecommendation": "4-8 weeks on, 2 weeks off",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "larazotide",
+    "name": "Larazotide Acetate (AT-1001)",
+    "category": "Healing & Recovery",
+    "description": "A tight junction regulator peptide studied for celiac disease. Helps repair the intestinal mucosal barrier and prevent leaky gut syndrome.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours (localized in GI)",
+    "adminRoute": "Oral (Capsules)",
+    "typicalFrequency": "3x daily (before meals)",
+    "typicalDoseRange": "0.25 mg - 1.0 mg per dose",
+    "storageInfo": "Store at room temperature in a dry container.",
+    "sideEffects": [
+      "Abdominal discomfort",
+      "mild bloating",
+      "headache"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Bowel obstruction"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "Tight junction regulator that prevents zonulin-mediated intestinal permeability increase, restoring epithelial barrier integrity.",
+    "legalStatus": "Investigational (Phase III)",
+    "researchEvidence": "Phase III Clinical Trial",
+    "peptideClass": "Tight Junction Regulator",
+    "cycleRecommendation": "As prescribed (continuous)",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "osteogen",
+    "name": "Osteogenic Peptide (Bone Healing)",
+    "category": "Healing & Recovery",
+    "description": "Synthetic peptide that mimics bone morphogenetic proteins (BMPs) to stimulate osteoblast activity and bone healing.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "500 mcg daily",
+    "storageInfo": "Keep refrigerated.",
+    "sideEffects": [
+      "Local aching",
+      "injection site soreness"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [
+      "History of osteosarcoma or bone oncology"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "BMP-mimetic peptide that activates Smad 1/5/8 signaling cascade, stimulating osteoblast differentiation and bone matrix deposition.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "BMP Mimetic",
+    "cycleRecommendation": "8-12 week cycles",
+    "onsetDays": "28-56",
+    "aliases": []
+  },
+  {
+    "id": "palmitoyleth",
+    "name": "PEA Peptide (Anti-Inflammatory)",
+    "category": "Healing & Recovery",
+    "description": "Endogenous fatty acid amide acting as a lipid messenger peptide to modulate localized neuroinflammation and pain pathways.",
+    "halfLifeHours": 4.0,
+    "halfLifeDisplay": "4 hours",
+    "adminRoute": "Oral",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "300 mg - 600 mg daily",
+    "storageInfo": "Store at room temperature.",
+    "sideEffects": [
+      "Mild gastrointestinal upset"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "Endogenous fatty acid amide that activates PPARα nuclear receptors and indirectly enhances endocannabinoid tone, modulating neuroinflammation and pain.",
+    "legalStatus": "Dietary Supplement (EU/US)",
+    "researchEvidence": "Multiple Clinical Trials",
+    "peptideClass": "Lipid Mediator (Amide)",
+    "cycleRecommendation": "Continuous",
+    "onsetDays": "7-21",
+    "aliases": []
+  },
+  {
+    "id": "tb500",
+    "name": "TB-500",
+    "category": "Healing & Recovery",
+    "description": "Synthetic peptide containing the active healing domain of Thymosin Beta-4. Promotes blood vessel growth, tissue repair, and cell migration in musculoskeletal injuries.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2-3 hours (biological effects persist longer)",
+    "adminRoute": "Subcutaneous or Intramuscular Injection",
+    "typicalFrequency": "2x weekly",
+    "typicalDoseRange": "2.0 mg - 5.0 mg per week",
+    "storageInfo": "Refrigerate reconstituted solution (2-8°C). Keep protected from light.",
+    "sideEffects": [
+      "Lethargy after injection",
+      "injection site redness",
+      "minor headache"
+    ],
+    "synergies": [
+      "BPC-157",
+      "GHK-Cu"
+    ],
+    "contraindications": [
+      "Active cancer",
+      "thymus disorders"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "Synthetic fragment of Thymosin Beta-4 that promotes actin polymerization, cell migration, blood vessel growth, and tissue repair via upregulation of cell-building proteins.",
+    "legalStatus": "Research Chemical / WADA Banned",
+    "researchEvidence": "Preclinical Only / Veterinary (Equine)",
+    "peptideClass": "Thymic Peptide",
+    "cycleRecommendation": "4-6 weeks loading, then maintenance",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "recovering_frag",
+    "name": "TB4 Frag (1-4) (Ac-SDKP)",
+    "category": "Healing & Recovery",
+    "description": "The amino-terminal fragment of Thymosin Beta-4 that regulates inflammation, angiogenesis, and collagen deposition.",
+    "halfLifeHours": 1.0,
+    "halfLifeDisplay": "1 hour",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "500 mcg per day",
+    "storageInfo": "Refrigerate reconstituted solution.",
+    "sideEffects": [
+      "Minor headache",
+      "flushing"
+    ],
+    "synergies": [
+      "BPC-157",
+      "TB-500"
+    ],
+    "contraindications": [
+      "Active oncology"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "N-terminal fragment (Ac-SDKP) of Thymosin Beta-4 that regulates inflammation, inhibits collagen deposition, and promotes angiogenesis.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Thymic Peptide Fragment",
+    "cycleRecommendation": "4-8 weeks on, 2 weeks off",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "tb4_full",
+    "name": "Thymosin Beta-4 (Full Length)",
+    "category": "Healing & Recovery",
+    "description": "The full 43-amino-acid peptide that occurs naturally in human tissues. Essential for cell migration, wound repair, and muscle fiber regeneration.",
+    "halfLifeHours": 24.0,
+    "halfLifeDisplay": "24 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "2x weekly",
+    "typicalDoseRange": "2.5 mg - 5.0 mg per week",
+    "storageInfo": "Keep reconstituted vial refrigerated. Protect from light.",
+    "sideEffects": [
+      "Mild fatigue",
+      "local redness at injection site"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Active cancer",
+      "thymus neoplasms"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "Full 43-amino-acid thymosin beta-4 peptide that sequesters G-actin monomers, promoting cell migration, wound repair, and anti-inflammatory responses.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Phase II Clinical Trial (Corneal healing)",
+    "peptideClass": "Thymic Peptide",
+    "cycleRecommendation": "4-6 weeks loading, then maintenance",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "vip_peptide",
+    "name": "Vasoactive Intestinal Peptide (VIP)",
+    "category": "Healing & Recovery",
+    "description": "A neuromodulator peptide that regulates inflammatory responses, lung tissue healing, and blood flow, often used in Chronic Inflammatory Response Syndrome (CIRS).",
+    "halfLifeHours": 0.05,
+    "halfLifeDisplay": "3 minutes (rapid systemic clearing)",
+    "adminRoute": "Intranasal Spray",
+    "typicalFrequency": "2-4x daily",
+    "typicalDoseRange": "50 mcg - 100 mcg per spray",
+    "storageInfo": "Keep refrigerated. Use within 30 days.",
+    "sideEffects": [
+      "Facial flushing",
+      "tachycardia (fast heart rate)",
+      "nasal irritation"
+    ],
+    "synergies": [
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Hypotension",
+      "moderate to severe cardiac disease"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "28-amino-acid neuropeptide that binds VPAC1/VPAC2 receptors, regulating vasodilation, anti-inflammatory cytokine release, and bronchodilation.",
+    "legalStatus": "Research Chemical / FDA-Approved (Aviptadil for CIRS protocol)",
+    "researchEvidence": "Phase II/III Clinical Trial",
+    "peptideClass": "Neuropeptide",
+    "cycleRecommendation": "As prescribed (CIRS protocol)",
+    "onsetDays": "1-7",
+    "aliases": []
+  },
+  {
+    "id": "amino1q",
+    "name": "5-Amino-1Q",
+    "category": "Weight Loss / Metabolic",
+    "description": "A small-molecule inhibitor of NNMT (nicotinamide N-methyltransferase). Promotes fat cell metabolism, muscle preservation, and energy expenditure.",
+    "halfLifeHours": 8.0,
+    "halfLifeDisplay": "8 hours",
+    "adminRoute": "Oral",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "50 mg - 150 mg per day",
+    "storageInfo": "Store at room temperature in a dry container.",
+    "sideEffects": [
+      "Mild diarrhea",
+      "headache"
+    ],
+    "synergies": [
+      "MOTS-c"
+    ],
+    "contraindications": [
+      "Pregnancy",
+      "liver dysfunction"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Small-molecule inhibitor of nicotinamide N-methyltransferase (NNMT), promoting SAM-dependent fat metabolism and energy expenditure.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Enzyme Inhibitor",
+    "cycleRecommendation": "8-12 weeks on, 4 weeks off",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "aod9604",
+    "name": "AOD-9604",
+    "category": "Weight Loss / Metabolic",
+    "description": "Anti-Obesity Drug-9604 is a synthetic C-terminal fragment of human Growth Hormone (hGH 177-191). Promotes lipolysis (fat breakdown) and inhibits lipogenesis without elevating blood glucose.",
+    "halfLifeHours": 3.0,
+    "halfLifeDisplay": "3 hours",
+    "adminRoute": "Subcutaneous Injection, Oral",
+    "typicalFrequency": "Daily (fasted in morning)",
+    "typicalDoseRange": "250 mcg - 500 mcg daily",
+    "storageInfo": "Refrigerate reconstituted solution.",
+    "sideEffects": [
+      "Headache",
+      "indigestion",
+      "injection site redness"
+    ],
+    "synergies": [
+      "CJC-1295",
+      "Ipamorelin"
+    ],
+    "contraindications": [
+      "Active oncology cases"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "C-terminal fragment of hGH (177-191) that stimulates lipolysis via beta-3 adrenergic receptors and inhibits lipogenesis without affecting blood glucose or IGF-1.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Phase IIb Clinical Trial (Did not advance)",
+    "peptideClass": "GH Fragment",
+    "cycleRecommendation": "12 weeks on, 4 weeks off",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "cagrilintide",
+    "name": "Cagrilintide (Amylin Analog)",
+    "category": "Weight Loss / Metabolic",
+    "description": "A long-acting amylin receptor agonist that works synergistically with GLP-1 agonists to enhance satiety and delay gastric emptying.",
+    "halfLifeHours": 180.0,
+    "halfLifeDisplay": "7.5 days",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Weekly",
+    "typicalDoseRange": "0.3 mg - 2.4 mg weekly (typically co-administered with Semaglutide)",
+    "storageInfo": "Store in refrigerator (2-8°C).",
+    "sideEffects": [
+      "Nausea",
+      "vomiting",
+      "decreased appetite",
+      "fatigue"
+    ],
+    "synergies": [
+      "Semaglutide"
+    ],
+    "contraindications": [
+      "Pregnancy",
+      "pancreatitis history"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Long-acting amylin receptor agonist that enhances satiety signaling and delays gastric emptying via area postrema and vagal afferent pathways.",
+    "legalStatus": "Investigational",
+    "researchEvidence": "Phase III Clinical Trial",
+    "peptideClass": "Amylin Analog",
+    "cycleRecommendation": "As prescribed",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "dulaglutide",
+    "name": "Dulaglutide",
+    "category": "Weight Loss / Metabolic",
+    "description": "An FDA-approved weekly GLP-1 receptor agonist (Trulicity) for glycemic control and cardiovascular risk reduction.",
+    "halfLifeHours": 120.0,
+    "halfLifeDisplay": "5 days",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Weekly",
+    "typicalDoseRange": "0.75 mg - 4.5 mg weekly",
+    "storageInfo": "Store in refrigerator.",
+    "sideEffects": [
+      "Diarrhea",
+      "nausea",
+      "vomiting",
+      "abdominal pain"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "MTC history",
+      "MEN 2"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Weekly GLP-1 receptor agonist fused to an Fc fragment for extended half-life, providing sustained incretin signaling for glycemic control.",
+    "legalStatus": "FDA-Approved (Trulicity)",
+    "researchEvidence": "Phase III Clinical Trial (Approved)",
+    "peptideClass": "GLP-1 Receptor Agonist",
+    "cycleRecommendation": "As prescribed (continuous)",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "exenatide",
+    "name": "Exenatide (Byetta/Bydureon)",
+    "category": "Weight Loss / Metabolic",
+    "description": "The first GLP-1 receptor agonist approved by the FDA, derived from Gila monster saliva, available in daily or weekly formulas.",
+    "halfLifeHours": 2.4,
+    "halfLifeDisplay": "2.4 hours (Bydureon extended: 2 weeks)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Weekly (Bydureon) or Daily (Byetta)",
+    "typicalDoseRange": "2.0 mg weekly (extended) or 5-10 mcg 2x daily",
+    "storageInfo": "Store in refrigerator.",
+    "sideEffects": [
+      "Nausea",
+      "injection site nodules (common with weekly)"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Severe renal impairment",
+      "history of drug-induced thrombocytopenia"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "GLP-1 receptor agonist derived from exendin-4 (Gila monster venom) that stimulates glucose-dependent insulin secretion.",
+    "legalStatus": "FDA-Approved (Byetta/Bydureon)",
+    "researchEvidence": "Phase III Clinical Trial (Approved)",
+    "peptideClass": "GLP-1 Receptor Agonist",
+    "cycleRecommendation": "As prescribed (continuous)",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "hgh177191",
+    "name": "HGH Fragment 177-191",
+    "category": "Weight Loss / Metabolic",
+    "description": "The lipolytic fragment of human growth hormone that promotes fat burning without affect blood glucose levels.",
+    "halfLifeHours": 0.5,
+    "halfLifeDisplay": "30 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "250 mcg - 500 mcg daily",
+    "storageInfo": "Refrigerate reconstituted solution.",
+    "sideEffects": [
+      "Lethargy",
+      "local injection pain"
+    ],
+    "synergies": [
+      "CJC-1295",
+      "Ipamorelin"
+    ],
+    "contraindications": [
+      "Active malignancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "C-terminal fragment of human growth hormone that activates lipolytic pathways via beta-3 adrenergic receptors without affecting blood glucose.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "GH Fragment",
+    "cycleRecommendation": "12 weeks on, 4 weeks off",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "liraglutide",
+    "name": "Liraglutide",
+    "category": "Weight Loss / Metabolic",
+    "description": "An FDA-approved daily GLP-1 receptor agonist for weight management (Saxenda) and type 2 diabetes (Victoza).",
+    "halfLifeHours": 13.0,
+    "halfLifeDisplay": "13 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "0.6 mg - 3.0 mg per day (titrated weekly)",
+    "storageInfo": "Refrigerate unused pens. Keep in-use pens up to 30 days at room temp.",
+    "sideEffects": [
+      "Nausea",
+      "hypoglycemia",
+      "diarrhea",
+      "constipation",
+      "headache"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "History of MTC",
+      "MEN 2",
+      "pregnancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Daily GLP-1 receptor agonist with acylation for albumin binding, prolonging half-life and providing sustained incretin-mediated glucose control.",
+    "legalStatus": "FDA-Approved (Victoza/Saxenda)",
+    "researchEvidence": "Phase III Clinical Trial (Approved)",
+    "peptideClass": "GLP-1 Receptor Agonist",
+    "cycleRecommendation": "As prescribed (continuous)",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "lixisenatide",
+    "name": "Lixisenatide",
+    "category": "Weight Loss / Metabolic",
+    "description": "A short-acting daily GLP-1 receptor agonist focused on postprandial glucose control.",
+    "halfLifeHours": 3.0,
+    "halfLifeDisplay": "3 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "10 mcg - 20 mcg daily",
+    "storageInfo": "Keep refrigerated.",
+    "sideEffects": [
+      "Nausea",
+      "headache",
+      "hypoglycemia"
+    ],
+    "synergies": [
+      "Basal insulin"
+    ],
+    "contraindications": [
+      "Severe gastroparesis"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Short-acting GLP-1 receptor agonist focused on postprandial glucose control via delayed gastric emptying.",
+    "legalStatus": "FDA-Approved (Adlyxin)",
+    "researchEvidence": "Phase III Clinical Trial (Approved)",
+    "peptideClass": "GLP-1 Receptor Agonist",
+    "cycleRecommendation": "As prescribed (continuous)",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "mazdutide",
+    "name": "Mazdutide (GLP1-GCGR)",
+    "category": "Weight Loss / Metabolic",
+    "description": "A dual GLP-1 and glucagon receptor agonist showing potent fat reduction and lipid profile improvement.",
+    "halfLifeHours": 130.0,
+    "halfLifeDisplay": "5.4 days",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Weekly",
+    "typicalDoseRange": "3.0 mg - 9.0 mg weekly",
+    "storageInfo": "Store in refrigerator.",
+    "sideEffects": [
+      "Appetite loss",
+      "mild nausea",
+      "diarrhea"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Thyroid cancer history",
+      "pregnancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Dual GLP-1 and glucagon receptor agonist that combines incretin-mediated appetite suppression with glucagon-driven hepatic fat oxidation.",
+    "legalStatus": "Investigational",
+    "researchEvidence": "Phase III Clinical Trial",
+    "peptideClass": "Dual Agonist",
+    "cycleRecommendation": "As prescribed",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "orforglipron",
+    "name": "Orforglipron",
+    "category": "Weight Loss / Metabolic",
+    "description": "An investigational oral, non-peptide GLP-1 receptor agonist providing weight loss without the need for weekly injections.",
+    "halfLifeHours": 35.0,
+    "halfLifeDisplay": "35 hours",
+    "adminRoute": "Oral",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "12 mg - 45 mg daily",
+    "storageInfo": "Store at room temperature.",
+    "sideEffects": [
+      "Nausea",
+      "diarrhea",
+      "constipation",
+      "vomiting"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Pregnancy",
+      "severe gastroparesis"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Oral non-peptide GLP-1 receptor agonist with small-molecule structure enabling oral bioavailability without injection.",
+    "legalStatus": "Investigational",
+    "researchEvidence": "Phase III Clinical Trial",
+    "peptideClass": "GLP-1 Receptor Agonist (Non-peptide)",
+    "cycleRecommendation": "As prescribed",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "retatrutide",
+    "name": "Retatrutide (Triple Agonist)",
+    "category": "Weight Loss / Metabolic",
+    "description": "An investigational triple receptor agonist targeting GLP-1, GIP, and Glucagon receptors, exhibiting substantial weight loss outcomes in Phase II trials.",
+    "halfLifeHours": 144.0,
+    "halfLifeDisplay": "6 days (144 hours)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Weekly",
+    "typicalDoseRange": "1.0 mg - 12.0 mg per week (titrated)",
+    "storageInfo": "Keep refrigerated.",
+    "sideEffects": [
+      "Nausea",
+      "vomiting",
+      "diarrhea",
+      "transient heart rate increase",
+      "decreased appetite"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "MTC history",
+      "cardiac arrhythmia",
+      "pregnancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Triple agonist targeting GLP-1, GIP, and glucagon receptors simultaneously for synergistic effects on appetite, glucose metabolism, and fat oxidation.",
+    "legalStatus": "Investigational",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "Triple Incretin Agonist",
+    "cycleRecommendation": "As prescribed (clinical trial protocol)",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "semaglutide",
+    "name": "Semaglutide",
+    "category": "Weight Loss / Metabolic",
+    "description": "An FDA-approved GLP-1 receptor agonist that regulates blood sugar, slows stomach emptying, and reduces hunger to assist in weight loss.",
+    "halfLifeHours": 168.0,
+    "halfLifeDisplay": "7 days (168 hours)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Weekly",
+    "typicalDoseRange": "0.25 mg - 2.4 mg per week (titrated monthly)",
+    "storageInfo": "Store in refrigerator (2-8°C). Protect from heat and direct sunlight.",
+    "sideEffects": [
+      "Nausea",
+      "vomiting",
+      "diarrhea",
+      "constipation",
+      "heartburn",
+      "fatigue"
+    ],
+    "synergies": [
+      "None established; typically monotherapy"
+    ],
+    "contraindications": [
+      "Personal/family history of MTC",
+      "MEN 2",
+      "pregnancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Long-acting GLP-1 receptor agonist that mimics incretin signaling to reduce appetite, slow gastric emptying, and enhance insulin secretion.",
+    "legalStatus": "FDA-Approved (Ozempic/Wegovy)",
+    "researchEvidence": "Phase III Clinical Trial (Approved)",
+    "peptideClass": "GLP-1 Receptor Agonist",
+    "cycleRecommendation": "As prescribed (continuous with titration)",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "tesofensine",
+    "name": "Tesofensine",
+    "category": "Weight Loss / Metabolic",
+    "description": "A monoamine reuptake inhibitor that suppresses appetite and increases energy expenditure. Demonstrates significant weight loss in clinical studies.",
+    "halfLifeHours": 220.0,
+    "halfLifeDisplay": "9 days (220 hours)",
+    "adminRoute": "Oral",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "0.25 mg - 1.0 mg daily",
+    "storageInfo": "Store at room temperature.",
+    "sideEffects": [
+      "Dry mouth",
+      "insomnia",
+      "increased heart rate",
+      "mild anxiety"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Severe depression",
+      "heart disease",
+      "cardiac arrhythmias"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Triple monoamine reuptake inhibitor (serotonin, norepinephrine, dopamine) that suppresses appetite centrally and increases basal metabolic rate.",
+    "legalStatus": "Investigational",
+    "researchEvidence": "Phase III Clinical Trial",
+    "peptideClass": "Small Molecule (Non-peptide)",
+    "cycleRecommendation": "As prescribed",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "tirzepatide",
+    "name": "Tirzepatide",
+    "category": "Weight Loss / Metabolic",
+    "description": "An FDA-approved dual GIP and GLP-1 receptor agonist that offers high efficacy in blood sugar control and body weight reduction.",
+    "halfLifeHours": 120.0,
+    "halfLifeDisplay": "5 days (120 hours)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Weekly",
+    "typicalDoseRange": "2.5 mg - 15.0 mg per week (titrated monthly)",
+    "storageInfo": "Keep refrigerated. Do not freeze.",
+    "sideEffects": [
+      "Nausea",
+      "diarrhea",
+      "decreased appetite",
+      "indigestion",
+      "vomiting"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Personal/family history of MTC",
+      "MEN 2",
+      "pregnancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Dual GIP and GLP-1 receptor agonist that provides synergistic incretin signaling for enhanced glucose control and weight reduction.",
+    "legalStatus": "FDA-Approved (Mounjaro/Zepbound)",
+    "researchEvidence": "Phase III Clinical Trial (Approved)",
+    "peptideClass": "Dual Incretin Agonist",
+    "cycleRecommendation": "As prescribed (continuous with titration)",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "humanin",
+    "name": "Humanin",
+    "category": "Mitochondrial / Longevity",
+    "description": "A 24-amino acid mitochondrial-derived peptide (MDP) encoded by the mitochondrial 16S rRNA gene. First discovered in 2001 in brain regions spared from Alzheimer's disease. Demonstrates potent anti-apoptotic, neuroprotective, and cytoprotective properties. Circulating levels decline with age.",
+    "halfLifeHours": 0.5,
+    "halfLifeDisplay": "30 minutes (rapid systemic clearance)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "1 mg - 4 mg daily (research context)",
+    "storageInfo": "Store reconstituted solution at 2-8°C. Highly sensitive to degradation.",
+    "sideEffects": [
+      "Mild injection site reaction",
+      "Transient hypoglycemia (insulin-sensitizing effect)"
+    ],
+    "synergies": [
+      "MOTS-c",
+      "SS-31",
+      "Epitalon"
+    ],
+    "contraindications": [
+      "Active malignancy (theoretical)",
+      "Pregnancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Mitochondrial / Longevity",
+      "Cognitive / Nootropic"
+    ],
+    "aliases": [
+      "HN",
+      "HNG (analog)",
+      "HNGF6A (analog)"
+    ],
+    "mechanismOfAction": "Binds and inhibits pro-apoptotic Bax protein, preventing mitochondrial outer membrane permeabilization. Activates STAT3, ERK1/2, and PI3K/Akt survival signaling pathways. Interacts with IGFBP-3 and enhances insulin sensitivity.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only (Extensive animal and in-vitro studies)",
+    "peptideClass": "Mitochondrial-Derived Peptide",
+    "cycleRecommendation": "Not established (research context)",
+    "onsetDays": "Unknown (preclinical)"
+  },
+  {
+    "id": "motsc",
+    "name": "MOTS-c",
+    "category": "Mitochondrial / Longevity",
+    "description": "A mitochondrial-derived peptide (MDP) encoded by the mitochondrial 12S rRNA gene. Regulates metabolic homeostasis by activating AMPK signaling, increasing insulin sensitivity, promoting exercise capacity, and enhancing fatty acid oxidation. Primarily studied for its role in longevity and metabolic health.",
+    "halfLifeHours": 4.0,
+    "halfLifeDisplay": "4 hours (estimated)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "2-3x weekly",
+    "typicalDoseRange": "5 mg - 10 mg per week",
+    "storageInfo": "Keep reconstituted solution refrigerated.",
+    "sideEffects": [
+      "Mild localized skin reaction",
+      "transient lethargy",
+      "headache"
+    ],
+    "synergies": [
+      "5-Amino-1Q"
+    ],
+    "contraindications": [
+      "Severe renal impairment"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Mitochondrial / Longevity",
+      "Weight Loss / Metabolic"
+    ],
+    "mechanismOfAction": "Mitochondrial-derived peptide that activates AMPK signaling, improving insulin sensitivity, glucose uptake, and fatty acid oxidation.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Mitochondrial-Derived Peptide",
+    "cycleRecommendation": "4-8 weeks on, 4 weeks off",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "ss31",
+    "name": "SS-31 (Elamipretide)",
+    "category": "Mitochondrial / Longevity",
+    "description": "A synthetic mitochondria-targeted tetrapeptide (D-Arg-Dmt-Lys-Phe-NH2) that selectively binds cardiolipin in the inner mitochondrial membrane. FDA-approved as FORZINITY™ (September 2025) for Barth syndrome, making it the first approved mitochondria-targeted therapeutic. Improves mitochondrial efficiency, reduces oxidative stress, and enhances ATP production.",
+    "halfLifeHours": 4.0,
+    "halfLifeDisplay": "4 hours (subcutaneous)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "40 mg daily (Barth syndrome approved dose)",
+    "storageInfo": "Store in refrigerator (2-8°C). Protect from light.",
+    "sideEffects": [
+      "Injection site reactions",
+      "Headache",
+      "Muscle spasm",
+      "Fatigue",
+      "Diarrhea"
+    ],
+    "synergies": [
+      "MOTS-c",
+      "Humanin",
+      "Epitalon"
+    ],
+    "contraindications": [
+      "Hypersensitivity to elamipretide",
+      "Pregnancy (insufficient data)"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Mitochondrial / Longevity",
+      "Healing & Recovery"
+    ],
+    "aliases": [
+      "Elamipretide",
+      "Bendavia",
+      "FORZINITY",
+      "MTP-131"
+    ],
+    "mechanismOfAction": "Selectively binds to cardiolipin on the inner mitochondrial membrane, stabilizing cytochrome c interaction and optimizing electron transport chain efficiency. Reduces reactive oxygen species production and prevents cardiolipin peroxidation.",
+    "legalStatus": "FDA-Approved (FORZINITY - Barth syndrome, Sep 2025)",
+    "researchEvidence": "Phase III Clinical Trial (FDA Approved)",
+    "peptideClass": "Mitochondria-Targeted Peptide",
+    "cycleRecommendation": "As prescribed (continuous for Barth syndrome)",
+    "onsetDays": "7-14"
+  },
+  {
+    "id": "cerebrolysin",
+    "name": "Cerebrolysin",
+    "category": "Cognitive / Nootropic",
+    "description": "A peptide mixture purified from pig brain tissue, rich in neurotrophic factors. Used for stroke recovery, dementia, and traumatic brain injury.",
+    "halfLifeHours": 3.0,
+    "halfLifeDisplay": "3 hours",
+    "adminRoute": "Intramuscular or Intravenous",
+    "typicalFrequency": "5 days per week (cycles)",
+    "typicalDoseRange": "5.0 mL - 10.0 mL daily",
+    "storageInfo": "Store in cool space. Ampoules are single-use; discard remainder.",
+    "sideEffects": [
+      "Dizziness",
+      "heat sensation",
+      "sweating",
+      "mild headache"
+    ],
+    "synergies": [
+      "Semax",
+      "Selank"
+    ],
+    "contraindications": [
+      "Severe renal impairment",
+      "status epilepticus"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "Mixture of neurotrophic peptides that mimic BDNF, GDNF, and CNTF signaling to promote neuronal survival, synaptogenesis, and neuroplasticity.",
+    "legalStatus": "Approved (EU/Asia, not US)",
+    "researchEvidence": "Phase III Clinical Trial (Approved outside US)",
+    "peptideClass": "Neurotrophic Peptide Mixture",
+    "cycleRecommendation": "5 days/week for 4-week cycles",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "cortagen",
+    "name": "Cortagen",
+    "category": "Cognitive / Nootropic",
+    "description": "A synthetic bioregulatory peptide (Ala-Glu-Asp-Pro) acting specifically on cerebral cortex cells to reduce age-related cognitive decline.",
+    "halfLifeHours": 1.0,
+    "halfLifeDisplay": "1 hour",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily (10-20 day cycles)",
+    "typicalDoseRange": "100 mcg - 200 mcg daily",
+    "storageInfo": "Store reconstituted solution in refrigerator.",
+    "sideEffects": [],
+    "synergies": [
+      "Pinealon"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "Synthetic bioregulatory tetrapeptide (Ala-Glu-Asp-Pro) that acts specifically on cerebral cortex cells via gene expression modulation.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical / Limited Clinical (Russia)",
+    "peptideClass": "Bioregulator Peptide",
+    "cycleRecommendation": "10-20 day cycles",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "dsip",
+    "name": "DSIP (Delta Sleep-Inducing Peptide)",
+    "category": "Cognitive / Nootropic",
+    "description": "A naturally occurring nonapeptide (Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu) first isolated from rabbit brain in 1977. Proposed to promote delta wave (slow-wave) sleep and regulate circadian rhythms. Historical evidence is mixed — some studies show modest sleep improvements while others show no significant difference from placebo.",
+    "halfLifeHours": 0.13,
+    "halfLifeDisplay": "7-8 minutes (rapid degradation)",
+    "adminRoute": "Subcutaneous Injection, Intranasal, Intravenous",
+    "typicalFrequency": "Daily (before sleep)",
+    "typicalDoseRange": "100 mcg - 300 mcg per dose",
+    "storageInfo": "Store reconstituted solution at 2-8°C. Extremely fragile — use within 14 days.",
+    "sideEffects": [
+      "Mild headache",
+      "Transient drowsiness",
+      "Occasional paradoxical insomnia"
+    ],
+    "synergies": [
+      "Selank",
+      "Pinealon",
+      "Epitalon"
+    ],
+    "contraindications": [
+      "Depression (insufficient safety data)",
+      "Pregnancy"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "aliases": [
+      "DSIP",
+      "Delta Sleep Peptide"
+    ],
+    "mechanismOfAction": "Modulates GABAergic transmission, interacts with opioid receptors, and regulates the HPA axis to reduce cortisol. May promote slow-wave sleep via serotonin pathway modulation. Exact mechanism remains unclear.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical / Mixed Historical Clinical (1970s-1990s)",
+    "peptideClass": "Neuropeptide",
+    "cycleRecommendation": "2-4 week cycles",
+    "onsetDays": "1-3 (variable)"
+  },
+  {
+    "id": "dihexa",
+    "name": "Dihexa",
+    "category": "Cognitive / Nootropic",
+    "description": "An oligopeptide drug candidate derived from angiotensin IV that binds to HGF, exhibiting potent neurogenic and memory-enhancing capabilities in laboratory models. Also promotes tissue recovery and angiogenesis via its HGF binding activity.",
+    "halfLifeHours": 2.5,
+    "halfLifeDisplay": "2.5 hours",
+    "adminRoute": "Oral, Topical",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "10 mg - 20 mg per day",
+    "storageInfo": "Store at room temperature.",
+    "sideEffects": [
+      "Headache",
+      "irritability",
+      "local skin irritation (if topical)"
+    ],
+    "synergies": [
+      "Semax"
+    ],
+    "contraindications": [
+      "Active cancer (due to HGF pathway stimulation)"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic",
+      "Healing & Recovery"
+    ],
+    "mechanismOfAction": "Angiotensin IV-derived hexapeptide that potentiates hepatocyte growth factor (HGF) signaling via c-Met receptor, promoting neurogenesis, synaptogenesis, and tissue repair.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Neurogenic Peptide",
+    "cycleRecommendation": "4 weeks on, 2 weeks off",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "fgl_peptide",
+    "name": "FGL Peptide",
+    "category": "Cognitive / Nootropic",
+    "description": "A peptide derived from neural cell adhesion molecule (NCAM) that activates the FGF receptor to stimulate synapse formation and memory retention.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours",
+    "adminRoute": "Intranasal Spray, Subcutaneous",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "1.0 mg - 2.0 mg daily",
+    "storageInfo": "Keep refrigerated.",
+    "sideEffects": [
+      "Mild headache"
+    ],
+    "synergies": [
+      "Semax"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "NCAM-derived peptide that activates FGF receptor to stimulate synapse formation, LTP enhancement, and memory retention.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Neural Adhesion Peptide",
+    "cycleRecommendation": "Not established",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "lglu_peptide",
+    "name": "L-Glutamyl-L-Selenocysteine",
+    "category": "Cognitive / Nootropic",
+    "description": "A seleno-peptide functioning as a cellular antioxidant to protect neurons from oxidative stress.",
+    "halfLifeHours": 3.0,
+    "halfLifeDisplay": "3 hours",
+    "adminRoute": "Oral",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "5.0 mg daily",
+    "storageInfo": "Store at room temp.",
+    "sideEffects": [
+      "Nausea (if empty stomach)"
+    ],
+    "synergies": [
+      "Pinealon"
+    ],
+    "contraindications": [
+      "Selenium toxicity risk"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "Seleno-peptide that functions as a glutathione peroxidase cofactor, protecting neurons from oxidative stress via selenium-dependent antioxidant mechanisms.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Seleno-peptide",
+    "cycleRecommendation": "Continuous (with selenium monitoring)",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "mif1",
+    "name": "MIF-1",
+    "category": "Cognitive / Nootropic",
+    "description": "A naturally occurring tripeptide (Pro-Leu-Gly-NH2) that modulates dopamine receptors, studied for Parkinson's disease and depression symptoms.",
+    "halfLifeHours": 1.5,
+    "halfLifeDisplay": "1.5 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "10 mg - 30 mg per day",
+    "storageInfo": "Store reconstituted solution at 2-8°C.",
+    "sideEffects": [
+      "Headache",
+      "nausea",
+      "dry mouth"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "History of schizophrenia or psychosis"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "Naturally occurring tripeptide (Pro-Leu-Gly-NH2) that modulates dopamine D2 receptor sensitivity and opioid receptor interactions.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Phase II Clinical Trial (Historical)",
+    "peptideClass": "Neuropeptide",
+    "cycleRecommendation": "4-8 week cycles",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "naselank",
+    "name": "N-Acetyl Selank Amidate",
+    "category": "Cognitive / Nootropic",
+    "description": "A modified version of Selank designed to exhibit increased potency, biological activity, and half-life in the central nervous system.",
+    "halfLifeHours": 0.4,
+    "halfLifeDisplay": "20-25 minutes",
+    "adminRoute": "Intranasal Spray",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "150 mcg - 300 mcg per dose",
+    "storageInfo": "Store in refrigerator.",
+    "sideEffects": [
+      "Nasal congestion",
+      "transient headache"
+    ],
+    "synergies": [
+      "N-Acetyl Semax"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "Acetylated and amidated Selank variant with increased CNS potency and prolonged biological half-life, enhancing anxiolytic and immunomodulatory effects.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Tuftsin Analog",
+    "cycleRecommendation": "10-20 day cycles",
+    "onsetDays": "1-3",
+    "aliases": []
+  },
+  {
+    "id": "nasemax",
+    "name": "N-Acetyl Semax Amidate",
+    "category": "Cognitive / Nootropic",
+    "description": "An acetylated and amidated variant of Semax providing increased blood-brain barrier penetration and enhanced stability.",
+    "halfLifeHours": 0.3,
+    "halfLifeDisplay": "15-20 minutes",
+    "adminRoute": "Intranasal Spray",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "100 mcg - 300 mcg per dose",
+    "storageInfo": "Refrigerate solution.",
+    "sideEffects": [
+      "Mild irritability",
+      "overstimulation",
+      "insomnia"
+    ],
+    "synergies": [
+      "N-Acetyl Selank"
+    ],
+    "contraindications": [
+      "Anxiety",
+      "insomnia"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "Acetylated and amidated Semax variant with increased BBB penetration and metabolic stability, enhancing BDNF expression more potently than standard Semax.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Melanocortin Peptide Fragment",
+    "cycleRecommendation": "10-20 day cycles",
+    "onsetDays": "1-3",
+    "aliases": []
+  },
+  {
+    "id": "noopept",
+    "name": "Noopept (GVS-111)",
+    "category": "Cognitive / Nootropic",
+    "description": "A proline-containing dipeptide designed to mimic the endogenous neuropeptide vasopressin. Enhances memory consolidation and learning capacity.",
+    "halfLifeHours": 0.5,
+    "halfLifeDisplay": "30-60 minutes (systemic)",
+    "adminRoute": "Oral, Sublingual",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "10 mg - 30 mg per day",
+    "storageInfo": "Store at room temperature in a dry container.",
+    "sideEffects": [
+      "Headache",
+      "irritability",
+      "sleep disturbances",
+      "elevated blood pressure"
+    ],
+    "synergies": [
+      "Alpha-GPC",
+      "Choline"
+    ],
+    "contraindications": [
+      "Severe hypertension",
+      "liver or kidney insufficiency"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "Proline-containing dipeptide that enhances AMPA and NMDA receptor sensitivity, increases BDNF and NGF expression, and improves memory consolidation.",
+    "legalStatus": "OTC Nootropic (Russia)",
+    "researchEvidence": "Phase III Clinical Trial (Russia)",
+    "peptideClass": "Racetam-like Dipeptide",
+    "cycleRecommendation": "1.5-3 months on, 1 month off",
+    "onsetDays": "1-7",
+    "aliases": []
+  },
+  {
+    "id": "p21_peptide",
+    "name": "P21 Peptide",
+    "category": "Cognitive / Nootropic",
+    "description": "A synthetic peptide derived from CNTF (ciliary neurotrophic factor) that improves neurogenesis and synaptic plasticity.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours",
+    "adminRoute": "Intranasal, Subcutaneous",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "1.0 mg daily",
+    "storageInfo": "Store reconstituted solution at 2-8°C.",
+    "sideEffects": [
+      "Headache",
+      "brain fog (if dose too high)"
+    ],
+    "synergies": [
+      "Semax"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "CNTF-derived peptide that promotes hippocampal neurogenesis via activation of STAT3 signaling and inhibition of LIF receptor.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Neurotrophic Peptide",
+    "cycleRecommendation": "4-8 week cycles",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "pe2228",
+    "name": "PE-22-28",
+    "category": "Cognitive / Nootropic",
+    "description": "A synthetic heptapeptide ('mini-spadin') that selectively inhibits the TREK-1 (TWIK-related) potassium channel. Preclinical rodent studies show rapid antidepressant-like effects comparable to fluoxetine but with faster onset. Acts through serotonergic transmission modulation rather than sigma receptor pathways.",
+    "halfLifeHours": 1.5,
+    "halfLifeDisplay": "1.5 hours (estimated)",
+    "adminRoute": "Subcutaneous Injection, Intranasal",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "100 mcg - 500 mcg daily (research context)",
+    "storageInfo": "Store reconstituted solution at 2-8°C. Protect from light.",
+    "sideEffects": [
+      "Mild headache",
+      "Insomnia (if dosed late)",
+      "Potential anxiety at high doses"
+    ],
+    "synergies": [
+      "Semax",
+      "Selank"
+    ],
+    "contraindications": [
+      "Active seizure disorder",
+      "Bipolar disorder",
+      "Concurrent SSRI use (theoretical interaction)"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "aliases": [
+      "Mini-Spadin",
+      "Spadin analog"
+    ],
+    "mechanismOfAction": "Selective antagonist of the TREK-1 (KCNK2) two-pore domain potassium channel. Blocking TREK-1 increases neuronal excitability and facilitates serotonergic transmission, producing rapid antidepressant-like effects. Promotes BDNF expression and hippocampal neurogenesis.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only (Rodent behavioral studies)",
+    "peptideClass": "Ion Channel Modulator",
+    "cycleRecommendation": "Not established (research context)",
+    "onsetDays": "1-3 (in preclinical models)"
+  },
+  {
+    "id": "pinealon",
+    "name": "Pinealon",
+    "category": "Cognitive / Nootropic",
+    "description": "A short bioregulator tripeptide (Glu-Asp-Arg) that protects brain tissues from hypoxia, improves memory, and coordinates circadian rhythms.",
+    "halfLifeHours": 1.5,
+    "halfLifeDisplay": "1.5 hours",
+    "adminRoute": "Subcutaneous, Oral, Intranasal",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "100 mcg - 300 mcg daily",
+    "storageInfo": "Refrigerate reconstituted solution.",
+    "sideEffects": [
+      "None reported in clinical trials"
+    ],
+    "synergies": [
+      "Epitalon"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "Short bioregulator tripeptide (Glu-Asp-Arg) that protects brain tissues from hypoxia and normalizes circadian rhythms via pineal gland regulation.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical / Limited Clinical",
+    "peptideClass": "Bioregulator Peptide",
+    "cycleRecommendation": "10-20 day cycles",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "rg14620",
+    "name": "RG14620 (EGF peptide)",
+    "category": "Cognitive / Nootropic",
+    "description": "An epidermal growth factor analog studied for cognitive support and neuronal survival in neurodegenerative models.",
+    "halfLifeHours": 1.2,
+    "halfLifeDisplay": "1.2 hours",
+    "adminRoute": "Intranasal Spray",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "100 mcg daily",
+    "storageInfo": "Keep refrigerated.",
+    "sideEffects": [
+      "Nasal dry patch",
+      "headache"
+    ],
+    "synergies": [
+      "Dihexa"
+    ],
+    "contraindications": [
+      "Active brain oncology"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "EGF analog that supports neuronal survival through EGF receptor-mediated signaling in neurodegenerative models.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Growth Factor Peptide",
+    "cycleRecommendation": "Not established",
+    "onsetDays": "Unknown",
+    "aliases": []
+  },
+  {
+    "id": "selank",
+    "name": "Selank",
+    "category": "Cognitive / Nootropic",
+    "description": "Synthetic anxiolytic peptide related to the immunomodulatory peptide Tuftsin, providing stress reduction and neurotransmitter balance without sedation. Also regulates IL-6 cytokine expression, acting as a bridge between nervous and immune systems.",
+    "halfLifeHours": 0.1,
+    "halfLifeDisplay": "Minutes (rapid clearance)",
+    "adminRoute": "Intranasal Spray, Subcutaneous Injection",
+    "typicalFrequency": "2-3x daily",
+    "typicalDoseRange": "250 mcg - 500 mcg per dose",
+    "storageInfo": "Keep refrigerated. Stable at room temperature up to 7 days.",
+    "sideEffects": [
+      "Transient nasal congestion",
+      "mild headache"
+    ],
+    "synergies": [
+      "Semax"
+    ],
+    "contraindications": [
+      "Pregnancy",
+      "hypersensitivity"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic",
+      "Immune / Thymic"
+    ],
+    "mechanismOfAction": "Tuftsin analog that modulates GABA-ergic transmission, regulates IL-6 expression, and enhances enkephalin degradation enzyme inhibition for anxiolytic effects.",
+    "legalStatus": "Approved (Russia)",
+    "researchEvidence": "Clinical (Approved in Russia)",
+    "peptideClass": "Tuftsin Analog",
+    "cycleRecommendation": "10-20 day cycles, 10 days off",
+    "onsetDays": "1-3",
+    "aliases": []
+  },
+  {
+    "id": "semax",
+    "name": "Semax",
+    "category": "Cognitive / Nootropic",
+    "description": "A synthetic heptapeptide derived from ACTH (4-7) with high neuroprotective, memory-enhancing, and stimulatory actions.",
+    "halfLifeHours": 0.1,
+    "halfLifeDisplay": "Minutes (rapid clearance, prolonged brain activity)",
+    "adminRoute": "Intranasal Spray, Subcutaneous Injection",
+    "typicalFrequency": "2-3x daily",
+    "typicalDoseRange": "200 mcg - 600 mcg per dose",
+    "storageInfo": "Store in refrigerator. Protect from direct light.",
+    "sideEffects": [
+      "Mild irritability",
+      "hair thinning (rare",
+      "due to high BDNF)",
+      "insomnia"
+    ],
+    "synergies": [
+      "Selank"
+    ],
+    "contraindications": [
+      "Acute anxiety",
+      "history of mania/bipolar"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Cognitive / Nootropic"
+    ],
+    "mechanismOfAction": "Synthetic ACTH (4-7) analog that upregulates BDNF and NGF expression, enhances serotonergic and dopaminergic transmission, and provides neuroprotection.",
+    "legalStatus": "Approved (Russia)",
+    "researchEvidence": "Clinical (Approved in Russia)",
+    "peptideClass": "Melanocortin Peptide Fragment",
+    "cycleRecommendation": "10-20 day cycles, 10 days off",
+    "onsetDays": "1-3",
+    "aliases": []
+  },
+  {
+    "id": "argireline",
+    "name": "Argireline (Acetyl Hexapeptide-8)",
+    "category": "Anti-Aging / Skin",
+    "description": "A peptide that mimics botulinum toxin mechanism by relaxing facial muscles, minimizing expression lines when used topically.",
+    "halfLifeHours": 1.0,
+    "halfLifeDisplay": "1 hour (systemic)",
+    "adminRoute": "Topical",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "5% - 10% solution",
+    "storageInfo": "Store at room temperature.",
+    "sideEffects": [
+      "Temporary skin tightness",
+      "localized dryness"
+    ],
+    "synergies": [
+      "Matrixyl"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Hexapeptide that inhibits SNARE complex formation, reducing acetylcholine release at neuromuscular junctions to relax facial muscles topically.",
+    "legalStatus": "Cosmetic Ingredient",
+    "researchEvidence": "Clinical (Cosmetic studies)",
+    "peptideClass": "Neurotransmitter Inhibitor Peptide",
+    "cycleRecommendation": "Continuous daily use",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "coppertri1",
+    "name": "Copper Tripeptide-1 (Cosmetic)",
+    "category": "Anti-Aging / Skin",
+    "description": "Common cosmetic copper peptide promoting cellular renewal and skin hydration.",
+    "halfLifeHours": 1.0,
+    "halfLifeDisplay": "1 hour",
+    "adminRoute": "Topical",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "1% - 2% solution",
+    "storageInfo": "Store at room temperature.",
+    "sideEffects": [
+      "Local irritation"
+    ],
+    "synergies": [
+      "Matrixyl",
+      "Hyaluronic Acid"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Copper peptide that stimulates dermal fibroblast activity, promoting cellular renewal and collagen deposition for skin hydration and repair.",
+    "legalStatus": "Cosmetic Ingredient",
+    "researchEvidence": "Clinical (Cosmetic studies)",
+    "peptideClass": "Copper Peptide",
+    "cycleRecommendation": "Continuous daily use",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "decorinyl",
+    "name": "Decorinyl (Tripeptide-10)",
+    "category": "Anti-Aging / Skin",
+    "description": "A tetrapeptide that mimics decorin, coordinating collagen fibril organization for skin firmness.",
+    "halfLifeHours": 1.5,
+    "halfLifeDisplay": "1.5 hours",
+    "adminRoute": "Topical",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "1% - 5% concentration",
+    "storageInfo": "Store at room temp.",
+    "sideEffects": [],
+    "synergies": [
+      "Matrixyl"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Decorin-mimetic peptide that coordinates collagen fibril organization and promotes uniform collagen lattice structure for skin firmness.",
+    "legalStatus": "Cosmetic Ingredient",
+    "researchEvidence": "Preclinical / In-vitro",
+    "peptideClass": "Signal Peptide (Cosmetic)",
+    "cycleRecommendation": "Continuous daily use",
+    "onsetDays": "28-56",
+    "aliases": []
+  },
+  {
+    "id": "epitalon",
+    "name": "Epitalon",
+    "category": "Anti-Aging / Skin",
+    "description": "A synthetic tetrapeptide (Epithalon) that stimulates telomerase activity, extending telomere length and retarding age-related cell decay.",
+    "halfLifeHours": 1.0,
+    "halfLifeDisplay": "1 hour",
+    "adminRoute": "Subcutaneous Injection, Oral",
+    "typicalFrequency": "Daily (10-20 day cycles)",
+    "typicalDoseRange": "5.0 mg - 10.0 mg daily",
+    "storageInfo": "Store reconstituted vials in refrigerator.",
+    "sideEffects": [
+      "No documented adverse reactions in clinical studies"
+    ],
+    "synergies": [
+      "GHK-Cu",
+      "Pinealon"
+    ],
+    "contraindications": [
+      "Active malignancy (due to telomerase stimulation)"
+    ],
+    "isBookmarked": false,
+    "aliases": [
+      "Epithalon"
+    ],
+    "tags": [
+      "Anti-Aging / Skin",
+      "Cognitive / Nootropic",
+      "Immune / Thymic",
+      "Mitochondrial / Longevity"
+    ],
+    "mechanismOfAction": "Synthetic tetrapeptide that stimulates telomerase (hTERT) activity in somatic cells, extending telomere length and normalizing pineal melatonin production.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical / Limited Clinical (Russia)",
+    "peptideClass": "Bioregulator Peptide",
+    "cycleRecommendation": "10-20 day cycles, 4-6 months between",
+    "onsetDays": "14-28"
+  },
+  {
+    "id": "eyeseryl",
+    "name": "Eyeseryl (Acetyl Tetrapeptide-5)",
+    "category": "Anti-Aging / Skin",
+    "description": "A peptide designed to reduce puffiness and dark circles under the eyes via anti-edematous actions.",
+    "halfLifeHours": 1.0,
+    "halfLifeDisplay": "1 hour",
+    "adminRoute": "Topical",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "1% - 10% cosmetic creams",
+    "storageInfo": "Store at room temp.",
+    "sideEffects": [],
+    "synergies": [
+      "Argireline"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Acetyl Tetrapeptide-5 that inhibits glycation of tissue proteins and reduces vascular permeability to decrease periorbital edema and dark circles.",
+    "legalStatus": "Cosmetic Ingredient",
+    "researchEvidence": "Clinical (Cosmetic studies)",
+    "peptideClass": "Signal Peptide (Cosmetic)",
+    "cycleRecommendation": "Continuous daily use",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "foxo4dri",
+    "name": "FOXO4-DRI",
+    "category": "Anti-Aging / Skin",
+    "description": "A retro-inverso peptide designed to interfere with FOXO4/p53 interaction, selectively inducing apoptosis (cell death) in senescent cells.",
+    "halfLifeHours": 36.0,
+    "halfLifeDisplay": "36 hours (estimated)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Intermittent cycles (e.g. 3 doses in 6 days)",
+    "typicalDoseRange": "2 mg - 5 mg per cycle dose",
+    "storageInfo": "Keep reconstituted solution frozen or refrigerated; highly sensitive.",
+    "sideEffects": [
+      "Temporary kidney markers increase",
+      "fatigue",
+      "mild headache"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Renal impairment",
+      "history of kidney disorders"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Retro-inverso peptide that disrupts FOXO4-p53 nuclear interaction in senescent cells, releasing p53 to cytoplasm to trigger selective apoptosis.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Senolytic Peptide",
+    "cycleRecommendation": "3 doses over 6 days, repeat every 3-6 months",
+    "onsetDays": "7-21",
+    "aliases": []
+  },
+  {
+    "id": "ghk_free",
+    "name": "GHK (Copper-Free Peptide)",
+    "category": "Anti-Aging / Skin",
+    "description": "The base tripeptide without copper. Promotes wound healing and collagen synthesis but with lower local stinging reactions.",
+    "halfLifeHours": 0.8,
+    "halfLifeDisplay": "48 minutes",
+    "adminRoute": "Subcutaneous, Topical",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "2 mg - 5 mg daily",
+    "storageInfo": "Store reconstituted solution at 2-8°C.",
+    "sideEffects": [
+      "Mild localized irritation"
+    ],
+    "synergies": [
+      "Epitalon"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Tripeptide without copper that activates wound healing pathways and collagen synthesis, chelating endogenous copper at application site.",
+    "legalStatus": "Research Chemical / Cosmetic",
+    "researchEvidence": "Preclinical / Clinical (Cosmetic)",
+    "peptideClass": "Tripeptide",
+    "cycleRecommendation": "Continuous (topical) / 4-8 weeks (injectable)",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "ghkcu",
+    "name": "GHK-Cu",
+    "category": "Anti-Aging / Skin",
+    "description": "Copper binding tripeptide naturally found in human plasma. Stimulates collagen synthesis, blood vessel development, and skin elasticity.",
+    "halfLifeHours": 1.0,
+    "halfLifeDisplay": "1 hour",
+    "adminRoute": "Subcutaneous Injection, Topical",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "1.0 mg - 2.5 mg per day (injectable); 1%-3% (topical)",
+    "storageInfo": "Store reconstituted solution in refrigerator. Topical forms in cool dark place.",
+    "sideEffects": [
+      "Injectable form stings. Mild skin redness (if topical)"
+    ],
+    "synergies": [
+      "BPC-157",
+      "Epitalon"
+    ],
+    "contraindications": [
+      "Wilson's disease (copper storage disorder)"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Copper-binding tripeptide that activates integrins, stimulates collagen I/III synthesis, promotes angiogenesis, and modulates over 4000 genes involved in tissue remodeling.",
+    "legalStatus": "Research Chemical / Cosmetic Ingredient",
+    "researchEvidence": "Multiple Clinical Trials (Wound healing, skin)",
+    "peptideClass": "Copper Peptide",
+    "cycleRecommendation": "Continuous (topical) / 4-8 week cycles (injectable)",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "leuphasyl",
+    "name": "Leuphasyl (Pentapeptide-18)",
+    "category": "Anti-Aging / Skin",
+    "description": "A novel peptide that works synergistically with Argireline to reduce expression line depth by modulating muscle contractions.",
+    "halfLifeHours": 1.0,
+    "halfLifeDisplay": "1 hour",
+    "adminRoute": "Topical",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "3% - 5% cosmetic concentrations",
+    "storageInfo": "Store at room temp.",
+    "sideEffects": [
+      "Rare local redness"
+    ],
+    "synergies": [
+      "Argireline"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Pentapeptide that acts through enkephalin receptor modulation to reduce muscle contractions synergistically with Argireline.",
+    "legalStatus": "Cosmetic Ingredient",
+    "researchEvidence": "Clinical (Cosmetic studies)",
+    "peptideClass": "Signal Peptide (Cosmetic)",
+    "cycleRecommendation": "Continuous daily use",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "matrixyl",
+    "name": "Matrixyl (Palmitoyl Pentapeptide-4)",
+    "category": "Anti-Aging / Skin",
+    "description": "Topical peptide that stimulates collagen and glycosaminoglycan production to minimize facial wrinkles.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours (systemic reference)",
+    "adminRoute": "Topical",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "2% - 5% cosmetic concentrations",
+    "storageInfo": "Store at room temperature in cosmetic creams.",
+    "sideEffects": [
+      "Mild localized skin sensitivity"
+    ],
+    "synergies": [
+      "Argireline",
+      "GHK-Cu"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Lipopeptide that mimics collagen breakdown products, triggering fibroblasts to synthesize new collagen and glycosaminoglycans via TGF-β signaling.",
+    "legalStatus": "Cosmetic Ingredient",
+    "researchEvidence": "Clinical (Cosmetic studies)",
+    "peptideClass": "Signal Peptide (Cosmetic)",
+    "cycleRecommendation": "Continuous daily use",
+    "onsetDays": "28-56",
+    "aliases": []
+  },
+  {
+    "id": "matrixyl3000",
+    "name": "Matrixyl 3000 (Duo Peptide)",
+    "category": "Anti-Aging / Skin",
+    "description": "Cosmetic combination of Palmitoyl Tripeptide-1 and Palmitoyl Tetrapeptide-7 to stimulate skin repair pathways.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours",
+    "adminRoute": "Topical",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "3% - 5% concentration",
+    "storageInfo": "Store at room temp.",
+    "sideEffects": [
+      "Minor skin redness"
+    ],
+    "synergies": [
+      "Argireline"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Combination of Palmitoyl Tripeptide-1 (collagen fragment mimic) and Palmitoyl Tetrapeptide-7 (IL-6 inhibitor) for dual anti-wrinkle action.",
+    "legalStatus": "Cosmetic Ingredient",
+    "researchEvidence": "Clinical (Cosmetic studies)",
+    "peptideClass": "Signal Peptide (Cosmetic)",
+    "cycleRecommendation": "Continuous daily use",
+    "onsetDays": "28-56",
+    "aliases": []
+  },
+  {
+    "id": "matrixylsynthe",
+    "name": "Matrixyl Synthe'6",
+    "category": "Anti-Aging / Skin",
+    "description": "Palmitoyl Tripeptide-38 which stimulates six major constituents of the skin matrix.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours",
+    "adminRoute": "Topical",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "2% - 3% concentration",
+    "storageInfo": "Store at room temp.",
+    "sideEffects": [],
+    "synergies": [
+      "GHK-Cu"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Palmitoyl Tripeptide-38 that activates synthesis of six major skin matrix components: collagen I, III, IV, fibronectin, hyaluronic acid, and laminin-5.",
+    "legalStatus": "Cosmetic Ingredient",
+    "researchEvidence": "Clinical (Cosmetic studies)",
+    "peptideClass": "Signal Peptide (Cosmetic)",
+    "cycleRecommendation": "Continuous daily use",
+    "onsetDays": "28-56",
+    "aliases": []
+  },
+  {
+    "id": "snap8",
+    "name": "Snap-8 (Acetyl Octapeptide-3)",
+    "category": "Anti-Aging / Skin",
+    "description": "An octapeptide related to Argireline that diminishes the depth of facial wrinkles caused by repetitive muscle movement.",
+    "halfLifeHours": 1.2,
+    "halfLifeDisplay": "1.2 hours",
+    "adminRoute": "Topical",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "3% - 10% solution",
+    "storageInfo": "Store at room temperature.",
+    "sideEffects": [
+      "Mild localized skin flaking"
+    ],
+    "synergies": [
+      "Matrixyl"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Octapeptide that competes with SNAP-25 in the SNARE complex, inhibiting vesicle docking and neurotransmitter release to reduce expression wrinkles.",
+    "legalStatus": "Cosmetic Ingredient",
+    "researchEvidence": "Clinical (Cosmetic studies)",
+    "peptideClass": "Neurotransmitter Inhibitor Peptide",
+    "cycleRecommendation": "Continuous daily use",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "synake",
+    "name": "Syn-Ake (Tripeptide-3)",
+    "category": "Anti-Aging / Skin",
+    "description": "A small synthetic peptide modeled from snake venom that mimics Waglerin-1, working to relax facial muscles topically.",
+    "halfLifeHours": 0.8,
+    "halfLifeDisplay": "48 minutes",
+    "adminRoute": "Topical",
+    "typicalFrequency": "1-2x daily",
+    "typicalDoseRange": "1% - 4% concentration",
+    "storageInfo": "Store at room temperature.",
+    "sideEffects": [
+      "Mild tingling",
+      "local dryness"
+    ],
+    "synergies": [
+      "Argireline"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Synthetic tripeptide modeled from Waglerin-1 (Temple Viper venom) that reversibly blocks muscular nicotinic acetylcholine receptors.",
+    "legalStatus": "Cosmetic Ingredient",
+    "researchEvidence": "Clinical (Cosmetic studies)",
+    "peptideClass": "Neurotransmitter Inhibitor Peptide",
+    "cycleRecommendation": "Continuous daily use",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "bremelanotide_tab",
+    "name": "Bremelanotide Acetate (Vyleesi)",
+    "category": "Sexual Health",
+    "description": "The commercially packaged FDA-approved Bremelanotide auto-injector for premenopausal women with acquired HSDD.",
+    "halfLifeHours": 2.7,
+    "halfLifeDisplay": "2.7 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "As needed (do not exceed 1 dose in 24 hours)",
+    "typicalDoseRange": "1.75 mg per dose",
+    "storageInfo": "Store at room temperature in packaging.",
+    "sideEffects": [
+      "Severe nausea",
+      "injection site pain",
+      "dark gums"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Severe cardiovascular disease",
+      "hypertension"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "FDA-approved MC4R agonist formulated as an auto-injector for premenopausal women with acquired hypoactive sexual desire disorder (HSDD).",
+    "legalStatus": "FDA-Approved (Vyleesi)",
+    "researchEvidence": "Phase III Clinical Trial (Approved)",
+    "peptideClass": "Melanocortin Agonist",
+    "cycleRecommendation": "As needed (max 1 dose per 24h)",
+    "onsetDays": "Acute (45-60 minutes)",
+    "aliases": []
+  },
+  {
+    "id": "gonadorelin",
+    "name": "Gonadorelin (GnRH)",
+    "category": "Sexual Health",
+    "description": "Synthetic gonadotropin-releasing hormone that stimulates the pituitary to release LH and FSH to support testicular volume and spermatogenesis.",
+    "halfLifeHours": 0.15,
+    "halfLifeDisplay": "10 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily or 2x daily",
+    "typicalDoseRange": "100 mcg - 200 mcg daily",
+    "storageInfo": "Store reconstituted solution at 2-8°C.",
+    "sideEffects": [
+      "Headache",
+      "flushing",
+      "local reaction"
+    ],
+    "synergies": [
+      "hCG"
+    ],
+    "contraindications": [
+      "Hormone-sensitive oncology"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "Synthetic decapeptide identical to endogenous GnRH that stimulates pituitary gonadotroph cells to release LH and FSH in a pulsatile manner.",
+    "legalStatus": "FDA-Approved (Factrel)",
+    "researchEvidence": "Clinical (Approved)",
+    "peptideClass": "GnRH",
+    "cycleRecommendation": "As prescribed (continuous)",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "hCG_peptide",
+    "name": "Human Chorionic Gonadotropin (hCG)",
+    "category": "Sexual Health",
+    "description": "A polypeptide hormone that mimics luteinizing hormone (LH), preventing testicular atrophy and restoring testosterone production in men.",
+    "halfLifeHours": 30.0,
+    "halfLifeDisplay": "30 hours (biphasic)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "2-3x weekly",
+    "typicalDoseRange": "250 IU - 500 IU per injection",
+    "storageInfo": "Keep reconstituted solution refrigerated.",
+    "sideEffects": [
+      "Gynecomastia",
+      "acne",
+      "irritability",
+      "water retention"
+    ],
+    "synergies": [
+      "TRT therapy",
+      "Kisspeptin"
+    ],
+    "contraindications": [
+      "Prostate cancer history",
+      "severe cardiovascular disorders"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "Glycoprotein hormone that mimics LH signaling via LH/CG receptor, stimulating Leydig cell testosterone production and preventing testicular atrophy.",
+    "legalStatus": "FDA-Approved (Various brands)",
+    "researchEvidence": "Clinical (Approved)",
+    "peptideClass": "Gonadotropin",
+    "cycleRecommendation": "As prescribed (TRT support: ongoing)",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "kisspeptin10",
+    "name": "Kisspeptin-10",
+    "category": "Sexual Health",
+    "description": "A decapeptide that stimulates gonadotropin-releasing hormone (GnRH) secretion, regulating LH/FSH production, testosterone levels, and libido.",
+    "halfLifeHours": 0.07,
+    "halfLifeDisplay": "4 minutes (rapid systemic elimination)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "2-3x weekly",
+    "typicalDoseRange": "100 mcg - 200 mcg per dose",
+    "storageInfo": "Refrigerate reconstituted solution.",
+    "sideEffects": [
+      "Mild fatigue",
+      "temporary warmth",
+      "localized injection site tingling"
+    ],
+    "synergies": [
+      "PT-141"
+    ],
+    "contraindications": [
+      "Prostate oncology",
+      "severe hormone-sensitive cases"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "Decapeptide that activates GPR54 on GnRH neurons, triggering pulsatile GnRH release and downstream LH/FSH secretion for reproductive hormone regulation.",
+    "legalStatus": "Investigational",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "Kisspeptin",
+    "cycleRecommendation": "Not established",
+    "onsetDays": "1-3",
+    "aliases": []
+  },
+  {
+    "id": "kisspeptin54",
+    "name": "Kisspeptin-54",
+    "category": "Sexual Health",
+    "description": "A longer form of Kisspeptin that regulates reproductive function and libido, with a slightly longer biological activity than Kisspeptin-10.",
+    "halfLifeHours": 0.5,
+    "halfLifeDisplay": "30 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Weekly",
+    "typicalDoseRange": "10 mcg - 50 mcg weekly",
+    "storageInfo": "Store in refrigerator.",
+    "sideEffects": [
+      "Mild headache",
+      "flushing"
+    ],
+    "synergies": [
+      "PT-141"
+    ],
+    "contraindications": [
+      "Hormone-sensitive cancers"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "Full-length kisspeptin that activates GPR54 with longer biological activity than Kisspeptin-10, regulating the HPG axis for reproductive function.",
+    "legalStatus": "Investigational",
+    "researchEvidence": "Phase II Clinical Trial",
+    "peptideClass": "Kisspeptin",
+    "cycleRecommendation": "Not established",
+    "onsetDays": "1-3",
+    "aliases": []
+  },
+  {
+    "id": "leuprolide_low",
+    "name": "Leuprolide (Low Dose)",
+    "category": "Sexual Health",
+    "description": "Luteinizing hormone-releasing hormone analog studied at low doses for hormonal pulse restoration.",
+    "halfLifeHours": 3.0,
+    "halfLifeDisplay": "3 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "50 mcg daily",
+    "storageInfo": "Keep refrigerated.",
+    "sideEffects": [
+      "Hot flashes",
+      "localized swelling"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Pituitary disease"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "LHRH analog that at low doses may restore pulsatile LH/FSH release, while high doses cause receptor desensitization and hormonal suppression.",
+    "legalStatus": "FDA-Approved (Lupron - at higher doses)",
+    "researchEvidence": "Clinical (Approved for other indications)",
+    "peptideClass": "GnRH Agonist",
+    "cycleRecommendation": "As prescribed (extreme caution)",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "melanotan1",
+    "name": "Melanotan I (Afamelanotide)",
+    "category": "Sexual Health",
+    "description": "An FDA-approved melanocortin agonist (Scenesse) for erythropoietic protoporphyria, used for skin tanning and libido enhancement with less nausea than Melanotan II.",
+    "halfLifeHours": 0.5,
+    "halfLifeDisplay": "30 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily or every other day",
+    "typicalDoseRange": "1.0 mg - 2.0 mg daily",
+    "storageInfo": "Store in refrigerator.",
+    "sideEffects": [
+      "Mild nausea",
+      "headache",
+      "flushing"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Skin cancer history"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "Selective MC1R agonist that stimulates eumelanin production without significant MC4R activation, providing UV-free tanning with minimal sexual side effects.",
+    "legalStatus": "FDA-Approved (Scenesse - for EPP)",
+    "researchEvidence": "Phase III Clinical Trial (Approved for EPP)",
+    "peptideClass": "Melanocortin Agonist",
+    "cycleRecommendation": "As prescribed (bimonthly implant)",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "melanotan2",
+    "name": "Melanotan II",
+    "category": "Sexual Health",
+    "description": "A non-selective melanocortin receptor agonist that promotes skin tanning, libido enhancement, and mild appetite suppression.",
+    "halfLifeHours": 1.5,
+    "halfLifeDisplay": "1.5 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily (loading) -> Weekly (maintenance)",
+    "typicalDoseRange": "250 mcg - 500 mcg per dose",
+    "storageInfo": "Store reconstituted solution in refrigerator.",
+    "sideEffects": [
+      "Nausea",
+      "facial flushing",
+      "increased moles/freckles",
+      "spontaneous erections"
+    ],
+    "synergies": [
+      "PT-141"
+    ],
+    "contraindications": [
+      "History of melanoma",
+      "atypical mole syndrome"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "Non-selective melanocortin agonist (MC1R-MC5R) that promotes melanogenesis (tanning), sexual arousal (MC4R), and appetite suppression.",
+    "legalStatus": "Research Chemical / WADA Banned",
+    "researchEvidence": "Phase II Clinical Trial (Discontinued)",
+    "peptideClass": "Melanocortin Agonist",
+    "cycleRecommendation": "Loading: 7-10 days daily, Maintenance: 1-2x weekly",
+    "onsetDays": "1-3 (arousal), 7-14 (tanning)",
+    "aliases": []
+  },
+  {
+    "id": "oxytocin",
+    "name": "Oxytocin (Hormonal Peptide)",
+    "category": "Sexual Health",
+    "description": "A nonapeptide hormone that promotes intimacy, sexual arousal, and social bonding, often administered intranasally.",
+    "halfLifeHours": 0.1,
+    "halfLifeDisplay": "3-5 minutes (rapid clearance, prolonged mood activity)",
+    "adminRoute": "Intranasal Spray, Subcutaneous",
+    "typicalFrequency": "As needed",
+    "typicalDoseRange": "10 IU - 20 IU (intranasal)",
+    "storageInfo": "Store nasal spray or vial in refrigerator.",
+    "sideEffects": [
+      "Transient facial flushing",
+      "mild uterine contractions",
+      "mild euphoria"
+    ],
+    "synergies": [
+      "PT-141"
+    ],
+    "contraindications": [
+      "Pregnancy",
+      "concurrent use of vasopressors"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "Nonapeptide hormone that binds oxytocin receptors in the brain and peripheral tissues, promoting social bonding, uterine contractions, and milk ejection.",
+    "legalStatus": "FDA-Approved (Pitocin - obstetric use)",
+    "researchEvidence": "Clinical (Approved for obstetric use)",
+    "peptideClass": "Neurohormone",
+    "cycleRecommendation": "As needed / As prescribed",
+    "onsetDays": "Acute (minutes)",
+    "aliases": []
+  },
+  {
+    "id": "pt141",
+    "name": "PT-141 (Bremelanotide)",
+    "category": "Sexual Health",
+    "description": "An FDA-approved melanocortin receptor agonist that acts on the nervous system to treat erectile dysfunction and hypoactive sexual desire disorder.",
+    "halfLifeHours": 2.5,
+    "halfLifeDisplay": "2.5 hours (effects last 8-12 hours)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "As needed (2-4 hours prior to activity)",
+    "typicalDoseRange": "1.0 mg - 2.0 mg per use",
+    "storageInfo": "Refrigerate reconstituted solution. Stable up to 30 days.",
+    "sideEffects": [
+      "Nausea (common",
+      "temporary)",
+      "flushing",
+      "headache",
+      "minor blood pressure increase"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Uncontrolled hypertension",
+      "cardiovascular disease"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "Melanocortin receptor agonist (MC3R/MC4R) that acts centrally on the hypothalamus to initiate sexual arousal pathways independent of vascular mechanisms.",
+    "legalStatus": "FDA-Approved (Vyleesi)",
+    "researchEvidence": "Phase III Clinical Trial (Approved)",
+    "peptideClass": "Melanocortin Agonist",
+    "cycleRecommendation": "As needed (max 1 dose per 24h, max 8 doses/month)",
+    "onsetDays": "Acute (45-60 minutes)",
+    "aliases": []
+  },
+  {
+    "id": "triptorelin",
+    "name": "Triptorelin (GnRH agonist)",
+    "category": "Sexual Health",
+    "description": "A GnRH agonist. An extremely small dose is occasionally used in post-cycle therapy (PCT) to restart natural testosterone production.",
+    "halfLifeHours": 3.0,
+    "halfLifeDisplay": "3 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Single injection (extreme care needed)",
+    "typicalDoseRange": "100 mcg single dose (never abuse)",
+    "storageInfo": "Refrigerate vial.",
+    "sideEffects": [
+      "Hormone crash (if abused)",
+      "hot flashes",
+      "headache"
+    ],
+    "synergies": [],
+    "contraindications": [
+      "Always contraindicated for ongoing use unless under strict clinical surveillance"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Sexual Health"
+    ],
+    "mechanismOfAction": "GnRH agonist that initially stimulates then desensitizes pituitary GnRH receptors, used in PCT at micro-doses for HPG axis restart.",
+    "legalStatus": "FDA-Approved (Trelstar - for prostate cancer)",
+    "researchEvidence": "Clinical (Approved for oncology)",
+    "peptideClass": "GnRH Agonist",
+    "cycleRecommendation": "Single micro-dose (PCT context)",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "imunofan",
+    "name": "Imunofan",
+    "category": "Immune / Thymic",
+    "description": "A synthetic hexapeptide developed in Russia that acts as an immunomodulator, hepatoprotector, and detoxifying agent.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours (systemic clearance)",
+    "adminRoute": "Intramuscular, Subcutaneous, Intranasal",
+    "typicalFrequency": "Daily or every other day (cycles)",
+    "typicalDoseRange": "50 mcg daily",
+    "storageInfo": "Store in refrigerator.",
+    "sideEffects": [
+      "No side effects reported at physiological doses"
+    ],
+    "synergies": [
+      "Thymosin Alpha-1"
+    ],
+    "contraindications": [
+      "Pregnancy with Rh-conflict"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Immune / Thymic"
+    ],
+    "mechanismOfAction": "Synthetic hexapeptide that normalizes oxidative stress markers, activates NF-κB-mediated antioxidant enzymes, and modulates T-helper cell balance.",
+    "legalStatus": "Approved (Russia)",
+    "researchEvidence": "Clinical (Approved in Russia)",
+    "peptideClass": "Immunomodulator Peptide",
+    "cycleRecommendation": "10 injections every other day",
+    "onsetDays": "3-7",
+    "aliases": []
+  },
+  {
+    "id": "ll37",
+    "name": "LL-37 (Antimicrobial)",
+    "category": "Immune / Thymic",
+    "description": "An antimicrobial peptide naturally occurring in human cells, showing potent antibacterial, antiviral, and tissue remodeling properties.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours (estimated)",
+    "adminRoute": "Subcutaneous Injection, Topical",
+    "typicalFrequency": "Daily (short cycles)",
+    "typicalDoseRange": "100 mcg - 250 mcg daily",
+    "storageInfo": "Store reconstituted solution at 2-8°C. Avoid frequent freezing.",
+    "sideEffects": [
+      "Local inflammation",
+      "itching",
+      "mild injection site swelling"
+    ],
+    "synergies": [
+      "Thymosin Alpha-1"
+    ],
+    "contraindications": [
+      "Active autoimmune flare-ups",
+      "psoriasis"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Immune / Thymic"
+    ],
+    "mechanismOfAction": "Cathelicidin-derived antimicrobial peptide that disrupts microbial membranes, activates TLR signaling, and recruits immune cells for innate defense.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Phase II Clinical Trial (Topical)",
+    "peptideClass": "Antimicrobial Peptide",
+    "cycleRecommendation": "5-10 day cycles",
+    "onsetDays": "1-3",
+    "aliases": []
+  },
+  {
+    "id": "rigin",
+    "name": "Rigin (Immunomodulator)",
+    "category": "Immune / Thymic",
+    "description": "A synthetic peptide that mimics the immunomodulatory fragment of immunoglobulin G, helping to regulate inflammatory cytokine cascades.",
+    "halfLifeHours": 1.0,
+    "halfLifeDisplay": "1 hour",
+    "adminRoute": "Subcutaneous, Topical",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "500 mcg daily",
+    "storageInfo": "Keep refrigerated.",
+    "sideEffects": [
+      "Mild local irritation"
+    ],
+    "synergies": [
+      "Tuftsin"
+    ],
+    "contraindications": [
+      "Active autoimmune disease"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Immune / Thymic"
+    ],
+    "mechanismOfAction": "Synthetic IgG fragment mimic that regulates inflammatory cytokine cascades, modulating TNF-α and IL-1β to balance immune responses.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical Only",
+    "peptideClass": "Immunomodulator Peptide",
+    "cycleRecommendation": "Not established",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "splenopentin",
+    "name": "Splenopentin (SP-5)",
+    "category": "Immune / Thymic",
+    "description": "A synthetic pentapeptide corresponding to the active site of the splenic hormone splenopin, regulating immune cell replication.",
+    "halfLifeHours": 0.6,
+    "halfLifeDisplay": "36 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "3x weekly",
+    "typicalDoseRange": "1.0 mg - 2.0 mg daily",
+    "storageInfo": "Refrigerate solution.",
+    "sideEffects": [
+      "Mild dizziness",
+      "local redness"
+    ],
+    "synergies": [
+      "Thymopentin"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Immune / Thymic"
+    ],
+    "mechanismOfAction": "Synthetic pentapeptide of splenopin active site that regulates immune cell replication via modulation of spleen-derived immunoregulatory signals.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical / Limited Clinical",
+    "peptideClass": "Splenic Peptide",
+    "cycleRecommendation": "3x weekly for 4-8 weeks",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "thymopentin",
+    "name": "Thymopentin (TP-5)",
+    "category": "Immune / Thymic",
+    "description": "A synthetic pentapeptide corresponding to the active site of thymopoietin. Used to enhance immune response and support rheumatoid arthritis treatments. Also used as an immunopotentiator to stimulate antibody titers and T-cell counts.",
+    "halfLifeHours": 0.5,
+    "halfLifeDisplay": "30 minutes (rapid clearance, long cell effect)",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily or 3x weekly",
+    "typicalDoseRange": "1.0 mg - 5.0 mg per injection",
+    "storageInfo": "Refrigerate solution.",
+    "sideEffects": [
+      "Headache",
+      "nausea",
+      "localized redness"
+    ],
+    "synergies": [
+      "Thymosin Alpha-1"
+    ],
+    "contraindications": [
+      "Pregnancy",
+      "immediate post-transplant period"
+    ],
+    "isBookmarked": false,
+    "aliases": [
+      "TP-5"
+    ],
+    "tags": [
+      "Immune / Thymic"
+    ],
+    "mechanismOfAction": "Synthetic pentapeptide of thymopoietin active site that induces T-cell differentiation markers (CD2, CD3) and enhances immune cell-mediated responses.",
+    "legalStatus": "Approved (Some countries)",
+    "researchEvidence": "Phase III Clinical Trial (Approved in some regions)",
+    "peptideClass": "Thymic Peptide",
+    "cycleRecommendation": "3x weekly for 4-12 weeks",
+    "onsetDays": "7-14"
+  },
+  {
+    "id": "thymosinalpha1",
+    "name": "Thymosin Alpha-1",
+    "category": "Immune / Thymic",
+    "description": "An immunomodulatory peptide that stimulates T-cell maturation and natural killer cell activity, used to support immune defense against chronic infections.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "2x weekly",
+    "typicalDoseRange": "1.5 mg per injection",
+    "storageInfo": "Store reconstituted solution in refrigerator (2-8°C). Use within 28 days.",
+    "sideEffects": [
+      "Injection site soreness",
+      "mild temporary fever",
+      "body aches"
+    ],
+    "synergies": [
+      "LL-37",
+      "BPC-157"
+    ],
+    "contraindications": [
+      "Immunosuppressed transplant patients"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Immune / Thymic"
+    ],
+    "mechanismOfAction": "Immunomodulatory peptide that activates toll-like receptors (TLR2, TLR9), stimulates dendritic cell maturation, T-cell differentiation, and NK cell activity.",
+    "legalStatus": "Approved (Multiple countries, not US - Zadaxin)",
+    "researchEvidence": "Phase III Clinical Trial (Approved outside US)",
+    "peptideClass": "Thymic Peptide",
+    "cycleRecommendation": "As prescribed (chronic: 2x weekly ongoing)",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "thymosimulation",
+    "name": "Thymostimulin (TP-1)",
+    "category": "Immune / Thymic",
+    "description": "Purified thymic extract containing low-molecular-weight polypeptides, studied for improving cell-mediated immunity in cancer chemotherapy patients.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours",
+    "adminRoute": "Intramuscular Injection",
+    "typicalFrequency": "2-3x weekly",
+    "typicalDoseRange": "50 mg weekly",
+    "storageInfo": "Store reconstituted solution at 2-8°C.",
+    "sideEffects": [
+      "Mild fever",
+      "injection site aching"
+    ],
+    "synergies": [
+      "Thymosin Alpha-1"
+    ],
+    "contraindications": [
+      "Hyper-thymic states",
+      "acute leukemia"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Immune / Thymic"
+    ],
+    "mechanismOfAction": "Purified thymic extract containing low-MW polypeptides that stimulate cell-mediated immunity by promoting T-cell maturation.",
+    "legalStatus": "Approved (Some EU countries)",
+    "researchEvidence": "Clinical (Approved in some regions)",
+    "peptideClass": "Thymic Extract",
+    "cycleRecommendation": "2-3x weekly for 4-12 weeks",
+    "onsetDays": "7-14",
+    "aliases": []
+  },
+  {
+    "id": "thymovocal",
+    "name": "Thymovocal (Thymus fraction)",
+    "category": "Immune / Thymic",
+    "description": "Peptides sourced from young bovine thymus glands used to support age-related immune deficiency and immune wellness.",
+    "halfLifeHours": 2.0,
+    "halfLifeDisplay": "2 hours",
+    "adminRoute": "Oral, Subcutaneous",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "10 mg daily",
+    "storageInfo": "Store in dry cool space.",
+    "sideEffects": [
+      "Mild digestion issues (if oral)"
+    ],
+    "synergies": [
+      "Thymosin Alpha-1"
+    ],
+    "contraindications": [
+      "Active oncology cases"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Immune / Thymic"
+    ],
+    "mechanismOfAction": "Bovine thymus-derived peptides that support age-related immune deficiency by providing thymic factors for T-cell differentiation.",
+    "legalStatus": "Dietary Supplement (Some countries)",
+    "researchEvidence": "Preclinical / Limited Clinical",
+    "peptideClass": "Thymic Extract",
+    "cycleRecommendation": "Continuous",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "thymulin",
+    "name": "Thymulin",
+    "category": "Immune / Thymic",
+    "description": "A zinc-dependent thymic hormone peptide that regulates T-lymphocyte differentiation and function. Also studied for hair follicle regrowth and protection against skin collagen breakdown.",
+    "halfLifeHours": 1.5,
+    "halfLifeDisplay": "1.5 hours",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "100 mcg - 200 mcg daily",
+    "storageInfo": "Refrigerate reconstituted solution.",
+    "sideEffects": [
+      "No major side effects reported at research doses"
+    ],
+    "synergies": [
+      "Thymosin Alpha-1"
+    ],
+    "contraindications": [],
+    "isBookmarked": false,
+    "tags": [
+      "Immune / Thymic",
+      "Anti-Aging / Skin"
+    ],
+    "mechanismOfAction": "Zinc-dependent nonapeptide hormone secreted by thymic epithelial cells that regulates T-lymphocyte differentiation, NF-κB modulation, and hair follicle cycling.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical / Limited Clinical",
+    "peptideClass": "Thymic Peptide",
+    "cycleRecommendation": "10-20 day cycles",
+    "onsetDays": "14-28",
+    "aliases": []
+  },
+  {
+    "id": "tuftsin",
+    "name": "Tuftsin",
+    "category": "Immune / Thymic",
+    "description": "A naturally occurring tetrapeptide (Thr-Lys-Pro-Arg) produced by enzymatic cleavage of IgG in the spleen. Stimulates phagocytosis and macrophage activity.",
+    "halfLifeHours": 0.5,
+    "halfLifeDisplay": "30 minutes",
+    "adminRoute": "Subcutaneous Injection",
+    "typicalFrequency": "Daily",
+    "typicalDoseRange": "100 mcg - 300 mcg daily",
+    "storageInfo": "Store reconstituted solution at 2-8°C.",
+    "sideEffects": [
+      "Mild fever",
+      "local swelling"
+    ],
+    "synergies": [
+      "Thymosin Alpha-1"
+    ],
+    "contraindications": [
+      "Splenomegaly"
+    ],
+    "isBookmarked": false,
+    "tags": [
+      "Immune / Thymic"
+    ],
+    "mechanismOfAction": "Natural tetrapeptide from IgG heavy chain that stimulates phagocytosis, macrophage migration, and superoxide anion production for innate immunity.",
+    "legalStatus": "Research Chemical",
+    "researchEvidence": "Preclinical / Limited Clinical",
+    "peptideClass": "Immunostimulant Peptide",
+    "cycleRecommendation": "Not established",
+    "onsetDays": "3-7",
+    "aliases": []
+  }
+]
