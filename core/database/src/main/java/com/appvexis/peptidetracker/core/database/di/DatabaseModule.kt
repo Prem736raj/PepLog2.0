@@ -17,6 +17,7 @@ import com.appvexis.peptidetracker.core.database.repository.InventoryRepositoryI
 import com.appvexis.peptidetracker.core.database.repository.LogRepositoryImpl
 import com.appvexis.peptidetracker.core.database.repository.PeptideRepositoryImpl
 import com.appvexis.peptidetracker.core.database.repository.ProtocolRepositoryImpl
+import com.appvexis.peptidetracker.core.database.security.DatabasePassphraseProvider
 import com.appvexis.peptidetracker.core.model.repository.AnalyticsRepository
 import com.appvexis.peptidetracker.core.model.repository.DeviceRepository
 import com.appvexis.peptidetracker.core.model.repository.HealthRepository
@@ -30,11 +31,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import javax.inject.Singleton
 
 /**
  * Hilt Dependency Injection module for the data and storage layer.
- * Configures database builder and binds repository implementations.
+ * Configures the encrypted Room database and binds repository implementations.
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -73,18 +75,25 @@ abstract class DatabaseModule {
         @Provides
         @Singleton
         fun provideDatabase(
-            @ApplicationContext context: Context
+            @ApplicationContext context: Context,
+            passphraseProvider: DatabasePassphraseProvider
         ): PepLogDatabase {
+            // SQLCipher's native library must be loaded before the SupportOpenHelper is used.
+            System.loadLibrary("sqlcipher")
+            val openHelperFactory = SupportOpenHelperFactory(
+                passphraseProvider.getOrCreatePassphrase()
+            )
+
             return Room.databaseBuilder(
                 context,
                 PepLogDatabase::class.java,
                 "peplog.db"
             )
-            // NOTE: Do NOT use fallbackToDestructiveMigration() in production.
-            // Any future schema changes must use explicit Migration objects
-            // to preserve user data. See Room migration docs:
-            // https://developer.android.com/training/data-storage/room/migrating-db-versions
-            .build()
+                .openHelperFactory(openHelperFactory)
+                // NOTE: Do NOT use fallbackToDestructiveMigration() in production.
+                // Future schema changes must use explicit Migration objects so user
+                // protocol/history data is never silently destroyed.
+                .build()
         }
 
         @Provides
