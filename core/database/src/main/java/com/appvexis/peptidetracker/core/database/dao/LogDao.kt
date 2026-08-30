@@ -44,8 +44,13 @@ interface LogDao {
     @Query("DELETE FROM dose_log WHERE id = :id")
     suspend fun deleteDoseLog(id: String)
 
-    @Query("UPDATE dose_log SET actual_time = :actualTime, status = 'TAKEN', injection_site = :site, injection_side = :side WHERE id = :id")
-    suspend fun logDoseTaken(id: String, actualTime: Long, site: String?, side: String?)
+    /**
+     * Marks a dose taken exactly once. The affected-row count is 0 when the dose
+     * is missing or was already marked TAKEN, preventing repeated side effects
+     * such as duplicate inventory deduction on double taps/retries.
+     */
+    @Query("UPDATE dose_log SET actual_time = :actualTime, status = 'TAKEN', injection_site = :site, injection_side = :side WHERE id = :id AND status != 'TAKEN'")
+    suspend fun logDoseTaken(id: String, actualTime: Long, site: String?, side: String?): Int
 
     // Injection Site logs
     @Query("SELECT * FROM injection_site_log ORDER BY timestamp DESC")
@@ -68,7 +73,6 @@ interface LogDao {
 
     @Query("DELETE FROM injection_site_log WHERE id = :id")
     suspend fun deleteSiteLog(id: String)
-
 
     // Side Effect logs
     @Query("SELECT * FROM side_effect_log ORDER BY date DESC")
