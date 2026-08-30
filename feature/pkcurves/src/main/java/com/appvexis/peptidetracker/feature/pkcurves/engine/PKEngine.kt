@@ -3,54 +3,34 @@ package com.appvexis.peptidetracker.feature.pkcurves.engine
 import com.appvexis.peptidetracker.feature.pkcurves.model.PKCurvePoint
 import com.appvexis.peptidetracker.feature.pkcurves.model.PKMarker
 import kotlin.math.exp
-import kotlin.math.ln
-import kotlin.math.max
 
 /**
- * Pharmacokinetic computation engine.
+ * First-order elimination estimator used for educational visualization.
  *
- * Models first-order elimination kinetics:
- *   C(t) = C₀ × e^(-k_el × t)
- * where k_el = ln(2) / t½
- *
- * Supports multi-dose superposition: at each time point,
- * the total concentration is the sum of residual concentrations
- * from every prior dose injection.
+ * The output is an estimated relative level derived from user-entered dose events
+ * and a half-life. It is not a measured blood/serum concentration and intentionally
+ * does not model absorption, distribution volume, bioavailability, metabolism,
+ * individual variation, or active metabolites.
  */
 object PKEngine {
 
     private const val LN_2 = 0.693147180559945
+    private const val MAX_RESOLUTION = 5_000
+    private const val LOOKBACK_HALF_LIVES = 10.0
 
-    /**
-     * Compute the decay constant (elimination rate constant) from half-life.
-     */
     fun eliminationConstant(halfLifeHours: Double): Double {
-        if (halfLifeHours <= 0.0) return 0.0
+        if (!halfLifeHours.isFinite() || halfLifeHours <= 0.0) return 0.0
         return LN_2 / halfLifeHours
     }
 
-    /**
-     * Single-dose exponential decay at time t after injection.
-     * @param c0 initial concentration (dose amount, normalized)
-     * @param kEl elimination rate constant
-     * @param t hours elapsed since injection
-     */
     fun singleDoseConcentration(c0: Double, kEl: Double, t: Double): Double {
-        if (t < 0.0) return 0.0
-        return c0 * exp(-kEl * t)
+        if (!c0.isFinite() || c0 < 0.0 || !kEl.isFinite() || kEl <= 0.0 || !t.isFinite() || t < 0.0) {
+            return 0.0
+        }
+        val result = c0 * exp(-kEl * t)
+        return result.takeIf { it.isFinite() && it >= 0.0 } ?: 0.0
     }
 
-    /**
-     * Compute the superimposed PK curve for multiple dose events.
-     *
-     * @param doseTimesHours list of hours-since-epoch for each dose event (sorted ascending)
-     * @param doseAmounts corresponding dose amounts for each event
-     * @param halfLifeHours half-life in hours
-     * @param windowStartHours the start of the visible time window (hours since epoch)
-     * @param windowEndHours the end of the visible time window (hours since epoch)
-     * @param resolution number of points to compute across the window
-     * @return list of PKCurvePoint with concentrations from superposition
-     */
     fun computeSuperpositionCurve(
         doseTimesHours: List<Double>,
         doseAmounts: List<Double>,
@@ -59,122 +39,113 @@ object PKEngine {
         windowEndHours: Double,
         resolution: Int = 500
     ): List<PKCurvePoint> {
-        if (doseTimesHours.isEmpty() || halfLifeHours <= 0.0) return emptyList()
+        if (!inputsAreValid(doseTimesHours, doseAmounts, halfLifeHours)) return emptyList()
+        if (!windowStartHours.isFinite() || !windowEndHours.isFinite() || windowEndHours <= windowStartHours) {
+            return emptyList()
+        }
+        if (resolution !in 2..MAX_RESOLUTION) return emptyList()
 
         val kEl = eliminationConstant(halfLifeHours)
+        if (kEl <= 0.0) return emptyList()
+
         val windowDuration = windowEndHours - windowStartHours
-        if (windowDuration <= 0.0) return emptyList()
+        val step = windowDuration / resolution.toDouble()
+        val lookbackHours = halfLifeHours * LOOKBACK_HALF_LIVES
+        if (!step.isFinite() || !lookbackHours.isFinite()) return emptyList()
 
-        val step = windowDuration / resolution
-        val points = mutableListOf<PKCurvePoint>()
-
-        // Only consider doses that could still contribute
-        // A dose's contribution drops below ~0.1% after 10 half-lives
-        val lookbackHours = halfLifeHours * 10.0
-
-        for (i in 0..resolution) {
+        return List(resolution + 1) { i ->
             val t = windowStartHours + i * step
-            var totalConcentration = 0.0
-
+            var total = 0.0
             for (j in doseTimesHours.indices) {
-                val doseTime = doseTimesHours[j]
-                val elapsed = t - doseTime
-                // Only include doses that happened before time t and are within lookback window
-                if (elapsed >= 0.0 && elapsed <= lookbackHours) {
-                    totalConcentration += singleDoseConcentration(doseAmounts[j], kEl, elapsed)
+                val elapsed = t - doseTimesHours[j]
+                if (elapsed.isFinite() && elapsed in 0.0..lookbackHours) {
+                    total += singleDoseConcentration(doseAmounts[j], kEl, elapsed)
                 }
             }
-
-            points.add(
-                PKCurvePoint(
-                    timeHours = t - windowStartHours, // normalize to window-relative
-                    concentration = totalConcentration
-                )
+            PKCurvePoint(
+                timeHours = t - windowStartHours,
+                concentration = total.takeIf { it.isFinite() && it >= 0.0 } ?: 0.0
             )
         }
-
-        return points
     }
 
-    /**
-     * Detect peaks and troughs from a computed curve.
-     * A peak is a local maximum, a trough is a local minimum.
-     * We also identify global peak and final trough.
-     *
-     * @param points the curve points (must be sorted by timeHours)
-     * @param minProminence minimum concentration delta to be considered a significant peak/trough
-     */
     fun detectMarkers(
         points: List<PKCurvePoint>,
         minProminence: Double = 0.01
     ): List<PKMarker> {
-        if (points.size < 3) return emptyList()
+        if (points.size < 3 || !minProminence.isFinite() || minProminence < 0.0) return emptyList()
+        if (points.any { !it.timeHours.isFinite() || !it.concentration.isFinite() || it.concentration < 0.0 }) {
+            return emptyList()
+        }
 
         val markers = mutableListOf<PKMarker>()
-
-        for (i in 1 until points.size - 1) {
+        for (i in 1 until points.lastIndex) {
             val prev = points[i - 1].concentration
             val curr = points[i].concentration
             val next = points[i + 1].concentration
-
-            // Peak detection: current is higher than both neighbors
-            if (curr > prev && curr > next && curr > minProminence) {
-                markers.add(
-                    PKMarker(
-                        timeHours = points[i].timeHours,
-                        concentration = curr,
-                        isPeak = true
-                    )
+            when {
+                curr > prev && curr > next && curr > minProminence -> markers += PKMarker(
+                    timeHours = points[i].timeHours,
+                    concentration = curr,
+                    isPeak = true
                 )
-            }
-            // Trough detection: current is lower than both neighbors
-            else if (curr < prev && curr < next && curr > minProminence * 0.1) {
-                markers.add(
-                    PKMarker(
-                        timeHours = points[i].timeHours,
-                        concentration = curr,
-                        isPeak = false
-                    )
+                curr < prev && curr < next && curr > minProminence * 0.1 -> markers += PKMarker(
+                    timeHours = points[i].timeHours,
+                    concentration = curr,
+                    isPeak = false
                 )
             }
         }
 
-        // Deduplicate closely spaced markers (within 1% of the window)
-        val windowSpan = points.lastOrNull()?.timeHours ?: 1.0
+        val windowSpan = points.last().timeHours.coerceAtLeast(0.0)
         val minGap = windowSpan * 0.01
-        return markers.filterIndexed { index, marker ->
-            if (index == 0) true
-            else (marker.timeHours - markers[index - 1].timeHours) > minGap
+        val deduped = mutableListOf<PKMarker>()
+        for (marker in markers) {
+            if (deduped.isEmpty() || marker.timeHours - deduped.last().timeHours > minGap) {
+                deduped += marker
+            }
         }
+        return deduped
     }
 
-    /**
-     * Compute concentration at a specific point in time (for crosshair display).
-     */
     fun concentrationAt(
         doseTimesHours: List<Double>,
         doseAmounts: List<Double>,
         halfLifeHours: Double,
         timeHours: Double
     ): Double {
-        if (doseTimesHours.isEmpty() || halfLifeHours <= 0.0) return 0.0
+        if (!inputsAreValid(doseTimesHours, doseAmounts, halfLifeHours) || !timeHours.isFinite()) return 0.0
         val kEl = eliminationConstant(halfLifeHours)
-        val lookbackHours = halfLifeHours * 10.0
+        val lookbackHours = halfLifeHours * LOOKBACK_HALF_LIVES
+        if (kEl <= 0.0 || !lookbackHours.isFinite()) return 0.0
 
         var total = 0.0
         for (j in doseTimesHours.indices) {
             val elapsed = timeHours - doseTimesHours[j]
-            if (elapsed >= 0.0 && elapsed <= lookbackHours) {
+            if (elapsed.isFinite() && elapsed in 0.0..lookbackHours) {
                 total += singleDoseConcentration(doseAmounts[j], kEl, elapsed)
             }
         }
-        return total
+        return total.takeIf { it.isFinite() && it >= 0.0 } ?: 0.0
     }
 
-    /**
-     * Find the maximum concentration across all curve points.
-     */
     fun maxConcentration(curves: List<List<PKCurvePoint>>): Double {
-        return curves.flatMap { it }.maxOfOrNull { it.concentration } ?: 1.0
+        val max = curves.asSequence()
+            .flatten()
+            .map { it.concentration }
+            .filter { it.isFinite() && it >= 0.0 }
+            .maxOrNull()
+        return max?.takeIf { it > 0.0 } ?: 1.0
     }
+
+    private fun inputsAreValid(
+        doseTimesHours: List<Double>,
+        doseAmounts: List<Double>,
+        halfLifeHours: Double
+    ): Boolean =
+        doseTimesHours.isNotEmpty() &&
+            doseTimesHours.size == doseAmounts.size &&
+            halfLifeHours.isFinite() && halfLifeHours > 0.0 &&
+            doseTimesHours.all { it.isFinite() } &&
+            doseAmounts.all { it.isFinite() && it >= 0.0 }
 }
