@@ -1,5 +1,7 @@
 package com.appvexis.peptidetracker.core.database.repository
 
+import androidx.room.withTransaction
+import com.appvexis.peptidetracker.core.database.PepLogDatabase
 import com.appvexis.peptidetracker.core.database.dao.InventoryDao
 import com.appvexis.peptidetracker.core.database.dao.LogDao
 import com.appvexis.peptidetracker.core.database.dao.ProtocolDao
@@ -27,46 +29,59 @@ import javax.inject.Singleton
  */
 @Singleton
 class LogRepositoryImpl @Inject constructor(
+    private val database: PepLogDatabase,
     private val logDao: LogDao,
     private val protocolDao: ProtocolDao,
     private val inventoryDao: InventoryDao,
     private val analyticsRepository: AnalyticsRepository
 ) : LogRepository {
 
-    // Helper to find protocol ID for a compound
     private suspend fun getProtocolIdForCompound(compoundId: String): String? {
         return protocolDao.getCompoundById(compoundId)?.protocolId
     }
 
-    // Helper to trigger recompute for a compound
     private suspend fun triggerRecomputeForCompound(compoundId: String) {
         getProtocolIdForCompound(compoundId)?.let { protocolId ->
             analyticsRepository.recomputeAnalyticsForProtocol(protocolId)
         }
     }
 
-    // Helper to auto-deduct volume from active vial when dose is logged as TAKEN
-    private suspend fun deductInventoryForDose(compoundId: String, doseAmount: Double, doseUnit: DoseUnit) {
-        val compound = protocolDao.getCompoundById(compoundId)
-        val peptideId = compound?.peptideId ?: compoundId
+    /**
+     * Deducts volume only when a dose can be converted to milligrams using the
+     * current inventory schema. IU is intentionally not converted: IU is a
+     * biological-activity unit and has no universal mg conversion.
+     */
+    private suspend fun deductInventoryForDose(
+        compoundId: String,
+        doseAmount: Double,
+        doseUnit: DoseUnit
+    ) {
+        if (!doseAmount.isFinite() || doseAmount <= 0.0) return
+
         val doseMg = when (doseUnit) {
             DoseUnit.MG -> doseAmount
             DoseUnit.MCG -> doseAmount / 1000.0
-            DoseUnit.IU -> doseAmount
+            DoseUnit.IU -> return
         }
-        val activeVial = inventoryDao.getActiveInUseVialForPeptide(peptideId)
-        if (activeVial != null && (activeVial.concentrationMgMl ?: 0.0) > 0.0) {
-            val volumeToDeduct = doseMg / activeVial.concentrationMgMl!!
-            val currentVolume = activeVial.remainingVolumeMl ?: activeVial.bacWaterMl ?: 0.0
-            val newVolume = maxOf(0.0, currentVolume - volumeToDeduct)
-            inventoryDao.updateRemainingVolume(activeVial.id, newVolume)
-            if (newVolume <= 0.001) {
-                inventoryDao.updateInventoryStatus(activeVial.id, InventoryStatus.EMPTY.name)
-            }
+
+        val compound = protocolDao.getCompoundById(compoundId) ?: return
+        val activeVial = inventoryDao.getActiveInUseVialForPeptide(compound.peptideId) ?: return
+        val concentration = activeVial.concentrationMgMl ?: return
+        if (!concentration.isFinite() || concentration <= 0.0) return
+
+        val currentVolume = activeVial.remainingVolumeMl ?: activeVial.bacWaterMl ?: return
+        if (!currentVolume.isFinite() || currentVolume < 0.0) return
+
+        val volumeToDeduct = doseMg / concentration
+        if (!volumeToDeduct.isFinite() || volumeToDeduct <= 0.0) return
+
+        val newVolume = (currentVolume - volumeToDeduct).coerceAtLeast(0.0)
+        inventoryDao.updateRemainingVolume(activeVial.id, newVolume)
+        if (newVolume <= EMPTY_VOLUME_EPSILON_ML) {
+            inventoryDao.updateInventoryStatus(activeVial.id, InventoryStatus.EMPTY.name)
         }
     }
 
-    // Dose logs
     override fun getDoseLogs(startDate: Long, endDate: Long): Flow<List<DoseLog>> {
         return logDao.getDoseLogs(startDate, endDate).map { list -> list.map { it.toDomain() } }
     }
@@ -80,34 +95,63 @@ class LogRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertDoseLog(log: DoseLog) {
-        logDao.insertDoseLog(log.toEntity())
-        if (log.status == DoseStatus.TAKEN) {
-            deductInventoryForDose(log.protocolCompoundId, log.doseAmount, log.doseUnit)
+        require(log.doseAmount.isFinite() && log.doseAmount > 0.0) {
+            "Dose amount must be a positive finite value"
+        }
+        require(protocolDao.getCompoundById(log.protocolCompoundId) != null) {
+            "Dose log must reference an existing protocol compound"
+        }
+
+        database.withTransaction {
+            val previous = logDao.getDoseLogById(log.id)
+            logDao.insertDoseLog(log.toEntity())
+            if (log.status == DoseStatus.TAKEN && previous?.status != DoseStatus.TAKEN) {
+                deductInventoryForDose(log.protocolCompoundId, log.doseAmount, log.doseUnit)
+            }
         }
         triggerRecomputeForCompound(log.protocolCompoundId)
     }
 
     override suspend fun updateDoseLog(log: DoseLog) {
-        logDao.updateDoseLog(log.toEntity())
+        require(log.doseAmount.isFinite() && log.doseAmount > 0.0) {
+            "Dose amount must be a positive finite value"
+        }
+
+        database.withTransaction {
+            val previous = logDao.getDoseLogById(log.id)
+            logDao.updateDoseLog(log.toEntity())
+            if (previous?.status != DoseStatus.TAKEN && log.status == DoseStatus.TAKEN) {
+                deductInventoryForDose(log.protocolCompoundId, log.doseAmount, log.doseUnit)
+            }
+        }
         triggerRecomputeForCompound(log.protocolCompoundId)
     }
 
     override suspend fun deleteDoseLog(id: String) {
         val log = logDao.getDoseLogById(id)
         logDao.deleteDoseLog(id)
+        // We intentionally do not "refund" inventory here. DoseLog currently does
+        // not store which physical vial was used, so restoring an arbitrary active
+        // vial could corrupt inventory history. A future schema should link each
+        // taken dose to its inventory item before reversible deduction is offered.
         log?.let { triggerRecomputeForCompound(it.protocolCompoundId) }
     }
 
     override suspend fun logDoseTaken(id: String, actualTime: Long, site: String?, side: String?) {
-        logDao.logDoseTaken(id, actualTime, site, side)
-        val log = logDao.getDoseLogById(id)
-        log?.let {
-            deductInventoryForDose(it.protocolCompoundId, it.doseAmount, it.doseUnit)
-            triggerRecomputeForCompound(it.protocolCompoundId)
+        var changedCompoundId: String? = null
+
+        database.withTransaction {
+            val before = logDao.getDoseLogById(id) ?: return@withTransaction
+            val rowsChanged = logDao.logDoseTaken(id, actualTime, site, side)
+            if (rowsChanged == 1) {
+                deductInventoryForDose(before.protocolCompoundId, before.doseAmount, before.doseUnit)
+                changedCompoundId = before.protocolCompoundId
+            }
         }
+
+        changedCompoundId?.let { triggerRecomputeForCompound(it) }
     }
 
-    // Injection Site logs
     override fun getInjectionSiteLogs(): Flow<List<InjectionSiteLog>> {
         return logDao.getInjectionSiteLogs().map { list -> list.map { it.toDomain() } }
     }
@@ -146,7 +190,6 @@ class LogRepositoryImpl @Inject constructor(
         logDao.deleteSiteLog(id)
     }
 
-    // Side Effect logs
     override fun getSideEffectLogs(): Flow<List<SideEffectLog>> {
         return logDao.getSideEffectLogs().map { list -> list.map { it.toDomain() } }
     }
@@ -166,7 +209,6 @@ class LogRepositoryImpl @Inject constructor(
         log?.protocolId?.let { analyticsRepository.recomputeAnalyticsForProtocol(it) }
     }
 
-    // Biomarker logs
     override fun getBiomarkerLogs(): Flow<List<BiomarkerLog>> {
         return logDao.getBiomarkerLogs().map { list -> list.map { it.toDomain() } }
     }
@@ -186,7 +228,6 @@ class LogRepositoryImpl @Inject constructor(
         log?.protocolId?.let { analyticsRepository.recomputeAnalyticsForProtocol(it) }
     }
 
-    // Progress Photos
     override fun getProgressPhotos(): Flow<List<ProgressPhoto>> {
         return logDao.getProgressPhotos().map { list -> list.map { it.toDomain() } }
     }
@@ -206,16 +247,25 @@ class LogRepositoryImpl @Inject constructor(
         photo?.protocolId?.let { analyticsRepository.recomputeAnalyticsForProtocol(it) }
     }
 
-    // Calculator Presets
     override fun getCalculatorPresets(): Flow<List<CalculatorPreset>> {
         return logDao.getCalculatorPresets().map { list -> list.map { it.toDomain() } }
     }
 
     override suspend fun insertCalculatorPreset(preset: CalculatorPreset) {
+        require(
+            preset.vialStrengthMg.isFinite() && preset.vialStrengthMg > 0.0 &&
+                preset.bacWaterMl.isFinite() && preset.bacWaterMl > 0.0 &&
+                preset.desiredDoseMg.isFinite() && preset.desiredDoseMg > 0.0 &&
+                preset.desiredDoseMg <= preset.vialStrengthMg
+        ) { "Calculator preset contains invalid values" }
         logDao.insertCalculatorPreset(preset.toEntity())
     }
 
     override suspend fun deleteCalculatorPreset(id: String) {
         logDao.deleteCalculatorPreset(id)
+    }
+
+    private companion object {
+        const val EMPTY_VOLUME_EPSILON_ML = 0.001
     }
 }
