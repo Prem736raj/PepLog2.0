@@ -11,38 +11,31 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.util.UUID
 import javax.inject.Inject
 
 /**
- * ViewModel for the Reconstitution Calculator feature.
+ * ViewModel for the reconstitution arithmetic tool.
  *
- * Handles real-time calculation of concentration, draw volume, and syringe units
- * from user-supplied vial strength, BAC water, and desired dose inputs.
- * Also manages save/load/delete of calculator presets via Room.
+ * All values are supplied by the user. The app performs unit conversion and
+ * concentration/draw-volume arithmetic; it does not select or recommend a dose.
  */
 @HiltViewModel
 class CalculatorViewModel @Inject constructor(
     private val logRepository: LogRepository
 ) : ViewModel() {
 
-    // Input fields
     private val _vialStrengthMg = MutableStateFlow("")
     private val _bacWaterMl = MutableStateFlow("")
     private val _desiredDoseMcg = MutableStateFlow("")
-    
-    // Unit mode (mg vs mcg for dose input)
-    private val _doseUnitIsMcg = MutableStateFlow(true) // Default: mcg
-    
-    // Syringe type
+    private val _doseUnitIsMcg = MutableStateFlow(true)
     private val _syringeType = MutableStateFlow(SyringeType.U100_INSULIN)
-    
-    // Preset management
+
     private val _showSaveDialog = MutableStateFlow(false)
     private val _showPresetsSheet = MutableStateFlow(false)
     private val _presetName = MutableStateFlow("")
 
-    // Combine all inputs + presets into a single UiState
     val uiState: StateFlow<CalculatorUiState> = combine(
         _vialStrengthMg,
         _bacWaterMl,
@@ -50,38 +43,10 @@ class CalculatorViewModel @Inject constructor(
         _doseUnitIsMcg,
         _syringeType
     ) { vialStr, bacStr, doseStr, isMcg, syringe ->
-        val vialMg = vialStr.toDoubleOrNull()
-        val bacMl = bacStr.toDoubleOrNull()
-        val doseRaw = doseStr.toDoubleOrNull()
-        
-        // Convert dose to mg for calculation
-        val doseMg = if (doseRaw != null) {
-            if (isMcg) doseRaw / 1000.0 else doseRaw
-        } else null
-
-        val result = if (vialMg != null && bacMl != null && vialMg > 0 && bacMl > 0) {
-            val concentration = vialMg / bacMl  // mg/mL
-            
-            val drawVolume = if (doseMg != null && doseMg > 0 && doseMg <= vialMg) {
-                doseMg / concentration  // mL
-            } else null
-            
-            val syringeUnits = if (drawVolume != null) {
-                drawVolume * syringe.unitsPerMl  // units
-            } else null
-            
-            val totalDoses = if (doseMg != null && doseMg > 0) {
-                (vialMg / doseMg).toInt()
-            } else null
-
-            CalculationResult(
-                concentrationMgMl = concentration,
-                drawVolumeMl = drawVolume,
-                syringeUnits = syringeUnits,
-                totalDosesPerVial = totalDoses,
-                isOverDose = doseMg != null && doseMg > vialMg
-            )
-        } else null
+        val vialMg = vialStr.toFiniteDoubleOrNull()
+        val bacMl = bacStr.toFiniteDoubleOrNull()
+        val doseRaw = doseStr.toFiniteDoubleOrNull()
+        val doseMg = doseRaw?.let { if (isMcg) it / 1000.0 else it }
 
         CalculatorUiState(
             vialStrengthMg = vialStr,
@@ -89,7 +54,7 @@ class CalculatorViewModel @Inject constructor(
             desiredDose = doseStr,
             doseUnitIsMcg = isMcg,
             syringeType = syringe,
-            result = result
+            result = ReconstitutionMath.calculate(vialMg, bacMl, doseMg, syringe)
         )
     }.stateIn(
         scope = viewModelScope,
@@ -97,7 +62,6 @@ class CalculatorViewModel @Inject constructor(
         initialValue = CalculatorUiState()
     )
 
-    // Separate flow for presets + dialog state
     val presetsState: StateFlow<PresetsUiState> = combine(
         logRepository.getCalculatorPresets(),
         _showSaveDialog,
@@ -116,29 +80,30 @@ class CalculatorViewModel @Inject constructor(
         initialValue = PresetsUiState()
     )
 
-    // --- Input Handlers ---
-
     fun onVialStrengthChanged(value: String) {
-        // Only allow valid decimal numbers
-        if (value.isEmpty() || value.matches(Regex("^\\d*\\.?\\d*$"))) {
-            _vialStrengthMg.value = value
-        }
+        if (value.isValidDecimalInput()) _vialStrengthMg.value = value
     }
 
     fun onBacWaterChanged(value: String) {
-        if (value.isEmpty() || value.matches(Regex("^\\d*\\.?\\d*$"))) {
-            _bacWaterMl.value = value
-        }
+        if (value.isValidDecimalInput()) _bacWaterMl.value = value
     }
 
     fun onDesiredDoseChanged(value: String) {
-        if (value.isEmpty() || value.matches(Regex("^\\d*\\.?\\d*$"))) {
-            _desiredDoseMcg.value = value
-        }
+        if (value.isValidDecimalInput()) _desiredDoseMcg.value = value
     }
 
+    /**
+     * Converts the currently entered numeric value when switching units. Merely
+     * relabelling 250 mcg as 250 mg would create a 1000x arithmetic error.
+     */
     fun toggleDoseUnit() {
-        _doseUnitIsMcg.value = !_doseUnitIsMcg.value
+        val currentlyMcg = _doseUnitIsMcg.value
+        val currentValue = _desiredDoseMcg.value.toFiniteDoubleOrNull()
+        if (currentValue != null) {
+            val converted = if (currentlyMcg) currentValue / 1000.0 else currentValue * 1000.0
+            _desiredDoseMcg.value = formatNumber(converted)
+        }
+        _doseUnitIsMcg.value = !currentlyMcg
     }
 
     fun onSyringeTypeChanged(type: SyringeType) {
@@ -151,9 +116,9 @@ class CalculatorViewModel @Inject constructor(
         _desiredDoseMcg.value = ""
     }
 
-    // --- Preset Management ---
-
     fun showSaveDialog() {
+        val state = uiState.value
+        if (state.result?.isValidForDrawing != true) return
         _presetName.value = ""
         _showSaveDialog.value = true
     }
@@ -163,29 +128,35 @@ class CalculatorViewModel @Inject constructor(
     }
 
     fun onPresetNameChanged(name: String) {
-        _presetName.value = name
+        _presetName.value = name.take(MAX_PRESET_NAME_LENGTH)
     }
 
     fun saveCurrentAsPreset() {
-        val vialMg = _vialStrengthMg.value.toDoubleOrNull() ?: return
-        val bacMl = _bacWaterMl.value.toDoubleOrNull() ?: return
-        val doseRaw = _desiredDoseMcg.value.toDoubleOrNull() ?: return
+        val vialMg = _vialStrengthMg.value.toFiniteDoubleOrNull() ?: return
+        val bacMl = _bacWaterMl.value.toFiniteDoubleOrNull() ?: return
+        val doseRaw = _desiredDoseMcg.value.toFiniteDoubleOrNull() ?: return
         val doseMg = if (_doseUnitIsMcg.value) doseRaw / 1000.0 else doseRaw
-        val name = _presetName.value.ifBlank { "Preset" }
+        val result = ReconstitutionMath.calculate(vialMg, bacMl, doseMg, _syringeType.value)
+        if (result?.isValidForDrawing != true) return
+
+        val name = _presetName.value.trim().ifBlank { "Preset" }
 
         viewModelScope.launch {
-            logRepository.insertCalculatorPreset(
-                CalculatorPreset(
-                    id = UUID.randomUUID().toString(),
-                    name = name,
-                    peptideId = null,
-                    vialStrengthMg = vialMg,
-                    bacWaterMl = bacMl,
-                    desiredDoseMg = doseMg,
-                    createdAt = System.currentTimeMillis()
+            runCatching {
+                logRepository.insertCalculatorPreset(
+                    CalculatorPreset(
+                        id = UUID.randomUUID().toString(),
+                        name = name,
+                        peptideId = null,
+                        vialStrengthMg = vialMg,
+                        bacWaterMl = bacMl,
+                        desiredDoseMg = doseMg,
+                        createdAt = System.currentTimeMillis()
+                    )
                 )
-            )
-            _showSaveDialog.value = false
+            }.onSuccess {
+                _showSaveDialog.value = false
+            }
         }
     }
 
@@ -198,9 +169,14 @@ class CalculatorViewModel @Inject constructor(
     }
 
     fun loadPreset(preset: CalculatorPreset) {
+        if (
+            !preset.vialStrengthMg.isPositiveFinite() ||
+            !preset.bacWaterMl.isPositiveFinite() ||
+            !preset.desiredDoseMg.isPositiveFinite()
+        ) return
+
         _vialStrengthMg.value = formatNumber(preset.vialStrengthMg)
         _bacWaterMl.value = formatNumber(preset.bacWaterMl)
-        // Always load in mcg
         _doseUnitIsMcg.value = true
         _desiredDoseMcg.value = formatNumber(preset.desiredDoseMg * 1000.0)
         _showPresetsSheet.value = false
@@ -208,20 +184,30 @@ class CalculatorViewModel @Inject constructor(
 
     fun deletePreset(id: String) {
         viewModelScope.launch {
-            logRepository.deleteCalculatorPreset(id)
+            runCatching { logRepository.deleteCalculatorPreset(id) }
         }
     }
+
+    private fun String.toFiniteDoubleOrNull(): Double? =
+        toDoubleOrNull()?.takeIf { it.isFinite() }
+
+    private fun String.isValidDecimalInput(): Boolean =
+        length <= MAX_NUMERIC_INPUT_LENGTH &&
+            (isEmpty() || matches(DECIMAL_REGEX))
+
+    private fun Double.isPositiveFinite(): Boolean = isFinite() && this > 0.0
 
     private fun formatNumber(value: Double): String {
-        return if (value == value.toLong().toDouble()) {
-            value.toLong().toString()
-        } else {
-            value.toString()
-        }
+        if (!value.isFinite()) return ""
+        return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString()
+    }
+
+    private companion object {
+        val DECIMAL_REGEX = Regex("^\\d*\\.?\\d*$")
+        const val MAX_NUMERIC_INPUT_LENGTH = 18
+        const val MAX_PRESET_NAME_LENGTH = 60
     }
 }
-
-// --- Data Classes ---
 
 data class CalculatorUiState(
     val vialStrengthMg: String = "",
@@ -234,11 +220,15 @@ data class CalculatorUiState(
 
 data class CalculationResult(
     val concentrationMgMl: Double,
-    val drawVolumeMl: Double?,
-    val syringeUnits: Double?,
-    val totalDosesPerVial: Int?,
-    val isOverDose: Boolean = false
-)
+    val drawVolumeMl: Double? = null,
+    val syringeUnits: Double? = null,
+    val totalDosesPerVial: Long? = null,
+    val isOverDose: Boolean = false,
+    val isSyringeCapacityExceeded: Boolean = false
+) {
+    val isValidForDrawing: Boolean
+        get() = drawVolumeMl != null && !isOverDose && !isSyringeCapacityExceeded
+}
 
 data class PresetsUiState(
     val presets: List<CalculatorPreset> = emptyList(),
@@ -247,9 +237,13 @@ data class PresetsUiState(
     val presetName: String = ""
 )
 
-enum class SyringeType(val displayName: String, val unitsPerMl: Double) {
-    U100_INSULIN("U-100 Insulin (1mL = 100 units)", 100.0),
-    U100_HALF("U-100 Half mL (0.5mL = 50 units)", 100.0),
-    STANDARD_1ML("Standard 1mL Syringe", 1.0),
-    STANDARD_3ML("Standard 3mL Syringe", 1.0)
+enum class SyringeType(
+    val displayName: String,
+    val capacityMl: Double,
+    val usesU100Units: Boolean
+) {
+    U100_INSULIN("U-100 1 mL (100 units)", capacityMl = 1.0, usesU100Units = true),
+    U100_HALF("U-100 0.5 mL (50 units)", capacityMl = 0.5, usesU100Units = true),
+    STANDARD_1ML("Standard 1 mL Syringe", capacityMl = 1.0, usesU100Units = false),
+    STANDARD_3ML("Standard 3 mL Syringe", capacityMl = 3.0, usesU100Units = false)
 }
