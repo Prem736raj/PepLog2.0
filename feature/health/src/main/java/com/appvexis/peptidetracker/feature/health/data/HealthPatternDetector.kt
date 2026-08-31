@@ -7,6 +7,9 @@ import com.appvexis.peptidetracker.core.model.HealthMetricType
 import com.appvexis.peptidetracker.core.model.HealthPattern
 import javax.inject.Inject
 import javax.inject.Singleton
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import kotlin.math.abs
 
 /**
@@ -41,7 +44,9 @@ class HealthPatternDetector @Inject constructor() {
 
         // For each metric type, compare pre-protocol vs during-protocol averages
         for (metricType in HealthMetricType.entries) {
-            val metricsOfType = healthMetrics.filter { it.metricType == metricType }
+            val metricsOfType = healthMetrics.filter {
+                it.metricType == metricType && it.value.isFinite() && it.value >= 0.0
+            }
             if (metricsOfType.size < 3) continue // Need minimum data points
 
             val pattern = analyzeMetricChange(
@@ -82,9 +87,10 @@ class HealthPatternDetector @Inject constructor() {
         val preAvg = preProtocol.map { it.value }.average()
         val duringAvg = duringProtocol.map { it.value }.average()
 
-        if (preAvg == 0.0) return null
+        if (!preAvg.isFinite() || !duringAvg.isFinite() || preAvg <= 0.0) return null
 
         val changePercent = ((duringAvg - preAvg) / preAvg) * 100
+        if (!changePercent.isFinite()) return null
 
         // Only report significant changes (>5%)
         if (abs(changePercent) < 5.0) return null
@@ -123,8 +129,8 @@ class HealthPatternDetector @Inject constructor() {
     ): List<HealthPattern> {
         val patterns = mutableListOf<HealthPattern>()
 
-        // Group doses by day (ms -> day boundary)
-        val doseDays = takenDoses.map { dayOf(it.actualTime ?: it.scheduledTime) }.toSet()
+        // Compare calendar days in the user's timezone; UTC midnight is not a user's day boundary.
+        val doseDays = takenDoses.mapNotNull { dayOf(it.actualTime ?: it.scheduledTime) }.toSet()
 
         // Analyze sleep on dose days vs non-dose days
         val sleepMetrics = healthMetrics.filter { it.metricType == HealthMetricType.SLEEP_DURATION }
@@ -135,9 +141,9 @@ class HealthPatternDetector @Inject constructor() {
             if (onDoseDays.size >= 2 && offDoseDays.size >= 2) {
                 val onAvg = onDoseDays.map { it.value }.average()
                 val offAvg = offDoseDays.map { it.value }.average()
-                val diff = ((onAvg - offAvg) / offAvg) * 100
+                val diff = if (offAvg > 0.0) ((onAvg - offAvg) / offAvg) * 100 else Double.NaN
 
-                if (abs(diff) > 10.0) {
+                if (diff.isFinite() && abs(diff) > 10.0) {
                     val better = if (diff > 0) "more" else "less"
                     patterns.add(
                         HealthPattern(
@@ -164,9 +170,9 @@ class HealthPatternDetector @Inject constructor() {
             if (onDoseDays.size >= 2 && offDoseDays.size >= 2) {
                 val onAvg = onDoseDays.map { it.value }.average()
                 val offAvg = offDoseDays.map { it.value }.average()
-                val diff = ((onAvg - offAvg) / offAvg) * 100
+                val diff = if (offAvg > 0.0) ((onAvg - offAvg) / offAvg) * 100 else Double.NaN
 
-                if (abs(diff) > 3.0) {
+                if (diff.isFinite() && abs(diff) > 3.0) {
                     val direction = if (diff < 0) "lower" else "higher"
                     patterns.add(
                         HealthPattern(
@@ -215,7 +221,11 @@ class HealthPatternDetector @Inject constructor() {
     /**
      * Normalize timestamp to day boundary for day-level comparisons.
      */
-    private fun dayOf(timestamp: Long): Long {
-        return timestamp / (24 * 60 * 60 * 1000) * (24 * 60 * 60 * 1000)
+    private fun dayOf(timestamp: Long): LocalDate? {
+        return runCatching {
+            Instant.ofEpochMilli(timestamp)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        }.getOrNull()
     }
 }

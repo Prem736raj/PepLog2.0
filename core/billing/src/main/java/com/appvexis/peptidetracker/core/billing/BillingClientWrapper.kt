@@ -186,9 +186,12 @@ class BillingClientWrapper @Inject constructor(
      * This is the single source of truth for subscription state.
      * Uses Billing Library 8 Kotlin suspend extension.
      */
-    suspend fun queryPurchases(): List<Purchase> {
-        val client = billingClient ?: return emptyList()
-        if (!client.isReady) return emptyList()
+    suspend fun queryPurchases(): Result<List<Purchase>> {
+        val client = billingClient
+            ?: return Result.failure(IllegalStateException("Billing service is not connected"))
+        if (!client.isReady) {
+            return Result.failure(IllegalStateException("Billing service is not ready"))
+        }
 
         val params = QueryPurchasesParams.newBuilder()
             .setProductType(BillingClient.ProductType.SUBS)
@@ -199,14 +202,18 @@ class BillingClientWrapper @Inject constructor(
             if (result.billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                 _purchases.value = result.purchasesList
                 Timber.d("Active purchases: ${result.purchasesList.size}")
-                result.purchasesList
+                Result.success(result.purchasesList)
             } else {
                 Timber.e("queryPurchases failed: code=${result.billingResult.responseCode}")
-                emptyList()
+                Result.failure(
+                    IllegalStateException(
+                        "Billing purchase query failed (code=${result.billingResult.responseCode})"
+                    )
+                )
             }
         } catch (e: Exception) {
             Timber.e(e, "queryPurchases exception")
-            emptyList()
+            Result.failure(e)
         }
     }
 

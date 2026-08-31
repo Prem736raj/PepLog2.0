@@ -1,5 +1,6 @@
 package com.appvexis.peptidetracker.feature.health
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -8,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,6 +63,7 @@ import com.appvexis.peptidetracker.feature.health.components.PatternInsightCards
 import com.appvexis.peptidetracker.feature.health.components.getMetricColor
 import com.appvexis.peptidetracker.feature.health.model.HealthConnectStatus
 import com.appvexis.peptidetracker.feature.health.model.HealthTimeRange
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -74,6 +78,7 @@ fun HealthConnectScreen(
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val snackbarScope = rememberCoroutineScope()
 
     // Permission launcher
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -158,29 +163,23 @@ fun HealthConnectScreen(
                     item {
                         HealthConnectPermissionCard(
                             status = uiState.healthConnectStatus,
-                            onRequestPermissions = {
-                                val permissions = viewModel.uiState.value.let {
-                                    // launch permission request
-                                    // We need the HealthConnectManager permissions
-                                }
+            onRequestPermissions = {
                                 permissionLauncher.launch(
-                                    setOf(
-                                        "android.permission.health.READ_WEIGHT",
-                                        "android.permission.health.READ_SLEEP",
-                                        "android.permission.health.READ_HEART_RATE",
-                                        "android.permission.health.READ_BLOOD_PRESSURE",
-                                        "android.permission.health.READ_STEPS",
-                                        "android.permission.health.READ_BODY_FAT",
-                                        "android.permission.health.READ_RESTING_HEART_RATE"
-                                    )
+                                    viewModel.requiredHealthPermissions
                                 )
                             },
                             onInstallHealthConnect = {
-                                val intent = Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse("market://details?id=com.google.android.apps.healthdata")
-                                )
-                                context.startActivity(intent)
+                                try {
+                                    val intent = Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse("market://details?id=com.google.android.apps.healthdata")
+                                    )
+                                    context.startActivity(intent)
+                                } catch (_: ActivityNotFoundException) {
+                                    snackbarScope.launch {
+                                        snackbarHostState.showSnackbar("Google Play is not available on this device")
+                                    }
+                                }
                             },
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
@@ -331,13 +330,12 @@ private fun TimeRangeSelector(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(10.dp))
+                    .clickable { onRangeSelected(range) }
                     .background(
                         if (isSelected) PepLogTheme.colors.primary.copy(alpha = 0.15f)
                         else PepLogTheme.colors.surface.copy(alpha = 0.6f)
                     )
-                    .then(
-                        Modifier.padding(vertical = 8.dp)
-                    ),
+                    .height(48.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(

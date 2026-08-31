@@ -53,10 +53,6 @@ dependencies {
     // Kotlinx Serialization for JSON converters
     implementation(libs.kotlinx.serialization.json)
 
-    // SQLCipher encryption
-    implementation(libs.sqlcipher)
-    implementation(libs.androidx.sqlite.ktx)
-    
     // Hilt DI
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

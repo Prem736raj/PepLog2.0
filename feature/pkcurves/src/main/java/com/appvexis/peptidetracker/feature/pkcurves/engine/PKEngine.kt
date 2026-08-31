@@ -59,7 +59,8 @@ object PKEngine {
         windowEndHours: Double,
         resolution: Int = 500
     ): List<PKCurvePoint> {
-        if (doseTimesHours.isEmpty() || halfLifeHours <= 0.0) return emptyList()
+        if (doseTimesHours.isEmpty() || doseTimesHours.size != doseAmounts.size ||
+            !halfLifeHours.isFinite() || halfLifeHours <= 0.0 || resolution < 1) return emptyList()
 
         val kEl = eliminationConstant(halfLifeHours)
         val windowDuration = windowEndHours - windowStartHours
@@ -157,7 +158,8 @@ object PKEngine {
         halfLifeHours: Double,
         timeHours: Double
     ): Double {
-        if (doseTimesHours.isEmpty() || halfLifeHours <= 0.0) return 0.0
+        if (doseTimesHours.isEmpty() || doseTimesHours.size != doseAmounts.size ||
+            !halfLifeHours.isFinite() || halfLifeHours <= 0.0) return 0.0
         val kEl = eliminationConstant(halfLifeHours)
         val lookbackHours = halfLifeHours * 10.0
 

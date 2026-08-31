@@ -50,9 +50,9 @@ class CalculatorViewModel @Inject constructor(
         _doseUnitIsMcg,
         _syringeType
     ) { vialStr, bacStr, doseStr, isMcg, syringe ->
-        val vialMg = vialStr.toDoubleOrNull()
-        val bacMl = bacStr.toDoubleOrNull()
-        val doseRaw = doseStr.toDoubleOrNull()
+        val vialMg = vialStr.toDoubleOrNull()?.takeIf { it.isFinite() }
+        val bacMl = bacStr.toDoubleOrNull()?.takeIf { it.isFinite() }
+        val doseRaw = doseStr.toDoubleOrNull()?.takeIf { it.isFinite() }
         
         // Convert dose to mg for calculation
         val doseMg = if (doseRaw != null) {
@@ -60,27 +60,29 @@ class CalculatorViewModel @Inject constructor(
         } else null
 
         val result = if (vialMg != null && bacMl != null && vialMg > 0 && bacMl > 0) {
-            val concentration = vialMg / bacMl  // mg/mL
+            val concentration = (vialMg / bacMl).takeIf { it.isFinite() }
             
-            val drawVolume = if (doseMg != null && doseMg > 0 && doseMg <= vialMg) {
-                doseMg / concentration  // mL
+            val drawVolume = if (concentration != null && doseMg != null && doseMg > 0 && doseMg <= vialMg) {
+                (doseMg / concentration).takeIf { it.isFinite() }  // mL
             } else null
             
             val syringeUnits = if (drawVolume != null) {
                 drawVolume * syringe.unitsPerMl  // units
             } else null
             
-            val totalDoses = if (doseMg != null && doseMg > 0) {
-                (vialMg / doseMg).toInt()
+            val totalDoses = if (doseMg != null && doseMg.isFinite() && doseMg > 0) {
+                (vialMg / doseMg).takeIf { it.isFinite() && it <= Int.MAX_VALUE }?.toInt()
             } else null
 
-            CalculationResult(
-                concentrationMgMl = concentration,
-                drawVolumeMl = drawVolume,
-                syringeUnits = syringeUnits,
-                totalDosesPerVial = totalDoses,
-                isOverDose = doseMg != null && doseMg > vialMg
-            )
+            concentration?.let {
+                CalculationResult(
+                    concentrationMgMl = it,
+                    drawVolumeMl = drawVolume,
+                    syringeUnits = syringeUnits,
+                    totalDosesPerVial = totalDoses,
+                    isOverDose = doseMg != null && doseMg > vialMg
+                )
+            }
         } else null
 
         CalculatorUiState(
@@ -167,10 +169,11 @@ class CalculatorViewModel @Inject constructor(
     }
 
     fun saveCurrentAsPreset() {
-        val vialMg = _vialStrengthMg.value.toDoubleOrNull() ?: return
-        val bacMl = _bacWaterMl.value.toDoubleOrNull() ?: return
-        val doseRaw = _desiredDoseMcg.value.toDoubleOrNull() ?: return
+        val vialMg = _vialStrengthMg.value.toDoubleOrNull()?.takeIf { it.isFinite() && it > 0 } ?: return
+        val bacMl = _bacWaterMl.value.toDoubleOrNull()?.takeIf { it.isFinite() && it > 0 } ?: return
+        val doseRaw = _desiredDoseMcg.value.toDoubleOrNull()?.takeIf { it.isFinite() && it > 0 } ?: return
         val doseMg = if (_doseUnitIsMcg.value) doseRaw / 1000.0 else doseRaw
+        if (!doseMg.isFinite() || doseMg > vialMg) return
         val name = _presetName.value.ifBlank { "Preset" }
 
         viewModelScope.launch {

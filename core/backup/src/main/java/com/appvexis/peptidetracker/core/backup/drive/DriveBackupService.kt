@@ -14,8 +14,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,7 +30,9 @@ import javax.inject.Singleton
 class DriveBackupService @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US)
+    private val dateFormat = DateTimeFormatter
+        .ofPattern("yyyy-MM-dd_HH-mm-ss", Locale.US)
+        .withZone(ZoneOffset.UTC)
 
     /**
      * Builds a [Drive] service instance for the given Google account email.
@@ -59,10 +62,11 @@ class DriveBackupService @Inject constructor(
         accountEmail: String,
         jsonData: String
     ): String = withContext(Dispatchers.IO) {
-        Timber.d("DriveBackupService: uploading backup for $accountEmail")
+        require(accountEmail.isNotBlank()) { "A Google account is required for backup" }
+        Timber.d("DriveBackupService: uploading backup")
 
         val driveService = buildDriveService(accountEmail)
-        val timestamp = dateFormat.format(Date())
+        val timestamp = dateFormat.format(Instant.now())
         val fileName = "${BackupConfig.BACKUP_FILE_PREFIX}$timestamp${BackupConfig.BACKUP_FILE_EXTENSION}"
 
         val fileMetadata = com.google.api.services.drive.model.File().apply {
@@ -80,7 +84,7 @@ class DriveBackupService @Inject constructor(
             .setFields("id, name, createdTime, size")
             .execute()
 
-        Timber.d("DriveBackupService: uploaded ${uploadedFile.name} (ID: ${uploadedFile.id})")
+        Timber.d("DriveBackupService: uploaded backup")
 
         // Prune old backups — keep only MAX_BACKUP_HISTORY most recent
         pruneOldBackups(driveService)
@@ -92,13 +96,15 @@ class DriveBackupService @Inject constructor(
      * Lists all backup files stored in appDataFolder, sorted by creation time descending.
      */
     suspend fun listBackups(accountEmail: String): List<DriveBackupFile> = withContext(Dispatchers.IO) {
-        Timber.d("DriveBackupService: listing backups for $accountEmail")
+        require(accountEmail.isNotBlank()) { "A Google account is required to list backups" }
+        Timber.d("DriveBackupService: listing backups")
 
         val driveService = buildDriveService(accountEmail)
 
         val result = driveService.files().list()
             .setSpaces(BackupConfig.DRIVE_APP_FOLDER_SPACE)
-            .setFields("files(id, name, createdTime, size)")
+            .setQ(backupQuery())
+            .setFields("files(id, name, createdTime, size, parents)")
             .setOrderBy("createdTime desc")
             .setPageSize(20)
             .execute()
@@ -123,9 +129,10 @@ class DriveBackupService @Inject constructor(
         accountEmail: String,
         fileId: String
     ): String = withContext(Dispatchers.IO) {
-        Timber.d("DriveBackupService: downloading backup $fileId")
+        require(accountEmail.isNotBlank()) { "A Google account is required to download a backup" }
 
         val driveService = buildDriveService(accountEmail)
+        requireOwnedBackupFile(driveService, fileId)
         val outputStream = ByteArrayOutputStream()
 
         driveService.files()
@@ -133,7 +140,7 @@ class DriveBackupService @Inject constructor(
             .executeMediaAndDownloadTo(outputStream)
 
         val content = outputStream.toString(Charsets.UTF_8.name())
-        Timber.d("DriveBackupService: downloaded ${content.length} bytes")
+        Timber.d("DriveBackupService: downloaded backup")
         content
     }
 
@@ -144,8 +151,9 @@ class DriveBackupService @Inject constructor(
         accountEmail: String,
         fileId: String
     ) = withContext(Dispatchers.IO) {
-        Timber.d("DriveBackupService: deleting backup $fileId")
+        require(accountEmail.isNotBlank()) { "A Google account is required to delete a backup" }
         val driveService = buildDriveService(accountEmail)
+        requireOwnedBackupFile(driveService, fileId)
         driveService.files().delete(fileId).execute()
     }
 
@@ -156,7 +164,8 @@ class DriveBackupService @Inject constructor(
         try {
             val result = driveService.files().list()
                 .setSpaces(BackupConfig.DRIVE_APP_FOLDER_SPACE)
-                .setFields("files(id, name, createdTime)")
+                .setQ(backupQuery())
+                .setFields("files(id, name, createdTime, parents)")
                 .setOrderBy("createdTime desc")
                 .setPageSize(50)
                 .execute()
@@ -172,6 +181,29 @@ class DriveBackupService @Inject constructor(
             }
         } catch (e: Exception) {
             Timber.e(e, "DriveBackupService: failed to prune old backups")
+        }
+    }
+
+    private fun backupQuery(): String =
+        "'${BackupConfig.DRIVE_APP_FOLDER_SPACE}' in parents and trashed = false " +
+            "and name contains '${BackupConfig.BACKUP_FILE_PREFIX}'"
+
+    /** Prevents a caller-controlled ID from reading or deleting another Drive file. */
+    private fun requireOwnedBackupFile(
+        driveService: Drive,
+        fileId: String
+    ) {
+        require(fileId.isNotBlank() && fileId.length <= 256) { "Invalid backup file ID" }
+        val file = driveService.files().get(fileId)
+            .setFields("id, name, parents, trashed")
+            .execute()
+        val isPepLogBackup = file.id == fileId &&
+            file.trashed != true &&
+            file.parents.orEmpty().contains(BackupConfig.DRIVE_APP_FOLDER_SPACE) &&
+            file.name.orEmpty().startsWith(BackupConfig.BACKUP_FILE_PREFIX) &&
+            file.name.orEmpty().endsWith(BackupConfig.BACKUP_FILE_EXTENSION)
+        if (!isPepLogBackup) {
+            throw SecurityException("The selected Drive file is not a PepLog backup")
         }
     }
 }

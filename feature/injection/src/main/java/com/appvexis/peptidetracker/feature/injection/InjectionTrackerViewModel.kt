@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -136,15 +137,12 @@ class InjectionTrackerViewModel @Inject constructor(
 
     fun updateHealingStatus(logId: String, newStatus: HealingStatus) {
         viewModelScope.launch {
-            // Find existing log and update its healing status
-            // For simplicity, we create a new entry with the update
-            logRepository.getInjectionSiteLogs().collect { logs ->
-                val existing = logs.find { it.id == logId }
-                if (existing != null) {
-                    val updated = existing.copy(healingStatus = newStatus)
-                    logRepository.updateSiteLog(updated)
-                }
-                return@collect
+            // Read one snapshot. Collecting this hot database flow here would keep
+            // the coroutine alive forever and re-run the update on every emission.
+            val existing = logRepository.getInjectionSiteLogs().first()
+                .firstOrNull { it.id == logId }
+            if (existing != null) {
+                logRepository.updateSiteLog(existing.copy(healingStatus = newStatus))
             }
         }
     }

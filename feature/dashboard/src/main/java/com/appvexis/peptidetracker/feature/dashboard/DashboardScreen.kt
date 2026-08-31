@@ -74,7 +74,6 @@ fun DashboardScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val showQuickLog by viewModel.showQuickLogDialog.collectAsStateWithLifecycle()
-    val allPeptides by viewModel.allPeptides.collectAsStateWithLifecycle()
 
     val colors = PepLogTheme.colors
 
@@ -273,10 +272,12 @@ fun DashboardScreen(
         // Quick Log Dialog
         if (showQuickLog) {
             QuickLogDoseDialog(
-                availablePeptides = allPeptides,
+                availableCompounds = (uiState as? DashboardUiState.Success)
+                    ?.availableCompounds
+                    .orEmpty(),
                 onDismiss = { viewModel.hideQuickLogDialog() },
-                onConfirmLog = { name, amount, unit, notes ->
-                    viewModel.quickLogDose(name, amount, unit, notes)
+                onConfirmLog = { compoundId, amount, unit, notes ->
+                    viewModel.quickLogDose(compoundId, amount, unit, notes)
                 }
             )
         }

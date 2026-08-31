@@ -1,6 +1,7 @@
 package com.appvexis.peptidetracker.core.backup.model
 
 import kotlinx.serialization.Serializable
+import com.appvexis.peptidetracker.core.model.TitrationStep
 
 /**
  * Complete backup payload containing all user data.
@@ -52,6 +53,7 @@ data class ProtocolCompoundBackup(
     val timeOfDay: String,
     val adminRoute: String,
     val titrationEnabled: Boolean,
+    val titrationSchedule: List<TitrationStep>? = null,
     val startDate: Long? = null,
     val endDate: Long? = null,
     val isActive: Boolean,

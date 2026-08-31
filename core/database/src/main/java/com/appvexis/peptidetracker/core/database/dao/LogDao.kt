@@ -38,14 +38,20 @@ interface LogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDoseLog(log: DoseLogEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDoseLogs(logs: List<DoseLogEntity>)
+
     @Update
     suspend fun updateDoseLog(log: DoseLogEntity)
 
     @Query("DELETE FROM dose_log WHERE id = :id")
     suspend fun deleteDoseLog(id: String)
 
-    @Query("UPDATE dose_log SET actual_time = :actualTime, status = 'TAKEN', injection_site = :site, injection_side = :side WHERE id = :id")
-    suspend fun logDoseTaken(id: String, actualTime: Long, site: String?, side: String?)
+    @Query("DELETE FROM dose_log")
+    suspend fun deleteAllDoseLogs()
+
+    @Query("UPDATE dose_log SET actual_time = :actualTime, status = 'TAKEN', injection_site = :site, injection_side = :side WHERE id = :id AND status = 'PENDING'")
+    suspend fun logDoseTakenIfPending(id: String, actualTime: Long, site: String?, side: String?): Int
 
     // Injection Site logs
     @Query("SELECT * FROM injection_site_log ORDER BY timestamp DESC")
@@ -63,11 +69,17 @@ interface LogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSiteLog(log: InjectionSiteLogEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSiteLogs(logs: List<InjectionSiteLogEntity>)
+
     @Update
     suspend fun updateSiteLog(log: InjectionSiteLogEntity)
 
     @Query("DELETE FROM injection_site_log WHERE id = :id")
     suspend fun deleteSiteLog(id: String)
+
+    @Query("DELETE FROM injection_site_log")
+    suspend fun deleteAllSiteLogs()
 
 
     // Side Effect logs
@@ -80,11 +92,17 @@ interface LogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSideEffectLog(log: SideEffectLogEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSideEffectLogs(logs: List<SideEffectLogEntity>)
+
     @Query("SELECT * FROM side_effect_log WHERE id = :id LIMIT 1")
     suspend fun getSideEffectLogById(id: String): SideEffectLogEntity?
 
     @Query("DELETE FROM side_effect_log WHERE id = :id")
     suspend fun deleteSideEffectLog(id: String)
+
+    @Query("DELETE FROM side_effect_log")
+    suspend fun deleteAllSideEffectLogs()
 
     // Biomarker logs
     @Query("SELECT * FROM biomarker_log ORDER BY date DESC")
@@ -96,11 +114,17 @@ interface LogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBiomarkerLog(log: BiomarkerLogEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertBiomarkerLogs(logs: List<BiomarkerLogEntity>)
+
     @Query("SELECT * FROM biomarker_log WHERE id = :id LIMIT 1")
     suspend fun getBiomarkerLogById(id: String): BiomarkerLogEntity?
 
     @Query("DELETE FROM biomarker_log WHERE id = :id")
     suspend fun deleteBiomarkerLog(id: String)
+
+    @Query("DELETE FROM biomarker_log")
+    suspend fun deleteAllBiomarkerLogs()
 
     // Progress Photos
     @Query("SELECT * FROM progress_photo ORDER BY date DESC")
@@ -112,11 +136,17 @@ interface LogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProgressPhoto(photo: ProgressPhotoEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertProgressPhotos(photos: List<ProgressPhotoEntity>)
+
     @Query("SELECT * FROM progress_photo WHERE id = :id LIMIT 1")
     suspend fun getProgressPhotoById(id: String): ProgressPhotoEntity?
 
     @Query("DELETE FROM progress_photo WHERE id = :id")
     suspend fun deleteProgressPhoto(id: String)
+
+    @Query("DELETE FROM progress_photo")
+    suspend fun deleteAllProgressPhotos()
 
     // Calculator Presets
     @Query("SELECT * FROM calculator_preset ORDER BY created_at DESC")
@@ -125,8 +155,14 @@ interface LogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCalculatorPreset(preset: CalculatorPresetEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCalculatorPresets(presets: List<CalculatorPresetEntity>)
+
     @Query("DELETE FROM calculator_preset WHERE id = :id")
     suspend fun deleteCalculatorPreset(id: String)
+
+    @Query("DELETE FROM calculator_preset")
+    suspend fun deleteAllCalculatorPresets()
 
     // Sync queries for backup export
     @Query("SELECT * FROM dose_log ORDER BY scheduled_time DESC")

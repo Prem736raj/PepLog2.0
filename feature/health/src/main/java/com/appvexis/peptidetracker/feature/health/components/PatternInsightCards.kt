@@ -71,13 +71,21 @@ fun PatternInsightCards(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Detected Patterns",
+                text = "Observed Associations",
                 fontFamily = OutfitFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 color = PepLogTheme.colors.textPrimary
             )
         }
+
+        Text(
+            text = "These comparisons show signals in your data; they do not prove that a dose caused a health change.",
+            fontSize = 12.sp,
+            color = PepLogTheme.colors.textSecondary,
+            lineHeight = 16.sp,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
 
         patterns.forEachIndexed { index, pattern ->
             var visible by remember { mutableStateOf(false) }
@@ -214,7 +222,7 @@ private fun PatternCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Confidence",
+                    text = "Signal strength",
                     fontSize = 10.sp,
                     color = PepLogTheme.colors.textSecondary.copy(alpha = 0.7f),
                     fontFamily = OutfitFontFamily

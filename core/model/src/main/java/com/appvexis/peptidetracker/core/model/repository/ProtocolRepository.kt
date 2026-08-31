@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface ProtocolRepository {
     fun getAllProtocols(): Flow<List<Protocol>>
+    fun getAllCompounds(): Flow<List<ProtocolCompound>>
     fun getActiveProtocols(): Flow<List<ProtocolWithCompounds>>
     fun getProtocolById(id: String): Flow<ProtocolWithCompounds?>
     suspend fun insertProtocol(protocol: Protocol)

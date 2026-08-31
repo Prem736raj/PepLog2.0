@@ -170,7 +170,7 @@ private fun OnboardingWelcomePage() {
     OnboardingPageLayout(
         imageResId = R.drawable.ic_onboarding_welcome,
         title = "Track with Precision",
-        subtitle = "Experience Android's most advanced peptide tracking system. Log protocols, visualize half-life elimination, and monitor health markers in a single, secure environment."
+        subtitle = "Log protocols, visualize dose decay, and review health markers in one local-first app."
     )
 }
 
@@ -272,8 +272,8 @@ private fun OnboardingSafetyPage() {
 private fun OnboardingTrialPage() {
     OnboardingPageLayout(
         imageResId = R.drawable.ic_onboarding_trial,
-        title = "7-Day Free Trial",
-        subtitle = "Start your free trial — every feature unlocked for 7 days. AI-powered stack analysis, biomarker correlations, PDF reports, and a fully offline-first database. No ads, ever. Cancel anytime."
+        title = "Start with a clear plan",
+        subtitle = "Track protocols, doses, inventory, health trends, and reference information in one offline-first workspace. Any trial offer, price, and renewal terms are shown by Google Play before purchase."
     )
 }
 

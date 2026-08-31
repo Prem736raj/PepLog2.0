@@ -16,6 +16,7 @@ import com.appvexis.peptidetracker.core.model.repository.ProtocolRepository
 import com.appvexis.peptidetracker.feature.dashboard.model.ActiveProtocolUiModel
 import com.appvexis.peptidetracker.feature.dashboard.model.DashboardUiState
 import com.appvexis.peptidetracker.feature.dashboard.model.NextDoseInfo
+import com.appvexis.peptidetracker.feature.dashboard.model.LoggableCompoundUiModel
 import com.appvexis.peptidetracker.feature.dashboard.model.StreakInfo
 import com.appvexis.peptidetracker.feature.dashboard.model.TodayDoseUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -51,8 +54,11 @@ class DashboardViewModel @Inject constructor(
     val allPeptides: StateFlow<List<Peptide>> = peptideRepository.getAllPeptides()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    private val dashboardLogStart = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(365)
+    private val dashboardLogEnd = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(365)
+
     val uiState: StateFlow<DashboardUiState> = combine(
-        logRepository.getDoseLogs(0, Long.MAX_VALUE),
+        logRepository.getDoseLogs(dashboardLogStart, dashboardLogEnd),
         protocolRepository.getActiveProtocols(),
         peptideRepository.getAllPeptides(),
         inventoryRepository.getAllInventoryItems(),
@@ -124,6 +130,19 @@ class DashboardViewModel @Inject constructor(
             )
         }
 
+        val availableCompounds = activeProtocols
+            .flatMap { it.compounds }
+            .filter { it.isActive }
+            .distinctBy { it.id }
+            .map { compound ->
+                LoggableCompoundUiModel(
+                    id = compound.id,
+                    name = peptideMap[compound.peptideId]?.name ?: compound.peptideId,
+                    doseAmount = compound.doseAmount,
+                    doseUnit = compound.doseUnit
+                )
+            }
+
         // 3. Streak Calculation
         val streakInfo = calculateStreak(allLogs, now)
 
@@ -146,6 +165,7 @@ class DashboardViewModel @Inject constructor(
             takenTodayDoses = takenToday,
             todayAdherencePercent = adherencePercent,
             activeProtocols = activeProtocolsUi,
+            availableCompounds = availableCompounds,
             streakInfo = streakInfo,
             nextDose = nextDose,
             totalVialsInStock = totalVials,
@@ -165,20 +185,26 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun quickLogDose(compoundName: String, amount: Double, unit: DoseUnit, notes: String?) {
+    fun quickLogDose(compoundId: String, amount: Double, unit: DoseUnit, notes: String?) {
         viewModelScope.launch {
+            if (!amount.isFinite() || amount <= 0.0 || amount > MAX_DOSE_AMOUNT) return@launch
+            val compound = (uiState.value as? DashboardUiState.Success)
+                ?.availableCompounds
+                ?.firstOrNull { it.id == compoundId }
+            if (compound == null) return@launch
+            val now = System.currentTimeMillis()
             val log = DoseLog(
                 id = UUID.randomUUID().toString(),
-                protocolCompoundId = compoundName,
-                scheduledTime = System.currentTimeMillis(),
-                actualTime = System.currentTimeMillis(),
+                protocolCompoundId = compound.id,
+                scheduledTime = now,
+                actualTime = now,
                 doseAmount = amount,
                 doseUnit = unit,
                 status = DoseStatus.TAKEN,
                 injectionSite = null,
                 injectionSide = null,
                 notes = notes,
-                createdAt = System.currentTimeMillis()
+                createdAt = now
             )
             logRepository.insertDoseLog(log)
             hideQuickLogDialog()
@@ -210,36 +236,55 @@ class DashboardViewModel @Inject constructor(
         }
 
         // Group taken logs by day
-        val dayTimestamps = takenLogs.map { getStartOfDay(it.actualTime ?: it.scheduledTime) }
+        val zoneId = java.time.ZoneId.systemDefault()
+        val takenDays = takenLogs.map {
+            Instant.ofEpochMilli(it.actualTime ?: it.scheduledTime).atZone(zoneId).toLocalDate()
+        }
             .distinct()
-            .sortedDescending()
+            .sorted()
 
-        val todayStart = getStartOfDay(now)
-        val yesterdayStart = todayStart - TimeUnit.DAYS.toMillis(1)
+        val today = Instant.ofEpochMilli(now).atZone(zoneId).toLocalDate()
+        val yesterday = today.minusDays(1)
 
         var currentStreak = 0
-        var checkDay = if (dayTimestamps.contains(todayStart)) todayStart else if (dayTimestamps.contains(yesterdayStart)) yesterdayStart else null
+        val checkDay = when {
+            takenDays.contains(today) -> today
+            takenDays.contains(yesterday) -> yesterday
+            else -> null
+        }
 
         if (checkDay != null) {
-            var expectedDay = checkDay
-            for (day in dayTimestamps) {
+            var expectedDay: LocalDate = checkDay
+            for (day in takenDays.asReversed()) {
                 if (day == expectedDay) {
                     currentStreak++
-                    expectedDay -= TimeUnit.DAYS.toMillis(1)
-                } else if (day < expectedDay) {
+                    expectedDay = expectedDay.minusDays(1)
+                } else if (day.isBefore(expectedDay)) {
                     break
                 }
             }
         }
 
+        var bestStreak = 0
+        var runningStreak = 0
+        var previousDay: LocalDate? = null
+        for (day in takenDays) {
+            runningStreak = if (previousDay?.plusDays(1) == day) runningStreak + 1 else 1
+            bestStreak = maxOf(bestStreak, runningStreak)
+            previousDay = day
+        }
+
         // Total Adherence Calculation
-        val totalScheduled = logs.size
+        // Future generated rows are not opportunities yet and must not lower adherence.
+        val totalScheduled = logs.count {
+            it.status != DoseStatus.SKIPPED && it.scheduledTime <= now
+        }
         val totalTaken = takenLogs.size
         val adherence = if (totalScheduled > 0) (totalTaken * 100) / totalScheduled else 100
 
         return StreakInfo(
             currentStreakDays = currentStreak,
-            bestStreakDays = maxOf(currentStreak, if (currentStreak > 0) currentStreak + 3 else 0),
+            bestStreakDays = bestStreak,
             totalDosesLogged = totalTaken,
             overallAdherencePercent = adherence.coerceIn(0, 100)
         )
@@ -307,5 +352,9 @@ class DashboardViewModel @Inject constructor(
             set(Calendar.MILLISECOND, 999)
         }
         return calendar.timeInMillis
+    }
+
+    companion object {
+        private const val MAX_DOSE_AMOUNT = 1_000_000.0
     }
 }

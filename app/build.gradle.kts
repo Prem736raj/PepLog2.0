@@ -16,6 +16,15 @@ val keystoreProperties = Properties().apply {
         keystorePropertiesFile.inputStream().use { load(it) }
     }
 }
+val signingPropertyNames = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
+val releaseStoreFile = keystoreProperties.getProperty("storeFile").orEmpty().trim()
+val releaseSigningConfigured = keystorePropertiesFile.isFile &&
+    signingPropertyNames.all { !keystoreProperties.getProperty(it).isNullOrBlank() } &&
+    releaseStoreFile.isNotBlank() && rootProject.file(releaseStoreFile).isFile
+val cloudProjectNumber = keystoreProperties.getProperty("CLOUD_PROJECT_NUMBER")
+    ?.trim()
+    ?.toLongOrNull()
+    ?: 0L
 
 android {
     namespace = "com.appvexis.peptidetracker"
@@ -24,9 +33,9 @@ android {
     defaultConfig {
         applicationId = "com.appvexis.peptidetracker"
         minSdk = 28
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        targetSdk = 36
+        versionCode = 2
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -39,14 +48,14 @@ android {
         buildConfigField(
             "long",
             "CLOUD_PROJECT_NUMBER",
-            keystoreProperties.getProperty("CLOUD_PROJECT_NUMBER", "0") + "L"
+            "${cloudProjectNumber}L"
         )
     }
 
     signingConfigs {
-        if (keystorePropertiesFile.exists()) {
+        if (releaseSigningConfigured) {
             create("release") {
-                storeFile = file(keystoreProperties.getProperty("storeFile", ""))
+                storeFile = rootProject.file(releaseStoreFile)
                 storePassword = keystoreProperties.getProperty("storePassword", "")
                 keyAlias = keystoreProperties.getProperty("keyAlias", "")
                 keyPassword = keystoreProperties.getProperty("keyPassword", "")
@@ -65,10 +74,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = if (keystorePropertiesFile.exists()) {
+            signingConfig = if (releaseSigningConfigured) {
                 signingConfigs.getByName("release")
             } else {
-                signingConfigs.getByName("debug") // Fallback for development
+                null
             }
         }
     }
@@ -98,6 +107,18 @@ android {
             excludes += "META-INF/NOTICE.txt"
             excludes += "META-INF/notice.txt"
             excludes += "META-INF/INDEX.LIST"
+        }
+    }
+}
+
+if (!releaseSigningConfigured) {
+    logger.warn("PepLog release signing is not configured; release packaging is intentionally blocked until keystore.properties is supplied.")
+}
+
+tasks.matching { it.name == "assembleRelease" || it.name == "bundleRelease" }.configureEach {
+    doFirst {
+        if (!releaseSigningConfigured) {
+            throw GradleException("Release signing is not configured. Add the ignored keystore.properties file with a real release keystore before building a Play artifact.")
         }
     }
 }

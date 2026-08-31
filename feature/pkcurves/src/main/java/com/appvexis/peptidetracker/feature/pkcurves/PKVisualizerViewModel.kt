@@ -46,12 +46,11 @@ class PKVisualizerViewModel @Inject constructor(
 
     // Dose logs: use a very wide window to capture all relevant doses
     // (30 days back + 10 half-lives of the longest compound)
-    private val nowMs = System.currentTimeMillis()
-    private val thirtyDaysAgoMs = nowMs - (30L * 24 * 60 * 60 * 1000)
+    private val thirtyDaysAgoMs = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
 
     val uiState: StateFlow<PKVisualizerUiState> = combine(
         protocolRepository.getActiveProtocols(),
-        logRepository.getDoseLogs(thirtyDaysAgoMs, nowMs),
+        logRepository.getDoseLogs(thirtyDaysAgoMs, Long.MAX_VALUE),
         peptideRepository.getAllPeptides(),
         _timeWindow,
         _visibilityMap
@@ -78,6 +77,7 @@ class PKVisualizerViewModel @Inject constructor(
             .filter { it.status == DoseStatus.TAKEN && it.actualTime != null }
             .groupBy { it.protocolCompoundId }
 
+        val nowMs = System.currentTimeMillis()
         val nowHours = nowMs.toDouble() / (1000.0 * 3600.0) // epoch hours
         val windowEndHours = nowHours
         val windowStartHours = nowHours - timeWindow.hours
@@ -88,16 +88,28 @@ class PKVisualizerViewModel @Inject constructor(
         for (protocol in protocols) {
             for (compound in protocol.compounds) {
                 val peptide = peptideMap[compound.peptideId]
-                val halfLife = peptide?.halfLifeHours ?: continue // Skip compounds with no PK data
+                val halfLife = peptide?.halfLifeHours
+                    ?.takeIf { it.isFinite() && it > 0.0 }
+                    ?: continue // Skip compounds with no valid PK data
 
                 val compoundDoseLogs = doseLogsByCompound[compound.id] ?: emptyList()
                 if (compoundDoseLogs.isEmpty()) continue
 
-                // Convert dose timestamps to epoch-hours
-                val doseTimesHours = compoundDoseLogs.mapNotNull { log ->
-                    log.actualTime?.let { it.toDouble() / (1000.0 * 3600.0) }
+                // PKEngine expects a mass amount. IU has no universal conversion
+                // to mass, so do not draw a misleading mg-equivalent curve.
+                val doseSamples = compoundDoseLogs.mapNotNull { log ->
+                    val actualTime = log.actualTime ?: return@mapNotNull null
+                    val doseAmountMg = when (log.doseUnit) {
+                        com.appvexis.peptidetracker.core.model.DoseUnit.MG -> log.doseAmount
+                        com.appvexis.peptidetracker.core.model.DoseUnit.MCG -> log.doseAmount / 1000.0
+                        com.appvexis.peptidetracker.core.model.DoseUnit.IU -> return@mapNotNull null
+                    }
+                    if (!doseAmountMg.isFinite() || doseAmountMg <= 0.0) return@mapNotNull null
+                    actualTime.toDouble() / (1000.0 * 3600.0) to doseAmountMg
                 }
-                val doseAmounts = compoundDoseLogs.map { it.doseAmount }
+                if (doseSamples.isEmpty()) continue
+                val doseTimesHours = doseSamples.map { it.first }
+                val doseAmounts = doseSamples.map { it.second }
 
                 // Compute the PK curve
                 val curvePoints = PKEngine.computeSuperpositionCurve(
@@ -121,7 +133,7 @@ class PKVisualizerViewModel @Inject constructor(
                 )
 
                 val isVisible = visibilityMap.getOrDefault(compound.id, true)
-                val doseUnitDisplay = compound.doseUnit.name.lowercase()
+                val doseUnitDisplay = "mg"
 
                 compoundCurves.add(
                     CompoundCurveData(
@@ -129,7 +141,7 @@ class PKVisualizerViewModel @Inject constructor(
                         peptideId = compound.peptideId,
                         peptideName = peptide.name,
                         halfLifeHours = halfLife,
-                        doseAmountMg = compound.doseAmount,
+                        doseAmountMg = doseAmounts.last(),
                         doseUnit = doseUnitDisplay,
                         color = PKChartColors.getColor(colorIndex),
                         points = curvePoints,

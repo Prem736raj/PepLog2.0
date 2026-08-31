@@ -84,7 +84,7 @@ fun AddEditVialDialog(
     }
     var customPeptideName by remember { mutableStateOf("") }
     var vialStrengthMg by remember { mutableStateOf(initialItem?.vialStrengthMg?.toString() ?: "10") }
-    var quantity by remember { mutableIntStateOf(initialItem?.quantity ?: 1) }
+    var quantity by remember { mutableIntStateOf((initialItem?.quantity ?: 1).coerceIn(1, 100_000)) }
     var vendor by remember { mutableStateOf(initialItem?.vendor ?: "") }
     var batchNumber by remember { mutableStateOf(initialItem?.batchNumber ?: "") }
     var storageLocation by remember { mutableStateOf(initialItem?.storageLocation ?: "Fridge (2-8°C)") }
@@ -294,7 +294,7 @@ fun AddEditVialDialog(
                     IconButton(
                         onClick = { if (quantity > 1) quantity-- },
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(48.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(colors.surfaceHigh)
                     ) {
@@ -310,9 +310,9 @@ fun AddEditVialDialog(
                     )
 
                     IconButton(
-                        onClick = { quantity++ },
+                        onClick = { if (quantity < 100_000) quantity++ },
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(48.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(colors.surfaceHigh)
                     ) {
@@ -417,12 +417,17 @@ fun AddEditVialDialog(
                         modifier = Modifier.weight(1f)
                     )
 
-                    val isValid = selectedPeptideId.isNotBlank() && (vialStrengthMg.toDoubleOrNull() ?: 0.0) > 0.0
+                    val parsedStrength = vialStrengthMg.toDoubleOrNull()
+                    val isValid = selectedPeptideId.isNotBlank() &&
+                            parsedStrength != null &&
+                            parsedStrength.isFinite() &&
+                            parsedStrength > 0.0 &&
+                            quantity > 0
 
                     PepLogButton(
                         text = if (isEdit) "Update Vial" else "Save to Stock",
                         onClick = {
-                            val strength = vialStrengthMg.toDoubleOrNull() ?: 10.0
+                            val strength = parsedStrength ?: return@PepLogButton
                             val newItem = initialItem?.copy(
                                 peptideId = selectedPeptideId,
                                 vialStrengthMg = strength,

@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Vaccines
 import androidx.compose.material.icons.automirrored.filled.MenuBook
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -69,7 +68,7 @@ fun MoreScreen(
         ),
         MoreOption(
             title = "Peptide Encyclopedia",
-            description = "Detailed reference guide for 100+ peptides, dosing ranges, and safety reports.",
+            description = "Reference information for 100+ compounds, research status, and caution notes.",
             icon = Icons.AutoMirrored.Filled.MenuBook,
             onClick = onNavigateToEncyclopedia
         ),
@@ -99,31 +98,25 @@ fun MoreScreen(
         ),
         MoreOption(
             title = "Health Connect Sync",
-            description = "Sync weight, sleep, heart rate, blood pressure, and steps. View correlation overlay charts and AI pattern detections.",
+            description = "Sync weight, sleep, heart rate, blood pressure, and steps for local trend views.",
             icon = Icons.Default.Favorite,
             onClick = onNavigateToHealthConnect
         ),
         MoreOption(
-            title = "App Settings",
-            description = "Configure theme, language, automated backups, and Google account linking.",
-            icon = Icons.Default.Settings,
-            onClick = { /* Settings wired in future phase */ }
-        ),
-        MoreOption(
             title = "Backup & Export",
-            description = "Google Drive cloud backup, restore data, and export dose logs, biomarkers, and protocols as CSV or JSON.",
+            description = "Export dose logs, biomarkers, protocols, and inventory as CSV or JSON. Google Drive backup requires account setup.",
             icon = Icons.Default.CloudUpload,
             onClick = onNavigateToBackupSettings
         ),
         MoreOption(
             title = "Go Premium",
-            description = "Unlock unlimited protocols, advanced analytics, PK curves, Health Connect sync, cloud backup, and more.",
+            description = "Unlock unlimited protocols, advanced analytics, PK curves, Health Connect sync, and cloud backup when Drive is configured.",
             icon = Icons.Default.Star,
             onClick = onNavigateToPaywall
         ),
         MoreOption(
             title = "Privacy Policy",
-            description = "How we handle your data — all stored locally with no external servers.",
+            description = "How local storage, optional Google Drive backup, and sharing handle your data.",
             icon = Icons.Default.PrivacyTip,
             onClick = onNavigateToPrivacyPolicy
         ),

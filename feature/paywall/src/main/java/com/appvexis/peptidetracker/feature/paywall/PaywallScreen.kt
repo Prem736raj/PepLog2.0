@@ -46,6 +46,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -82,10 +83,15 @@ private val PremiumTeal = Color(0xFF22D3EE)
 @Composable
 fun PaywallScreen(
     onBackClick: () -> Unit,
+    onNavigateToPrivacyPolicy: () -> Unit = {},
+    onNavigateToTermsOfService: () -> Unit = {},
     viewModel: PaywallViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val yearlyPlan = uiState.plans.firstOrNull { it.plan == SubscriptionPlan.YEARLY }
+    val weeklyPlan = uiState.plans.firstOrNull { it.plan == SubscriptionPlan.WEEKLY }
+    val monthlyPlan = uiState.plans.firstOrNull { it.plan == SubscriptionPlan.MONTHLY }
 
     // Animate entrance
     val contentAlpha = remember { Animatable(0f) }
@@ -137,13 +143,14 @@ fun PaywallScreen(
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "Restore Purchase",
-                    fontFamily = OutfitFontFamily,
-                    fontSize = 13.sp,
-                    color = PremiumTeal,
-                    modifier = Modifier.clickable { /* Restore */ }
-                )
+                TextButton(onClick = viewModel::restorePurchases) {
+                    Text(
+                        text = "Restore purchase",
+                        fontFamily = OutfitFontFamily,
+                        fontSize = 13.sp,
+                        color = PremiumTeal
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -203,6 +210,11 @@ fun PaywallScreen(
             // ═══════════════════════════════════════════
             PrimaryTrialButton(
                 isLoading = uiState.isLoading,
+                label = if (yearlyPlan?.price == "Unavailable") {
+                    "Retry loading yearly plan"
+                } else {
+                    "Continue with yearly plan"
+                },
                 onClick = {
                     val activity = context as? Activity
                     if (activity != null) {
@@ -215,7 +227,11 @@ fun PaywallScreen(
 
             // Subtitle under CTA
             Text(
-                text = "Then ₹699/year. Cancel anytime.",
+                text = buildString {
+                    append("Yearly: ${yearlyPlan?.price ?: "Unavailable"}")
+                    if (yearlyPlan?.hasTrial == true) append(" • Trial offer available")
+                    append(". Renewal terms are shown by Google Play.")
+                },
                 fontFamily = OutfitFontFamily,
                 fontSize = 13.sp,
                 color = PepLogTheme.colors.textSecondary,
@@ -229,6 +245,8 @@ fun PaywallScreen(
             // ═══════════════════════════════════════════
             SecondaryPlanRow(
                 selectedPlan = uiState.selectedPlan,
+                weeklyPrice = weeklyPlan?.price ?: "Unavailable",
+                monthlyPrice = monthlyPlan?.price ?: "Unavailable",
                 onPlanSelect = { plan ->
                     viewModel.selectPlan(plan)
                 },
@@ -274,23 +292,27 @@ fun PaywallScreen(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = "Terms of Service",
-                    fontFamily = OutfitFontFamily,
-                    fontSize = 11.sp,
-                    color = PremiumTeal.copy(alpha = 0.7f)
-                )
+                TextButton(onClick = onNavigateToTermsOfService) {
+                    Text(
+                        text = "Terms of Service",
+                        fontFamily = OutfitFontFamily,
+                        fontSize = 11.sp,
+                        color = PremiumTeal.copy(alpha = 0.7f)
+                    )
+                }
                 Text(
                     text = "  •  ",
                     fontSize = 11.sp,
                     color = PepLogTheme.colors.textSecondary.copy(alpha = 0.4f)
                 )
-                Text(
-                    text = "Privacy Policy",
-                    fontFamily = OutfitFontFamily,
-                    fontSize = 11.sp,
-                    color = PremiumTeal.copy(alpha = 0.7f)
-                )
+                TextButton(onClick = onNavigateToPrivacyPolicy) {
+                    Text(
+                        text = "Privacy Policy",
+                        fontFamily = OutfitFontFamily,
+                        fontSize = 11.sp,
+                        color = PremiumTeal.copy(alpha = 0.7f)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -305,6 +327,7 @@ fun PaywallScreen(
 @Composable
 private fun PrimaryTrialButton(
     isLoading: Boolean,
+    label: String,
     onClick: () -> Unit
 ) {
     val buttonScale by animateFloatAsState(
@@ -357,7 +380,7 @@ private fun PrimaryTrialButton(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Start Your 3-Day Free Trial",
+                        text = label,
                         fontFamily = OutfitFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
@@ -376,6 +399,8 @@ private fun PrimaryTrialButton(
 @Composable
 private fun SecondaryPlanRow(
     selectedPlan: SubscriptionPlan,
+    weeklyPrice: String,
+    monthlyPrice: String,
     onPlanSelect: (SubscriptionPlan) -> Unit,
     onPurchase: () -> Unit
 ) {
@@ -398,7 +423,7 @@ private fun SecondaryPlanRow(
         ) {
             SecondaryPlanChip(
                 title = "Weekly",
-                price = "₹69/week",
+                price = weeklyPrice,
                 isSelected = selectedPlan == SubscriptionPlan.WEEKLY,
                 onClick = {
                     onPlanSelect(SubscriptionPlan.WEEKLY)
@@ -408,7 +433,7 @@ private fun SecondaryPlanRow(
             )
             SecondaryPlanChip(
                 title = "Monthly",
-                price = "₹139/month",
+                price = monthlyPrice,
                 isSelected = selectedPlan == SubscriptionPlan.MONTHLY,
                 onClick = {
                     onPlanSelect(SubscriptionPlan.MONTHLY)
@@ -473,7 +498,7 @@ private fun PremiumFeaturesList() {
         FeatureItem(Icons.Default.Analytics, "Advanced Analytics", "Deep insight reports, adherence trends, and biomarker correlations"),
         FeatureItem(Icons.Default.Timeline, "PK Half-Life Curves", "Animated pharmacokinetic decay visualizer with multi-compound overlay"),
         FeatureItem(Icons.Default.Favorite, "Health Connect Sync", "Auto-sync weight, sleep, heart rate, and steps from your wearable"),
-        FeatureItem(Icons.Default.Backup, "Cloud Backup", "Google Drive backup & restore with full data export"),
+        FeatureItem(Icons.Default.Backup, "Cloud Backup", "Google Drive backup and restore when account connection is configured"),
         FeatureItem(Icons.Default.Shield, "Priority Support", "Direct access to the development team for feedback and issues")
     )
 

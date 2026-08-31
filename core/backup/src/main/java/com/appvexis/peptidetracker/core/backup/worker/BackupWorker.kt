@@ -24,6 +24,11 @@ class BackupWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Timber.d("BackupWorker: starting scheduled backup")
 
+        if (!backupManager.isAutoBackupEnabledSync()) {
+            Timber.d("BackupWorker: automatic backup is disabled, skipping")
+            return Result.success()
+        }
+
         val accountEmail = backupManager.getGoogleAccountEmailSync()
         if (accountEmail.isNullOrBlank()) {
             Timber.w("BackupWorker: no Google account linked, skipping backup")

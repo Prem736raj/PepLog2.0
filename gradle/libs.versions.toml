@@ -19,7 +19,6 @@ vico = "1.15.0"
 playBilling = "8.0.0"
 healthConnect = "1.1.0-alpha07"
 playIntegrity = "1.4.0"
-sqlcipher = "4.5.4"
 sqlite = "2.4.0"
 timber = "5.0.1"
 work = "2.9.1"
@@ -98,7 +97,6 @@ androidx-health-connect-client = { group = "androidx.health.connect", name = "co
 
 # Security & Encryption
 play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
-sqlcipher = { group = "net.zetetic", name = "android-database-sqlcipher", version.ref = "sqlcipher" }
 androidx-sqlite-ktx = { group = "androidx.sqlite", name = "sqlite-ktx", version.ref = "sqlite" }
 
 # Logging

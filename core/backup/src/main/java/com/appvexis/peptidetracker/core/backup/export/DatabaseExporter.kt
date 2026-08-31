@@ -67,6 +67,7 @@ class DatabaseExporter @Inject constructor(
                 timeOfDay = entity.timeOfDay,
                 adminRoute = entity.adminRoute.name,
                 titrationEnabled = entity.titrationEnabled,
+                titrationSchedule = entity.titrationSchedule,
                 startDate = entity.startDate,
                 endDate = entity.endDate,
                 isActive = entity.isActive,
@@ -213,6 +214,11 @@ class DatabaseExporter @Inject constructor(
      * Deserializes a JSON string to [BackupData].
      */
     fun fromJson(jsonString: String): BackupData {
+        require(jsonString.length <= MAX_BACKUP_JSON_CHARS) { "Backup file is too large" }
         return json.decodeFromString(jsonString)
+    }
+
+    private companion object {
+        const val MAX_BACKUP_JSON_CHARS = 10_000_000
     }
 }

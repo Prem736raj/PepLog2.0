@@ -58,6 +58,7 @@ dependencies {
 
     // Room (needed to access PepLogDatabase)
     implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
 
     // Hilt
     implementation(libs.hilt.android)

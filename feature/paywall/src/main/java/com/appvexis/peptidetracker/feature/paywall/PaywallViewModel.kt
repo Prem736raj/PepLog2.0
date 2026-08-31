@@ -4,9 +4,11 @@ import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appvexis.peptidetracker.core.billing.BillingConfig
+import com.appvexis.peptidetracker.core.billing.BillingProductDisplay
 import com.appvexis.peptidetracker.core.billing.SubscriptionManager
 import com.appvexis.peptidetracker.feature.paywall.model.PaywallUiState
 import com.appvexis.peptidetracker.feature.paywall.model.SubscriptionPlan
+import com.appvexis.peptidetracker.feature.paywall.model.defaultPlans
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -48,6 +50,12 @@ class PaywallViewModel @Inject constructor(
                     _uiState.update { it.copy(error = error) }
                 }
             }
+
+            launch {
+                subscriptionManager.products.collect { products ->
+                    _uiState.update { it.copy(plans = products.toPlanDisplays()) }
+                }
+            }
         }
     }
 
@@ -64,14 +72,39 @@ class PaywallViewModel @Inject constructor(
         subscriptionManager.launchPurchase(activity, productId)
     }
 
-    /**
-     * Launches the primary CTA — yearly plan with 3-day trial.
-     */
+    /** Launches the primary CTA for the yearly plan; Play determines any offer terms. */
     fun launchTrialPurchase(activity: Activity) {
         subscriptionManager.launchPurchase(activity, BillingConfig.PRODUCT_ID_YEARLY)
+    }
+
+    fun restorePurchases() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val verified = subscriptionManager.refreshSubscriptionState()
+            if (!verified) {
+                _uiState.update { it.copy(error = "Google Play could not verify purchases. Check your connection and try again.") }
+            } else if (!subscriptionManager.isPremium.value) {
+                _uiState.update { it.copy(error = "No active PepLog subscription was found.") }
+            }
+            _uiState.update { it.copy(isLoading = false) }
+        }
     }
 
     fun clearError() {
         subscriptionManager.clearError()
     }
+}
+
+private fun List<BillingProductDisplay>.toPlanDisplays() = defaultPlans().map { plan ->
+    val productId = when (plan.plan) {
+        SubscriptionPlan.YEARLY -> BillingConfig.PRODUCT_ID_YEARLY
+        SubscriptionPlan.MONTHLY -> BillingConfig.PRODUCT_ID_MONTHLY
+        SubscriptionPlan.WEEKLY -> BillingConfig.PRODUCT_ID_WEEKLY
+    }
+    val product = firstOrNull { it.productId == productId }
+    plan.copy(
+        price = product?.priceText ?: "Unavailable",
+        hasTrial = product?.hasFreeTrial == true,
+        trialText = if (product?.hasFreeTrial == true) "Trial offer available" else null
+    )
 }

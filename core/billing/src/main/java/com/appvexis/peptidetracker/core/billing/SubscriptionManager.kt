@@ -6,7 +6,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -59,7 +58,6 @@ class SubscriptionManager @Inject constructor(
     // ---- DataStore keys ---- //
     private object Keys {
         val IS_PREMIUM = booleanPreferencesKey(BillingConfig.PREF_KEY_IS_PREMIUM)
-        val EXPIRY_MS = longPreferencesKey(BillingConfig.PREF_KEY_SUBSCRIPTION_EXPIRY)
         val PRODUCT_ID = stringPreferencesKey(BillingConfig.PREF_KEY_SUBSCRIPTION_PRODUCT)
     }
 
@@ -79,6 +77,25 @@ class SubscriptionManager @Inject constructor(
 
     private val _subscriptionProduct = MutableStateFlow<String?>(null)
     val subscriptionProduct: StateFlow<String?> = _subscriptionProduct.asStateFlow()
+
+    val products: StateFlow<List<BillingProductDisplay>> = billingClientWrapper.productDetails
+        .map { details ->
+            details.map { product ->
+                val offer = product.subscriptionOfferDetails?.firstOrNull()
+                val phases = offer?.pricingPhases?.pricingPhaseList.orEmpty()
+                val paidPhase = phases.lastOrNull { it.priceAmountMicros > 0L }
+                    ?: phases.lastOrNull()
+                val trialPhase = phases.firstOrNull { it.priceAmountMicros == 0L }
+                BillingProductDisplay(
+                    productId = product.productId,
+                    priceText = paidPhase?.let {
+                        "${it.formattedPrice}${billingPeriodSuffix(it.billingPeriod)}"
+                    } ?: "Unavailable",
+                    hasFreeTrial = trialPhase != null
+                )
+            }
+        }
+        .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -186,16 +203,17 @@ class SubscriptionManager @Inject constructor(
         when (result.responseCode) {
             BillingClient.BillingResponseCode.OK -> {
                 purchases?.forEach { purchase ->
-                    if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
+                    val productId = purchase.products.firstOrNull { it in BillingConfig.ALL_PRODUCT_IDS }
+                    if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED && productId != null) {
                         // Acknowledge if needed
-                        if (!purchase.isAcknowledged) {
-                            val acknowledged = billingClientWrapper.acknowledgePurchase(purchase.purchaseToken)
-                            if (!acknowledged) {
-                                Timber.e("Failed to acknowledge purchase: ${purchase.orderId}")
-                            }
+                        val acknowledged = purchase.isAcknowledged ||
+                            billingClientWrapper.acknowledgePurchase(purchase.purchaseToken)
+                        if (!acknowledged) {
+                            Timber.e("Failed to acknowledge purchase")
+                            _purchaseError.value = "Purchase is awaiting Play verification. Please try again shortly."
+                            return@forEach
                         }
                         // Update subscription state
-                        val productId = purchase.products.firstOrNull()
                         updateCachedState(isPremium = true, productId = productId)
                     }
                 }
@@ -217,23 +235,33 @@ class SubscriptionManager @Inject constructor(
      * Refreshes subscription state from Play's `queryPurchasesAsync()`.
      * This is the authoritative check — DataStore cache is only for offline fallback.
      */
-    suspend fun refreshSubscriptionState() {
+    suspend fun refreshSubscriptionState(): Boolean {
         try {
-            val activePurchases = billingClientWrapper.queryPurchases()
-            val hasActive = activePurchases.any { purchase ->
-                purchase.purchaseState == Purchase.PurchaseState.PURCHASED &&
-                        purchase.products.any { it in BillingConfig.ALL_PRODUCT_IDS }
+            val activePurchases = billingClientWrapper.queryPurchases().getOrElse { error ->
+                Timber.e(error, "Purchase state could not be verified")
+                return false
             }
+            var activeProduct: String? = null
+            activePurchases
+                .filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }
+                .forEach { purchase ->
+                    val productId = purchase.products.firstOrNull { it in BillingConfig.ALL_PRODUCT_IDS }
+                    if (productId != null) {
+                        val acknowledged = purchase.isAcknowledged ||
+                            billingClientWrapper.acknowledgePurchase(purchase.purchaseToken)
+                        if (acknowledged && activeProduct == null) {
+                            activeProduct = productId
+                        }
+                    }
+                }
 
-            val activeProduct = activePurchases
-                .firstOrNull { it.purchaseState == Purchase.PurchaseState.PURCHASED }
-                ?.products?.firstOrNull()
-
-            updateCachedState(isPremium = hasActive, productId = activeProduct)
-            Timber.d("Subscription state refreshed: isPremium=$hasActive, product=$activeProduct")
+            updateCachedState(isPremium = activeProduct != null, productId = activeProduct)
+            Timber.d("Subscription state refreshed: isPremium=${activeProduct != null}")
+            return true
         } catch (e: Exception) {
             Timber.e(e, "Failed to refresh subscription state")
             // Fall back to cached state — don't clear it
+            return false
         }
     }
 
@@ -245,7 +273,6 @@ class SubscriptionManager @Inject constructor(
             if (productId != null) {
                 prefs[Keys.PRODUCT_ID] = productId
             }
-            prefs[Keys.EXPIRY_MS] = System.currentTimeMillis()
         }
         _subscriptionProduct.value = productId
     }
@@ -268,7 +295,9 @@ class SubscriptionManager @Inject constructor(
             PremiumFeature.PK_VISUALIZER -> isPremium.value
             PremiumFeature.HEALTH_CONNECT -> isPremium.value
             PremiumFeature.CLOUD_BACKUP -> isPremium.value
-            PremiumFeature.EXPORT_DATA -> isPremium.value
+            // Local export is always available so users can retrieve their data
+            // without paying; cloud backup remains Premium-only.
+            PremiumFeature.EXPORT_DATA -> true
             // Free tier features
             PremiumFeature.BASIC_LOGGING -> true
             PremiumFeature.SINGLE_PROTOCOL -> true
@@ -276,6 +305,20 @@ class SubscriptionManager @Inject constructor(
             PremiumFeature.ENCYCLOPEDIA -> true
         }
     }
+}
+
+data class BillingProductDisplay(
+    val productId: String,
+    val priceText: String,
+    val hasFreeTrial: Boolean
+)
+
+private fun billingPeriodSuffix(period: String): String = when (period) {
+    "P1D" -> "/day"
+    "P1W" -> "/week"
+    "P1M" -> "/month"
+    "P1Y" -> "/year"
+    else -> ""
 }
 
 /**

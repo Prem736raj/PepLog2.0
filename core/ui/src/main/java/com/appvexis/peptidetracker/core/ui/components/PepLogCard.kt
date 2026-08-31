@@ -67,6 +67,7 @@ fun PepLogCard(
                 it.clickable(
                     interactionSource = interactionSource,
                     indication = null,
+                    role = androidx.compose.ui.semantics.Role.Button,
                     onClick = onClick
                 )
             } else it

@@ -137,7 +137,11 @@ fun DoseHistoryScreen(
                             modifier = Modifier.fillMaxSize()
                         ) {
                             items(state.logs, key = { it.id }) { log ->
-                                HistoryDoseItem(log = log)
+                                HistoryDoseItem(
+                                    log = log,
+                                    compoundName = state.compoundNames[log.protocolCompoundId]
+                                        ?: "Unknown compound"
+                                )
                             }
                         }
                     }
@@ -148,7 +152,7 @@ fun DoseHistoryScreen(
 }
 
 @Composable
-private fun HistoryDoseItem(log: DoseLog) {
+private fun HistoryDoseItem(log: DoseLog, compoundName: String) {
     val dateFormat = SimpleDateFormat("MMM d, yyyy • h:mm a", Locale.getDefault())
     val dateStr = dateFormat.format(Date(log.actualTime ?: log.scheduledTime))
 
@@ -183,7 +187,7 @@ private fun HistoryDoseItem(log: DoseLog) {
             
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Compound: ${log.protocolCompoundId.take(8)}", // Should map to peptide id
+                    text = compoundName,
                     fontFamily = OutfitFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,

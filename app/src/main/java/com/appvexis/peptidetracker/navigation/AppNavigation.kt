@@ -5,14 +5,23 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -70,6 +79,7 @@ import com.appvexis.peptidetracker.core.model.PhotoComparisonRoute
 import com.appvexis.peptidetracker.core.model.PKVisualizerRoute
 import com.appvexis.peptidetracker.core.model.HealthConnectRoute
 import com.appvexis.peptidetracker.core.model.PaywallRoute
+import com.appvexis.peptidetracker.core.ui.components.PepLogTab
 import com.appvexis.peptidetracker.core.model.BackupSettingsRoute
 import com.appvexis.peptidetracker.feature.progress.ProgressScreen
 import com.appvexis.peptidetracker.feature.progress.PhotoComparisonScreen
@@ -107,49 +117,33 @@ private fun AppNavigationContent(
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
+    val subscriptionViewModel: SubscriptionAccessViewModel = hiltViewModel()
+    val isPremium by subscriptionViewModel.isPremium.collectAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     
     // Extract current route from backstack
     val currentDestination = navBackStackEntry?.destination
     val currentRoute = currentDestination?.route
 
-    // Check if we should show top/bottom bars (hide on sub-screens)
-    val showBars = currentRoute != null && 
-            !currentRoute.contains("OnboardingRoute") && 
-            !currentRoute.contains("SplashRoute") &&
-            !currentRoute.contains("PeptideDetailRoute") &&
-            !currentRoute.contains("CalculatorRoute") &&
-            !currentRoute.contains("ProtocolDetailRoute") &&
-            !currentRoute.contains("CreateProtocolRoute") &&
-            !currentRoute.contains("AddCompoundRoute") &&
-            !currentRoute.contains("InjectionTrackerRoute") &&
-            !currentRoute.contains("InventoryRoute") &&
-            !currentRoute.contains("ProgressRoute") &&
-            !currentRoute.contains("PhotoComparisonRoute") &&
-            !currentRoute.contains("PKVisualizerRoute") &&
-            !currentRoute.contains("HealthConnectRoute") &&
-            !currentRoute.contains("BackupSettingsRoute") &&
-            !currentRoute.contains("LegalRoute")
-
-    // Dynamic TopBar Title based on destination route
-    val topBarTitle = when {
-        currentRoute?.contains("DashboardRoute") == true -> "PepLog Dashboard"
-        currentRoute?.contains("ProtocolsRoute") == true -> "My Protocols"
-        currentRoute?.contains("InsightsRoute") == true -> "Analytics Insights"
-        currentRoute?.contains("MoreRoute") == true -> "More Options"
-        currentRoute?.contains("EncyclopediaRoute") == true -> "Peptide Encyclopedia"
-        else -> "PepLog"
-    }
-
-    val showTopBar = showBars && currentRoute?.contains("DashboardRoute") != true
+    // Each root tab owns its content header. The shell only owns the bottom tabs;
+    // the encyclopedia keeps a shell back/title bar because it is opened from More.
+    val isRootTab = currentRoute?.let {
+        it.contains("DashboardRoute") ||
+            it.contains("ProtocolsRoute") ||
+            it.contains("InsightsRoute") ||
+            it.contains("MoreRoute")
+    } == true
+    val isEncyclopedia = currentRoute?.contains("EncyclopediaRoute") == true
+    val showBottomBar = isRootTab
+    val showTopBar = isEncyclopedia
+    val showBars = showBottomBar || showTopBar
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             if (showTopBar) {
-                val isEncyclopedia = currentRoute?.contains("EncyclopediaRoute") == true
                 PepLogTopBar(
-                    title = topBarTitle,
+                    title = "Peptide Encyclopedia",
                     isCenterAligned = true,
                     navigationIcon = if (isEncyclopedia) {
                         {
@@ -166,11 +160,16 @@ private fun AppNavigationContent(
             }
         },
         bottomBar = {
-            if (showBars) {
+            if (showBottomBar) {
                 AnimatedBottomBar(
                     currentRoute = currentRoute,
                     onTabSelected = { tab ->
-                        navController.navigate(tab.route) {
+                        val destination = if (tab == PepLogTab.INSIGHTS && !isPremium) {
+                            PaywallRoute
+                        } else {
+                            tab.route
+                        }
+                        navController.navigate(destination) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -283,7 +282,14 @@ private fun AppNavigationContent(
                     navDeepLink { uriPattern = "peplog://insights" }
                 )
             ) {
-                InsightsScreen()
+                if (isPremium) {
+                    InsightsScreen()
+                } else {
+                    PremiumRequiredScreen(
+                        featureName = "Advanced insights",
+                        onUnlock = { navController.navigate(PaywallRoute) }
+                    )
+                }
             }
             
             composable<MoreRoute>(
@@ -308,10 +314,18 @@ private fun AppNavigationContent(
                         navController.navigate(ProgressRoute)
                     },
                     onNavigateToPKVisualizer = {
-                        navController.navigate(PKVisualizerRoute)
+                        if (isPremium) {
+                            navController.navigate(PKVisualizerRoute)
+                        } else {
+                            navController.navigate(PaywallRoute)
+                        }
                     },
                     onNavigateToHealthConnect = {
-                        navController.navigate(HealthConnectRoute)
+                        if (isPremium) {
+                            navController.navigate(HealthConnectRoute)
+                        } else {
+                            navController.navigate(PaywallRoute)
+                        }
                     },
                     onNavigateToPaywall = {
                         navController.navigate(PaywallRoute)
@@ -391,25 +405,45 @@ private fun AppNavigationContent(
             }
 
             composable<PKVisualizerRoute> {
-                PKVisualizerScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
-                )
+                if (isPremium) {
+                    PKVisualizerScreen(
+                        onBackClick = {
+                            navController.popBackStack()
+                        }
+                    )
+                } else {
+                    PremiumRequiredScreen(
+                        featureName = "PK half-life curves",
+                        onUnlock = { navController.navigate(PaywallRoute) }
+                    )
+                }
             }
 
             composable<HealthConnectRoute> {
-                HealthConnectScreen(
-                    onBackClick = {
-                        navController.popBackStack()
-                    }
-                )
+                if (isPremium) {
+                    HealthConnectScreen(
+                        onBackClick = {
+                            navController.popBackStack()
+                        }
+                    )
+                } else {
+                    PremiumRequiredScreen(
+                        featureName = "Health Connect sync",
+                        onUnlock = { navController.navigate(PaywallRoute) }
+                    )
+                }
             }
 
             composable<PaywallRoute> {
                 PaywallScreen(
                     onBackClick = {
                         navController.popBackStack()
+                    },
+                    onNavigateToPrivacyPolicy = {
+                        navController.navigate(LegalRoute(type = "privacy"))
+                    },
+                    onNavigateToTermsOfService = {
+                        navController.navigate(LegalRoute(type = "terms"))
                     }
                 )
             }
@@ -450,6 +484,39 @@ private fun AppNavigationContent(
                         navController.popBackStack()
                     }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun PremiumRequiredScreen(
+    featureName: String,
+    onUnlock: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Premium feature",
+                fontWeight = FontWeight.Bold,
+                color = com.appvexis.peptidetracker.core.ui.theme.PepLogTheme.colors.textPrimary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "$featureName is included with PepLog Premium. Your existing dose logs remain available on the free plan.",
+                color = com.appvexis.peptidetracker.core.ui.theme.PepLogTheme.colors.textSecondary
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(onClick = onUnlock) {
+                Text("View Premium plans")
             }
         }
     }

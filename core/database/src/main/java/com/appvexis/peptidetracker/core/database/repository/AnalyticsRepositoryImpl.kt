@@ -68,6 +68,10 @@ class AnalyticsRepositoryImpl @Inject constructor(
 
         // 2. Fetch logs for calculation
         val doseLogs = logDao.getDoseLogsForProtocol(protocolId).first()
+        val analysisNow = System.currentTimeMillis()
+        // Scheduled rows are generated ahead of time. Future rows are not adherence
+        // opportunities yet and should not create empty future report days.
+        val doseLogsForAnalytics = doseLogs.filter { it.scheduledTime <= analysisNow }
         val sideEffectLogs = logDao.getSideEffectLogsForProtocol(protocolId).first()
         val biomarkerLogs = logDao.getBiomarkerLogsForProtocol(protocolId).first()
         val siteLogs = logDao.getInjectionSiteLogs().first()
@@ -82,7 +86,7 @@ class AnalyticsRepositoryImpl @Inject constructor(
 
         // 3. Find all unique local dates represented by logs
         val zoneId = ZoneId.systemDefault()
-        val allDays = (doseLogs.map { Instant.ofEpochMilli(it.scheduledTime).atZone(zoneId).toLocalDate() } +
+        val allDays = (doseLogsForAnalytics.map { Instant.ofEpochMilli(it.scheduledTime).atZone(zoneId).toLocalDate() } +
                 sideEffectLogs.map { Instant.ofEpochMilli(it.date).atZone(zoneId).toLocalDate() } +
                 biomarkerLogs.map { Instant.ofEpochMilli(it.date).atZone(zoneId).toLocalDate() } +
                 siteLogsForProtocol.map { Instant.ofEpochMilli(it.timestamp).atZone(zoneId).toLocalDate() }).toSet()
@@ -96,17 +100,20 @@ class AnalyticsRepositoryImpl @Inject constructor(
         val dailySummaries = mutableListOf<DailyAnalyticsSummaryEntity>()
 
         // 4. Calculate Daily summaries
-        for (day in allDays) {
+        for (day in allDays.sorted()) {
             val dayStartMillis = day.atStartOfDay(zoneId).toInstant().toEpochMilli()
 
-            val dosesOnDay = doseLogs.filter { Instant.ofEpochMilli(it.scheduledTime).atZone(zoneId).toLocalDate() == day }
+            val dosesOnDay = doseLogsForAnalytics.filter { Instant.ofEpochMilli(it.scheduledTime).atZone(zoneId).toLocalDate() == day }
             val sideEffectsOnDay = sideEffectLogs.filter { Instant.ofEpochMilli(it.date).atZone(zoneId).toLocalDate() == day }
             val biomarkersOnDay = biomarkerLogs.filter { Instant.ofEpochMilli(it.date).atZone(zoneId).toLocalDate() == day }
             val sitesOnDay = siteLogsForProtocol.filter { Instant.ofEpochMilli(it.timestamp).atZone(zoneId).toLocalDate() == day }
 
-            val totalDosesScheduled = dosesOnDay.size
+            val totalDosesScheduled = dosesOnDay.count { it.status != DoseStatus.SKIPPED }
             val totalDosesTaken = dosesOnDay.count { it.status == DoseStatus.TAKEN }
-            val totalDosesMissed = dosesOnDay.count { it.status == DoseStatus.MISSED }
+            val totalDosesMissed = dosesOnDay.count {
+                it.status == DoseStatus.MISSED ||
+                    (it.status == DoseStatus.PENDING && it.scheduledTime < analysisNow)
+            }
             val adherencePercentage = if (totalDosesScheduled > 0) {
                 (totalDosesTaken.toDouble() / totalDosesScheduled.toDouble()) * 100.0
             } else {
@@ -128,7 +135,12 @@ class AnalyticsRepositoryImpl @Inject constructor(
 
             val sideEffectCount = sideEffectsOnDay.count { it.type == "side_effect" }
 
-            val weightLog = biomarkersOnDay.lastOrNull { it.biomarkerName.equals("weight", ignoreCase = true) }
+            val weightLog = biomarkersOnDay
+                .filter {
+                    it.biomarkerName.equals("weight", ignoreCase = true) ||
+                        it.biomarkerName.equals("BODY_WEIGHT", ignoreCase = true)
+                }
+                .maxByOrNull { it.date }
             val weight = weightLog?.value
 
             val dailyEntity = DailyAnalyticsSummaryEntity(

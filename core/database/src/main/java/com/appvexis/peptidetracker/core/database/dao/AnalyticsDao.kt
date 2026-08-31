@@ -36,5 +36,10 @@ interface AnalyticsDao {
 
     @Query("DELETE FROM analytics_protocol_summary WHERE protocol_id = :protocolId")
     suspend fun deleteProtocolSummaryForProtocol(protocolId: String)
-}
 
+    @Query("DELETE FROM analytics_daily_summary")
+    suspend fun deleteAllDailySummaries()
+
+    @Query("DELETE FROM analytics_protocol_summary")
+    suspend fun deleteAllProtocolSummaries()
+}

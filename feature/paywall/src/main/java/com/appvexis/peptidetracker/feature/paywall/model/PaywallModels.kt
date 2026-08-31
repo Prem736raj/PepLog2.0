@@ -35,33 +35,33 @@ data class PlanDisplay(
 )
 
 /**
- * Default plan display data (used before Play Console prices load).
+ * Default plan display data used until Play returns localized prices.
  */
 fun defaultPlans(): List<PlanDisplay> = listOf(
     PlanDisplay(
         plan = SubscriptionPlan.YEARLY,
         title = "Yearly",
-        price = "₹699/year",
-        pricePerUnit = "₹13.4/week",
-        badge = "Best Value",
-        hasTrial = true,
-        trialText = "3-day free trial",
-        savings = "Save 80%"
+        price = "See price in Google Play",
+        pricePerUnit = "",
+        badge = null,
+        hasTrial = false,
+        trialText = null,
+        savings = null
     ),
     PlanDisplay(
         plan = SubscriptionPlan.MONTHLY,
         title = "Monthly",
-        price = "₹139/month",
-        pricePerUnit = "₹34.8/week",
+        price = "See price in Google Play",
+        pricePerUnit = "",
         badge = null,
         hasTrial = false,
-        savings = "Save 50%"
+        savings = null
     ),
     PlanDisplay(
         plan = SubscriptionPlan.WEEKLY,
         title = "Weekly",
-        price = "₹69/week",
-        pricePerUnit = "₹69/week",
+        price = "See price in Google Play",
+        pricePerUnit = "",
         badge = null,
         hasTrial = false,
         savings = null

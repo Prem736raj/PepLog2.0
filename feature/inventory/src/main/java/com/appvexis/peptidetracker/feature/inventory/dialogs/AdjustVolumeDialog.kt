@@ -226,7 +226,7 @@ fun AdjustVolumeDialog(
                     )
 
                     val newVol = volumeInput.toDoubleOrNull()
-                    val isValid = newVol != null && newVol >= 0.0
+                    val isValid = newVol != null && newVol.isFinite() && newVol >= 0.0
 
                     PepLogButton(
                         text = "Save Volume",

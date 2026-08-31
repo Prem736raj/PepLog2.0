@@ -134,6 +134,7 @@ fun ProtocolDetailScreen(
                             items(compounds, key = { it.id }) { compound ->
                                 CompoundItemCard(
                                     compound = compound,
+                                    peptideName = state.peptideNames[compound.peptideId] ?: "Unknown peptide",
                                     onDeleteClick = { viewModel.deleteCompound(compound.id) }
                                 )
                             }
@@ -171,6 +172,7 @@ private fun EmptyCompoundsState(modifier: Modifier = Modifier) {
 @Composable
 private fun CompoundItemCard(
     compound: ProtocolCompound,
+    peptideName: String,
     onDeleteClick: () -> Unit
 ) {
     PepLogCard(
@@ -186,7 +188,7 @@ private fun CompoundItemCard(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = compound.peptideId, // We should map this to peptide name ideally
+                    text = peptideName,
                     fontFamily = OutfitFontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,

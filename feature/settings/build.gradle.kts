@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:backup"))
     implementation(project(":core:datastore"))
+    implementation(project(":core:billing"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)

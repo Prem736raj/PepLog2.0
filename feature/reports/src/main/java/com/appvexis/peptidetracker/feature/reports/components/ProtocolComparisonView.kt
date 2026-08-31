@@ -77,7 +77,7 @@ fun ProtocolComparisonView(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Create multiple protocol stacks and log doses to analyze comparative effectiveness and adherence.",
+                            text = "Create multiple protocol stacks and log doses to compare adherence and observed trends.",
                             style = MaterialTheme.typography.bodySmall,
                             color = PepLogTheme.colors.textSecondary,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center

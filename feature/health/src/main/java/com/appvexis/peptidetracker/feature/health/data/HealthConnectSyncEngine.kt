@@ -20,6 +20,8 @@ class HealthConnectSyncEngine @Inject constructor(
     companion object {
         /** Default lookback window for initial sync (30 days). */
         private const val DEFAULT_LOOKBACK_DAYS = 30L
+        /** Health Connect records can arrive late; overlap avoids permanent gaps. */
+        private const val INCREMENTAL_OVERLAP_HOURS = 24L
     }
 
     /**
@@ -59,6 +61,7 @@ class HealthConnectSyncEngine @Inject constructor(
         val lastSync = healthRepository.getLastSyncTimestamp(metricType)
         val startTime = if (lastSync != null) {
             Instant.ofEpochMilli(lastSync)
+                .minus(INCREMENTAL_OVERLAP_HOURS, ChronoUnit.HOURS)
         } else {
             // Initial sync: look back DEFAULT_LOOKBACK_DAYS
             now.minus(DEFAULT_LOOKBACK_DAYS, ChronoUnit.DAYS)

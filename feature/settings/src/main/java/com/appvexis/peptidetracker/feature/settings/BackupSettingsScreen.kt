@@ -1,5 +1,9 @@
 package com.appvexis.peptidetracker.feature.settings
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -84,6 +88,41 @@ fun BackupSettingsScreen(
     val driveBackups by viewModel.driveBackups.collectAsState()
     val isLoadingBackups by viewModel.isLoadingBackups.collectAsState()
     val restoreConfirmation by viewModel.showRestoreConfirmation.collectAsState()
+    val shareRequest by viewModel.shareRequest.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(shareRequest) {
+        val request = shareRequest ?: return@LaunchedEffect
+        try {
+            val uris = request.files.map { file ->
+                FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.fileprovider",
+                    file
+                )
+            }
+            if (uris.isNotEmpty()) {
+                val shareIntent = if (uris.size == 1) {
+                    Intent(Intent.ACTION_SEND).apply {
+                        type = request.mimeType
+                        putExtra(Intent.EXTRA_STREAM, uris.single())
+                    }
+                } else {
+                    Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+                        type = request.mimeType
+                        putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uris))
+                    }
+                }.apply {
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                context.startActivity(Intent.createChooser(shareIntent, "Share PepLog export"))
+            }
+        } catch (_: ActivityNotFoundException) {
+            // There is no installed app that can receive this export.
+        } finally {
+            viewModel.clearShareRequest()
+        }
+    }
 
     // Load Drive backups when account is connected
     LaunchedEffect(preferences.googleAccountEmail) {
@@ -123,6 +162,7 @@ fun BackupSettingsScreen(
                     lastBackupTime = preferences.lastBackupTime,
                     lastBackupSize = preferences.lastBackupSize,
                     accountEmail = preferences.googleAccountEmail,
+                    isPremium = preferences.isPremium,
                     isBackingUp = backupStatus is BackupStatus.InProgress,
                     onBackupNow = { viewModel.backupNow() }
                 )
@@ -131,13 +171,15 @@ fun BackupSettingsScreen(
             // Auto-Backup Toggle
             item {
                 AutoBackupCard(
-                    isEnabled = preferences.isAutoBackupEnabled,
+                    isEnabled = preferences.isAutoBackupEnabled && preferences.isPremium && !preferences.googleAccountEmail.isNullOrBlank(),
+                    isAvailable = preferences.isPremium && !preferences.googleAccountEmail.isNullOrBlank(),
+                    isPremium = preferences.isPremium,
                     onToggle = { viewModel.setAutoBackup(it) }
                 )
             }
 
             // Drive Backups List
-            if (!preferences.googleAccountEmail.isNullOrBlank()) {
+            if (preferences.isPremium && !preferences.googleAccountEmail.isNullOrBlank()) {
                 item {
                     SectionHeader(title = "Available Backups")
                 }
@@ -364,6 +406,7 @@ private fun CloudBackupCard(
     lastBackupTime: Long?,
     lastBackupSize: Long?,
     accountEmail: String?,
+    isPremium: Boolean,
     isBackingUp: Boolean,
     onBackupNow: () -> Unit
 ) {
@@ -439,7 +482,7 @@ private fun CloudBackupCard(
             // Backup Now button
             Button(
                 onClick = onBackupNow,
-                enabled = !isBackingUp && !accountEmail.isNullOrBlank(),
+                enabled = isPremium && !isBackingUp && !accountEmail.isNullOrBlank(),
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PepLogTheme.colors.primary,
@@ -466,10 +509,17 @@ private fun CloudBackupCard(
                 }
             }
 
-            if (accountEmail.isNullOrBlank()) {
+            if (!isPremium) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Sign in with Google from App Settings to enable cloud backup.",
+                    text = "Cloud backup and restore are included with Premium. Local CSV and JSON export remain available below.",
+                    color = PepLogTheme.colors.textSecondary,
+                    fontSize = 12.sp
+                )
+            } else if (accountEmail.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Google Drive account connection is not configured in this build. Local CSV and JSON export are available below.",
                     color = PepLogTheme.colors.textSecondary,
                     fontSize = 12.sp
                 )
@@ -481,6 +531,8 @@ private fun CloudBackupCard(
 @Composable
 private fun AutoBackupCard(
     isEnabled: Boolean,
+    isAvailable: Boolean,
+    isPremium: Boolean,
     onToggle: (Boolean) -> Unit
 ) {
     PepLogCard(
@@ -515,14 +567,18 @@ private fun AutoBackupCard(
                     color = PepLogTheme.colors.textPrimary
                 )
                 Text(
-                    text = "Daily automatic backup to Google Drive",
+                    text = when {
+                        !isPremium -> "Premium feature — local export is always available"
+                        isAvailable -> "Daily automatic backup to Google Drive"
+                        else -> "Google Drive account connection is not configured"
+                    },
                     color = PepLogTheme.colors.textSecondary,
                     fontSize = 12.sp
                 )
             }
             Switch(
                 checked = isEnabled,
-                onCheckedChange = onToggle,
+                onCheckedChange = if (isAvailable) onToggle else null,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = PepLogTheme.colors.primary,
                     checkedTrackColor = PepLogTheme.colors.primary.copy(alpha = 0.3f)

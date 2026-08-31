@@ -1,7 +1,6 @@
 package com.appvexis.peptidetracker.feature.dashboard.dialogs
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +38,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.appvexis.peptidetracker.core.model.DoseUnit
-import com.appvexis.peptidetracker.core.model.Peptide
 import com.appvexis.peptidetracker.core.ui.components.PepLogButton
 import com.appvexis.peptidetracker.core.ui.components.PepLogButtonVariant
 import com.appvexis.peptidetracker.core.ui.components.PepLogCard
@@ -47,27 +45,29 @@ import com.appvexis.peptidetracker.core.ui.components.PepLogChip
 import com.appvexis.peptidetracker.core.ui.components.PepLogTextField
 import com.appvexis.peptidetracker.core.ui.theme.OutfitFontFamily
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
+import com.appvexis.peptidetracker.feature.dashboard.model.LoggableCompoundUiModel
 
-/**
- * Quick dose logging popup from the dashboard.
- */
+/** Quick dose logging for compounds that belong to an active protocol. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun QuickLogDoseDialog(
-    availablePeptides: List<Peptide>,
+    availableCompounds: List<LoggableCompoundUiModel>,
     onDismiss: () -> Unit,
-    onConfirmLog: (compoundName: String, amount: Double, unit: DoseUnit, notes: String?) -> Unit
+    onConfirmLog: (compoundId: String, amount: Double, unit: DoseUnit, notes: String?) -> Unit
 ) {
     val colors = PepLogTheme.colors
-
-    var selectedPeptideName by remember {
-        mutableStateOf(availablePeptides.firstOrNull()?.name ?: "BPC-157")
+    var selectedCompoundId by remember(availableCompounds) {
+        mutableStateOf(availableCompounds.firstOrNull()?.id.orEmpty())
     }
-    var doseAmountInput by remember { mutableStateOf("250") }
-    var selectedUnit by remember { mutableStateOf(DoseUnit.MCG) }
+    val selectedCompound = availableCompounds.firstOrNull { it.id == selectedCompoundId }
+    var doseAmountInput by remember(selectedCompoundId) {
+        mutableStateOf(selectedCompound?.doseAmount?.toDisplayAmount() ?: "")
+    }
+    var selectedUnit by remember(selectedCompoundId) {
+        mutableStateOf(selectedCompound?.doseUnit ?: DoseUnit.MCG)
+    }
     var notesInput by remember { mutableStateOf("") }
 
-    val popularPeptides = listOf("BPC-157", "TB-500", "CJC-1295", "Ipamorelin", "Semaglutide", "Tirzepatide", "GHK-Cu")
     val dosePresets = when (selectedUnit) {
         DoseUnit.MCG -> listOf("100", "250", "300", "500", "1000")
         DoseUnit.MG -> listOf("0.25", "0.5", "1.0", "2.5", "5.0")
@@ -89,7 +89,6 @@ fun QuickLogDoseDialog(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                // Header
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -131,38 +130,36 @@ fun QuickLogDoseDialog(
 
                 Spacer(modifier = Modifier.height(PepLogTheme.spacing.medium))
 
-                // Peptide Name Input
                 Text(
-                    text = "Peptide Compound",
+                    text = "Active protocol compound",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
                     color = colors.textPrimary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                PepLogTextField(
-                    value = selectedPeptideName,
-                    onValueChange = { selectedPeptideName = it },
-                    label = "Peptide Name"
-                )
-
-                // Quick Popular Chips
-                Spacer(modifier = Modifier.height(4.dp))
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    popularPeptides.forEach { name ->
-                        PepLogChip(
-                            text = name,
-                            selected = selectedPeptideName == name,
-                            onClick = { selectedPeptideName = name }
-                        )
+                if (availableCompounds.isEmpty()) {
+                    Text(
+                        text = "Add a compound to an active protocol before using Quick Log.",
+                        color = colors.textSecondary,
+                        fontSize = 14.sp
+                    )
+                } else {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        availableCompounds.forEach { compound ->
+                            PepLogChip(
+                                text = compound.name,
+                                selected = selectedCompoundId == compound.id,
+                                onClick = { selectedCompoundId = compound.id }
+                            )
+                        }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(PepLogTheme.spacing.medium))
 
-                // Dose Amount & Unit Row
                 Text(
                     text = "Dose Amount & Unit",
                     fontWeight = FontWeight.SemiBold,
@@ -182,7 +179,6 @@ fun QuickLogDoseDialog(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         modifier = Modifier.weight(1f)
                     )
-
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -197,7 +193,6 @@ fun QuickLogDoseDialog(
                     }
                 }
 
-                // Quick Dose Presets
                 Spacer(modifier = Modifier.height(4.dp))
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -214,7 +209,6 @@ fun QuickLogDoseDialog(
 
                 Spacer(modifier = Modifier.height(PepLogTheme.spacing.medium))
 
-                // Notes
                 PepLogTextField(
                     value = notesInput,
                     onValueChange = { notesInput = it },
@@ -224,7 +218,6 @@ fun QuickLogDoseDialog(
 
                 Spacer(modifier = Modifier.height(PepLogTheme.spacing.large))
 
-                // Actions
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -237,13 +230,19 @@ fun QuickLogDoseDialog(
                     )
 
                     val amount = doseAmountInput.toDoubleOrNull()
-                    val isValid = selectedPeptideName.isNotBlank() && amount != null && amount > 0
+                    val isValid = selectedCompound != null &&
+                        amount != null && amount.isFinite() && amount > 0.0 && amount <= MAX_DOSE_AMOUNT
 
                     PepLogButton(
                         text = "Record Dose",
                         onClick = {
-                            if (amount != null) {
-                                onConfirmLog(selectedPeptideName, amount, selectedUnit, notesInput.takeIf { it.isNotBlank() })
+                            if (selectedCompound != null && amount != null) {
+                                onConfirmLog(
+                                    selectedCompound.id,
+                                    amount,
+                                    selectedUnit,
+                                    notesInput.takeIf { it.isNotBlank() }
+                                )
                             }
                         },
                         enabled = isValid,
@@ -255,3 +254,8 @@ fun QuickLogDoseDialog(
         }
     }
 }
+
+private const val MAX_DOSE_AMOUNT = 1_000_000.0
+
+private fun Double.toDisplayAmount(): String =
+    if (this % 1.0 == 0.0) toLong().toString() else toString()

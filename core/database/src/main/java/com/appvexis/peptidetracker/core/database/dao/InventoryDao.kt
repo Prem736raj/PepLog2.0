@@ -34,14 +34,23 @@ interface InventoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInventoryItem(item: InventoryItemEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertInventoryItems(items: List<InventoryItemEntity>)
+
     @Update
     suspend fun updateInventoryItem(item: InventoryItemEntity)
 
     @Query("DELETE FROM inventory_item WHERE id = :id")
     suspend fun deleteInventoryItem(id: String)
 
+    @Query("DELETE FROM inventory_item")
+    suspend fun deleteAllInventoryItems()
+
     @Query("UPDATE inventory_item SET remaining_volume_ml = :volume WHERE id = :id")
     suspend fun updateRemainingVolume(id: String, volume: Double)
+
+    @Query("UPDATE inventory_item SET remaining_volume_ml = MAX(0.0, COALESCE(remaining_volume_ml, bac_water_ml, 0.0) - :amountMl) WHERE id = :id")
+    suspend fun deductRemainingVolume(id: String, amountMl: Double): Int
 
     @Query("UPDATE inventory_item SET status = :status WHERE id = :id")
     suspend fun updateInventoryStatus(id: String, status: String)

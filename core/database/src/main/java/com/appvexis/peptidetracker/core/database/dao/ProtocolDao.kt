@@ -19,6 +19,9 @@ interface ProtocolDao {
     @Query("SELECT * FROM protocol ORDER BY created_at DESC")
     fun getAllProtocols(): Flow<List<ProtocolEntity>>
 
+    @Query("SELECT * FROM protocol_compound")
+    fun getAllCompounds(): Flow<List<ProtocolCompoundEntity>>
+
     @Transaction
     @Query("SELECT * FROM protocol WHERE status = 'ACTIVE' ORDER BY created_at DESC")
     fun getActiveProtocols(): Flow<List<ProtocolWithCompoundsEntity>>
@@ -30,6 +33,9 @@ interface ProtocolDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProtocol(protocol: ProtocolEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertProtocols(protocols: List<ProtocolEntity>)
+
     @Update
     suspend fun updateProtocol(protocol: ProtocolEntity)
 
@@ -39,6 +45,9 @@ interface ProtocolDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCompound(compound: ProtocolCompoundEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCompounds(compounds: List<ProtocolCompoundEntity>)
+
     @Update
     suspend fun updateCompound(compound: ProtocolCompoundEntity)
 
@@ -47,6 +56,12 @@ interface ProtocolDao {
 
     @Query("DELETE FROM protocol_compound WHERE id = :id")
     suspend fun deleteCompound(id: String)
+
+    @Query("DELETE FROM protocol_compound")
+    suspend fun deleteAllCompounds()
+
+    @Query("DELETE FROM protocol")
+    suspend fun deleteAllProtocols()
 
     // Sync queries for backup export
     @Query("SELECT * FROM protocol ORDER BY created_at DESC")

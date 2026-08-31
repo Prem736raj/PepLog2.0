@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -55,28 +56,39 @@ class InventoryViewModel @Inject constructor(
     val allPeptides: StateFlow<List<Peptide>> = peptideRepository.getAllPeptides()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    val uiState: StateFlow<InventoryUiState> = combine(
+    private val allVials: StateFlow<List<VialUiModel>> = combine(
         inventoryRepository.getAllInventoryItems(),
-        peptideRepository.getAllPeptides(),
+        peptideRepository.getAllPeptides()
+    ) { items, peptides ->
+        val peptideMap = peptides.associateBy { it.id }
+        items.map { item ->
+            val peptide = peptideMap[item.peptideId]
+            item.toUiModel(
+                peptideName = peptide?.name ?: item.peptideId,
+                peptideCategory = peptide?.category ?: "Custom Peptide"
+            )
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    init {
+        viewModelScope.launch {
+            allVials
+                .collect { vials ->
+                    InventoryNotificationHelper.checkAndNotifyInventoryAlerts(context, vials)
+                }
+        }
+    }
+
+    val uiState: StateFlow<InventoryUiState> = combine(
+        allVials,
         _searchQuery,
         _activeFilter
-    ) { items, peptides, query, filter ->
-        val peptideMap = peptides.associateBy { it.id }
-
-        val allVialUiModels = items.map { item ->
-            val peptide = peptideMap[item.peptideId]
-            val name = peptide?.name ?: item.peptideId
-            val category = peptide?.category ?: "Custom Peptide"
-            item.toUiModel(name, category)
-        }
-
-        // Trigger local notification check for expiring / low-stock vials
-        InventoryNotificationHelper.checkAndNotifyInventoryAlerts(context, allVialUiModels)
+    ) { allVialUiModels, query, filter ->
 
         // Summary counts
-        val totalVials = items.sumOf { it.quantity }
-        val inUseCount = items.count { it.status == InventoryStatus.IN_USE || it.isReconstituted }
-        val unmixedCount = items.count { !it.isReconstituted && it.status != InventoryStatus.EMPTY && it.status != InventoryStatus.EXPIRED }
+        val totalVials = allVialUiModels.sumOf { it.item.quantity }
+        val inUseCount = allVialUiModels.count { it.item.status == InventoryStatus.IN_USE || it.item.isReconstituted }
+        val unmixedCount = allVialUiModels.count { !it.item.isReconstituted && it.item.status != InventoryStatus.EMPTY && it.item.status != InventoryStatus.EXPIRED }
         val expiringCount = allVialUiModels.count { it.expirationStatus == ExpirationStatus.CRITICAL || it.expirationStatus == ExpirationStatus.EXPIRING_SOON || it.expirationStatus == ExpirationStatus.EXPIRED }
         val lowVolumeCount = allVialUiModels.count { it.isLowVolume }
         val alertCount = allVialUiModels.count {
@@ -129,6 +141,10 @@ class InventoryViewModel @Inject constructor(
 
     fun updateSearchQuery(query: String) {
         _searchQuery.update { query }
+    }
+
+    fun notifyCurrentAlerts() {
+        InventoryNotificationHelper.checkAndNotifyInventoryAlerts(context, allVials.value)
     }
 
     fun selectFilter(filter: InventoryFilter) {
@@ -204,7 +220,7 @@ class InventoryViewModel @Inject constructor(
     fun adjustVolume(id: String, newVolumeMl: Double) {
         viewModelScope.launch {
             val item = (uiState.value as? InventoryUiState.Success)?.vials?.find { it.item.id == id }?.item
-            if (item != null) {
+            if (item != null && newVolumeMl.isFinite() && newVolumeMl >= 0.0) {
                 val updated = item.copy(
                     remainingVolumeMl = newVolumeMl,
                     status = if (newVolumeMl <= 0.001) InventoryStatus.EMPTY else item.status

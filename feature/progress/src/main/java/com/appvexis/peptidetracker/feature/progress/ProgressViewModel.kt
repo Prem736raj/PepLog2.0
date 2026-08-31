@@ -1,5 +1,7 @@
 package com.appvexis.peptidetracker.feature.progress
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appvexis.peptidetracker.core.model.BiomarkerLog
@@ -17,13 +19,21 @@ import com.appvexis.peptidetracker.feature.progress.model.PhotoCategory
 import com.appvexis.peptidetracker.feature.progress.model.ProgressTab
 import com.appvexis.peptidetracker.feature.progress.model.ProgressUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -34,7 +44,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProgressViewModel @Inject constructor(
     private val logRepository: LogRepository,
-    private val protocolRepository: ProtocolRepository
+    private val protocolRepository: ProtocolRepository,
+    @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
     private val _activeTab = MutableStateFlow(ProgressTab.PHOTOS)
@@ -54,6 +65,9 @@ class ProgressViewModel @Inject constructor(
 
     private val _showLogBodyMetricsDialog = MutableStateFlow(false)
     val showLogBodyMetricsDialog: StateFlow<Boolean> = _showLogBodyMetricsDialog
+
+    private val _actionError = MutableStateFlow<String?>(null)
+    val actionError: StateFlow<String?> = _actionError.asStateFlow()
 
     val allProtocols: StateFlow<List<Protocol>> = protocolRepository.getAllProtocols()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
@@ -195,22 +209,35 @@ class ProgressViewModel @Inject constructor(
 
     fun addProgressPhoto(photoUri: String, category: String, protocolId: String?, notes: String?) {
         viewModelScope.launch {
-            val photo = ProgressPhoto(
-                id = UUID.randomUUID().toString(),
-                photoUri = photoUri,
-                date = System.currentTimeMillis(),
-                protocolId = protocolId,
-                category = category,
-                notes = notes
-            )
-            logRepository.insertProgressPhoto(photo)
-            hideAddPhotoDialog()
+            runCatching {
+                val privatePhotoUri = copyPhotoToPrivateStorage(photoUri)
+                val photo = ProgressPhoto(
+                    id = UUID.randomUUID().toString(),
+                    photoUri = privatePhotoUri,
+                    date = System.currentTimeMillis(),
+                    protocolId = protocolId,
+                    category = category,
+                    notes = notes?.trim()?.takeIf { it.isNotEmpty() }
+                )
+                logRepository.insertProgressPhoto(photo)
+            }.onSuccess {
+                hideAddPhotoDialog()
+            }.onFailure { error ->
+                _actionError.value = error.message ?: "Could not save the photo"
+            }
         }
     }
 
     fun deleteProgressPhoto(photoId: String) {
         viewModelScope.launch {
-            logRepository.deleteProgressPhoto(photoId)
+            runCatching {
+                val photo = logRepository.getProgressPhotos().first()
+                    .firstOrNull { it.id == photoId }
+                logRepository.deleteProgressPhoto(photoId)
+                photo?.let { deletePrivatePhoto(it.photoUri) }
+            }.onFailure { error ->
+                _actionError.value = error.message ?: "Could not delete the photo"
+            }
         }
     }
 
@@ -220,18 +247,26 @@ class ProgressViewModel @Inject constructor(
 
     fun logBiomarker(name: String, value: Double, unit: String, protocolId: String?, lab: String?, notes: String?) {
         viewModelScope.launch {
-            val biomarker = BiomarkerLog(
-                id = UUID.randomUUID().toString(),
-                biomarkerName = name,
-                value = value,
-                unit = unit,
-                date = System.currentTimeMillis(),
-                protocolId = protocolId,
-                labName = lab,
-                notes = notes
-            )
-            logRepository.insertBiomarkerLog(biomarker)
-            hideLogBiomarkerDialog()
+            runCatching {
+                require(name.isNotBlank()) { "Enter a biomarker name" }
+                require(unit.isNotBlank()) { "Enter a unit" }
+                require(value.isFinite()) { "Enter a finite biomarker value" }
+                val biomarker = BiomarkerLog(
+                    id = UUID.randomUUID().toString(),
+                    biomarkerName = name.trim(),
+                    value = value,
+                    unit = unit.trim(),
+                    date = System.currentTimeMillis(),
+                    protocolId = protocolId,
+                    labName = lab?.trim()?.takeIf { it.isNotEmpty() },
+                    notes = notes?.trim()?.takeIf { it.isNotEmpty() }
+                )
+                logRepository.insertBiomarkerLog(biomarker)
+            }.onSuccess {
+                hideLogBiomarkerDialog()
+            }.onFailure { error ->
+                _actionError.value = error.message ?: "Could not save the lab result"
+            }
         }
     }
 
@@ -254,6 +289,10 @@ class ProgressViewModel @Inject constructor(
         notes: String?
     ) {
         viewModelScope.launch {
+            if (listOf(mood, energy, sleep, pain, libido).any { it !in 1..10 }) {
+                _actionError.value = "Wellness ratings must be between 1 and 10"
+                return@launch
+            }
             val now = System.currentTimeMillis()
             val metrics = listOf(
                 "mood" to mood,
@@ -281,19 +320,26 @@ class ProgressViewModel @Inject constructor(
 
     fun logSideEffect(category: String, severity: Int, protocolId: String?, notes: String?) {
         viewModelScope.launch {
-            val now = System.currentTimeMillis()
-            val log = SideEffectLog(
-                id = UUID.randomUUID().toString(),
-                protocolId = protocolId,
-                date = now,
-                type = "side_effect",
-                category = category,
-                severity = severity,
-                notes = notes,
-                createdAt = now
-            )
-            logRepository.insertSideEffectLog(log)
-            hideLogSideEffectDialog()
+            runCatching {
+                require(category.isNotBlank()) { "Enter a symptom or reaction" }
+                require(severity in 1..10) { "Severity must be between 1 and 10" }
+                val now = System.currentTimeMillis()
+                val log = SideEffectLog(
+                    id = UUID.randomUUID().toString(),
+                    protocolId = protocolId,
+                    date = now,
+                    type = "side_effect",
+                    category = category.trim(),
+                    severity = severity,
+                    notes = notes?.trim()?.takeIf { it.isNotEmpty() },
+                    createdAt = now
+                )
+                logRepository.insertSideEffectLog(log)
+            }.onSuccess {
+                hideLogSideEffectDialog()
+            }.onFailure { error ->
+                _actionError.value = error.message ?: "Could not save the symptom"
+            }
         }
     }
 
@@ -316,6 +362,18 @@ class ProgressViewModel @Inject constructor(
         notes: String?
     ) {
         viewModelScope.launch {
+            val optionalMetrics = listOf(
+                "body fat" to bodyFat,
+                "muscle mass" to muscleMass,
+                "waist" to waistCm
+            )
+            if (!weightKg.isFinite() || weightKg <= 0.0 ||
+                optionalMetrics.any { (_, value) -> value != null && (!value.isFinite() || value <= 0.0) } ||
+                (bodyFat != null && bodyFat > 100.0)
+            ) {
+                _actionError.value = "Enter valid positive body metrics"
+                return@launch
+            }
             val now = System.currentTimeMillis()
 
             logRepository.insertBiomarkerLog(
@@ -389,5 +447,65 @@ class ProgressViewModel @Inject constructor(
             set(Calendar.MILLISECOND, 0)
         }
         return calendar.timeInMillis
+    }
+
+    private suspend fun copyPhotoToPrivateStorage(photoUri: String): String = withContext(Dispatchers.IO) {
+        require(photoUri.isNotBlank()) { "Choose a photo first" }
+        val sourceUri = Uri.parse(photoUri)
+        val photoDirectory = File(appContext.filesDir, PHOTO_DIRECTORY_NAME).apply {
+            if (!exists() && !mkdirs()) throw IllegalStateException("Could not create photo storage")
+        }
+        val extension = appContext.contentResolver.getType(sourceUri)
+            ?.substringAfterLast('/', "")
+            ?.lowercase()
+            ?.takeIf { it in SUPPORTED_IMAGE_EXTENSIONS }
+            ?: "img"
+        val destination = File(photoDirectory, "${UUID.randomUUID()}.$extension")
+
+        try {
+            val input = if (sourceUri.scheme.isNullOrBlank()) {
+                FileInputStream(File(photoUri))
+            } else {
+                appContext.contentResolver.openInputStream(sourceUri)
+                    ?: throw IllegalArgumentException("The selected photo is no longer available")
+            }
+            input.use { source ->
+                FileOutputStream(destination).use { output ->
+                    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                    var totalBytes = 0L
+                    while (true) {
+                        val count = source.read(buffer)
+                        if (count < 0) break
+                        totalBytes += count
+                        require(totalBytes <= MAX_PHOTO_BYTES) { "Photo must be smaller than 25 MB" }
+                        output.write(buffer, 0, count)
+                    }
+                }
+            }
+            Uri.fromFile(destination).toString()
+        } catch (error: Exception) {
+            destination.delete()
+            throw error
+        }
+    }
+
+    private fun deletePrivatePhoto(photoUri: String) {
+        val uri = Uri.parse(photoUri)
+        if (uri.scheme != "file" || uri.path.isNullOrBlank()) return
+        val directory = File(appContext.filesDir, PHOTO_DIRECTORY_NAME).canonicalFile
+        val file = File(uri.path!!).canonicalFile
+        if (file.toPath().startsWith(directory.toPath())) {
+            file.delete()
+        }
+    }
+
+    fun clearActionError() {
+        _actionError.value = null
+    }
+
+    companion object {
+        private const val PHOTO_DIRECTORY_NAME = "progress_photos"
+        private const val MAX_PHOTO_BYTES = 25L * 1024L * 1024L
+        private val SUPPORTED_IMAGE_EXTENSIONS = setOf("jpeg", "jpg", "png", "webp", "heic", "heif")
     }
 }

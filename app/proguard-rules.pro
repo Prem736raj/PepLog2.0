@@ -178,14 +178,6 @@
 -dontwarn androidx.work.**
 
 # ============================================================
-# SQLCipher
-# ============================================================
-
--keep class net.sqlcipher.** { *; }
--keep class net.sqlcipher.database.** { *; }
--dontwarn net.sqlcipher.**
-
-# ============================================================
 # PepLog App — Keep entities and backup models for serialization
 # ============================================================
 

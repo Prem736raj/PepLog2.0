@@ -37,6 +37,9 @@ interface HealthMetricDao {
     @Query("DELETE FROM health_metric WHERE id = :id")
     suspend fun deleteHealthMetric(id: String)
 
+    @Query("DELETE FROM health_metric")
+    suspend fun deleteAllHealthMetrics()
+
     @Query("SELECT MAX(synced_at) FROM health_metric WHERE metric_type = :metricType")
     suspend fun getLastSyncTimestamp(metricType: String): Long?
 

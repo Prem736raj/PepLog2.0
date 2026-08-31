@@ -11,6 +11,8 @@
 local.properties
 
 # IDE
+/.idea/
+/.kotlin/
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -32,3 +34,4 @@ keystore.properties
 
 # Misc
 *.hprof
+network_logs.txt

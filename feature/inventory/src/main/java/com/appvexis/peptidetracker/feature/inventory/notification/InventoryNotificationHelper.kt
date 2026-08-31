@@ -6,8 +6,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.content.pm.PackageManager
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.appvexis.peptidetracker.feature.inventory.model.ExpirationStatus
 import com.appvexis.peptidetracker.feature.inventory.model.VialUiModel
 import timber.log.Timber
@@ -36,6 +38,14 @@ object InventoryNotificationHelper {
     }
 
     fun checkAndNotifyInventoryAlerts(context: Context, vials: List<VialUiModel>) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                context,
+                "android.permission.POST_NOTIFICATIONS"
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
         createNotificationChannel(context)
 
         val criticalVials = vials.filter { it.expirationStatus == ExpirationStatus.CRITICAL || it.expirationStatus == ExpirationStatus.EXPIRING_SOON }
@@ -55,8 +65,7 @@ object InventoryNotificationHelper {
                     append("${expiredVials.size} vial(s) expired. ")
                 }
                 if (criticalVials.isNotEmpty()) {
-                    val names = criticalVials.take(2).joinToString(", ") { "${it.peptideName} (${it.daysRemaining}d left)" }
-                    append("Expiring soon: $names")
+                    append("${criticalVials.size} vial(s) need an expiration review.")
                 }
             }
 
@@ -70,16 +79,11 @@ object InventoryNotificationHelper {
 
         // Alert for low volume stock
         if (lowStockVials.isNotEmpty()) {
-            val names = lowStockVials.take(3).joinToString(", ") {
-                val rem = it.item.remainingVolumeMl ?: 0.0
-                "${it.peptideName} (${String.format(java.util.Locale.US, "%.2f", rem)} mL)"
-            }
-
             sendNotification(
                 context = context,
                 notificationId = NOTIFICATION_ID_LOW_STOCK,
                 title = "📦 Low Vial Volume Alert",
-                message = "Remaining volume low for: $names"
+                message = "${lowStockVials.size} vial(s) have low remaining volume. Open PepLog for details."
             )
         }
     }
@@ -110,6 +114,7 @@ object InventoryNotificationHelper {
                 .setContentText(message)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(message))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
                 .setAutoCancel(true)
                 .apply {
                     if (pendingIntent != null) setContentIntent(pendingIntent)

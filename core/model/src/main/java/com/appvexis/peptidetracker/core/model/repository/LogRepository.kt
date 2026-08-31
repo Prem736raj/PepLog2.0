@@ -17,6 +17,7 @@ interface LogRepository {
     fun getDoseLogsForCompound(compoundId: String): Flow<List<DoseLog>>
     fun getPendingDoseLogs(currentTime: Long): Flow<List<DoseLog>>
     suspend fun insertDoseLog(log: DoseLog)
+    suspend fun insertDoseLogs(logs: List<DoseLog>)
     suspend fun updateDoseLog(log: DoseLog)
     suspend fun deleteDoseLog(id: String)
     suspend fun logDoseTaken(id: String, actualTime: Long, site: String?, side: String?)

@@ -31,9 +31,10 @@ class AppIntegrityChecker @Inject constructor(
     val lastCheckTimestamp: StateFlow<Long> = _lastCheckTimestamp.asStateFlow()
 
     /**
-     * Requests an integrity token. A successful response indicates
-     * that the app is running on a genuine, unmodified device with
-     * Google Play Services.
+     * Requests an integrity token. A successful response is only a local
+     * availability signal until a trusted backend decodes and verifies the
+     * token; this app has no backend and therefore cannot make an authenticity
+     * or anti-tamper guarantee from this check alone.
      *
      * Note: Without a backend to decode the token, we treat
      * "request succeeded" as a positive signal. A failure (e.g. on
@@ -57,7 +58,8 @@ class AppIntegrityChecker @Inject constructor(
 
             integrityManager.requestIntegrityToken(request)
                 .addOnSuccessListener { response ->
-                    // Token received — device passes basic integrity
+                    // Token received — Play Integrity is available. The token
+                    // is deliberately not treated as verified without a backend.
                     val token = response.token()
                     Timber.d("Play Integrity check passed (token length: ${token.length})")
                     _isDeviceTrusted.value = true
@@ -82,4 +84,3 @@ class AppIntegrityChecker @Inject constructor(
         return android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP)
     }
 }
-

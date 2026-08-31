@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +24,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 
@@ -80,10 +84,12 @@ fun PepLogChip(
         modifier = modifier
             .scale(chipScale)
             .clip(shape)
-            .clickable(onClick = onClick)
+            .clickable(role = Role.Button, onClick = onClick)
             .background(backgroundColor)
             .border(1.dp, borderColor, shape)
-            .padding(horizontal = PepLogTheme.spacing.medium, vertical = PepLogTheme.spacing.small),
+            .heightIn(min = 48.dp)
+            .padding(horizontal = PepLogTheme.spacing.medium, vertical = PepLogTheme.spacing.small)
+            .semantics { role = Role.Button },
         contentAlignment = Alignment.Center
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {

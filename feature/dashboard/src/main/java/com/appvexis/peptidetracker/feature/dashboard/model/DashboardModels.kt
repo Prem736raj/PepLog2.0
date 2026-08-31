@@ -2,6 +2,7 @@ package com.appvexis.peptidetracker.feature.dashboard.model
 
 import com.appvexis.peptidetracker.core.model.DoseLog
 import com.appvexis.peptidetracker.core.model.DoseStatus
+import com.appvexis.peptidetracker.core.model.DoseUnit
 import com.appvexis.peptidetracker.core.model.Protocol
 import com.appvexis.peptidetracker.core.model.ProtocolCompound
 
@@ -51,6 +52,14 @@ data class NextDoseInfo(
     val isOverdue: Boolean
 )
 
+/** A selectable active-protocol compound for quick dose logging. */
+data class LoggableCompoundUiModel(
+    val id: String,
+    val name: String,
+    val doseAmount: Double,
+    val doseUnit: DoseUnit
+)
+
 /**
  * Comprehensive reactive state for the Dashboard.
  */
@@ -62,6 +71,7 @@ sealed interface DashboardUiState {
         val takenTodayDoses: Int,
         val todayAdherencePercent: Int,
         val activeProtocols: List<ActiveProtocolUiModel>,
+        val availableCompounds: List<LoggableCompoundUiModel>,
         val streakInfo: StreakInfo,
         val nextDose: NextDoseInfo?,
         val totalVialsInStock: Int,

@@ -6,6 +6,7 @@ import com.appvexis.peptidetracker.core.database.entity.toEntity
 import com.appvexis.peptidetracker.core.model.Protocol
 import com.appvexis.peptidetracker.core.model.ProtocolCompound
 import com.appvexis.peptidetracker.core.model.ProtocolWithCompounds
+import com.appvexis.peptidetracker.core.model.FrequencyType
 import com.appvexis.peptidetracker.core.model.repository.AnalyticsRepository
 import com.appvexis.peptidetracker.core.model.repository.ProtocolRepository
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,10 @@ class ProtocolRepositoryImpl @Inject constructor(
         return protocolDao.getAllProtocols().map { list -> list.map { it.toDomain() } }
     }
 
+    override fun getAllCompounds(): Flow<List<ProtocolCompound>> {
+        return protocolDao.getAllCompounds().map { list -> list.map { it.toDomain() } }
+    }
+
     override fun getActiveProtocols(): Flow<List<ProtocolWithCompounds>> {
         return protocolDao.getActiveProtocols().map { list -> list.map { it.toDomain() } }
     }
@@ -36,12 +41,14 @@ class ProtocolRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertProtocol(protocol: Protocol) {
+        validateProtocol(protocol)
         protocolDao.insertProtocol(protocol.toEntity())
         // Initialize or update analytics for the new protocol
         analyticsRepository.recomputeAnalyticsForProtocol(protocol.id)
     }
 
     override suspend fun updateProtocol(protocol: Protocol) {
+        validateProtocol(protocol)
         protocolDao.updateProtocol(protocol.toEntity())
         // Protocol status or dates might have changed, triggering analytics recalculation
         analyticsRepository.recomputeAnalyticsForProtocol(protocol.id)
@@ -53,13 +60,44 @@ class ProtocolRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertCompound(compound: ProtocolCompound) {
+        validateCompound(compound)
         protocolDao.insertCompound(compound.toEntity())
         analyticsRepository.recomputeAnalyticsForProtocol(compound.protocolId)
     }
 
     override suspend fun updateCompound(compound: ProtocolCompound) {
+        validateCompound(compound)
         protocolDao.updateCompound(compound.toEntity())
         analyticsRepository.recomputeAnalyticsForProtocol(compound.protocolId)
+    }
+
+    private fun validateCompound(compound: ProtocolCompound) {
+        require(compound.protocolId.isNotBlank()) { "A compound must reference a protocol" }
+        require(compound.peptideId.isNotBlank()) { "A compound must reference a peptide" }
+        require(compound.doseAmount.isFinite() && compound.doseAmount > 0.0) {
+            "Dose amount must be a finite value greater than zero"
+        }
+        val frequencyDays = compound.frequencyDays
+        when (compound.frequencyType) {
+            FrequencyType.CUSTOM -> require(
+                frequencyDays?.isNotEmpty() == true &&
+                    frequencyDays.all { it in 1..7 }
+            ) {
+                "Custom frequency requires at least one day from Sunday=1 through Saturday=7"
+            }
+            FrequencyType.CYCLE -> {
+                val cycleDays = frequencyDays.orEmpty()
+                require(
+                    cycleDays.getOrNull(0)?.let { it in 1..365 } == true &&
+                        cycleDays.getOrNull(1)?.let { it in 0..365 } == true
+                ) {
+                    "Cycle frequency requires valid on/off day counts"
+                }
+            }
+            else -> require(frequencyDays.orEmpty().all { it in 1..7 }) {
+                "Frequency days must use the Sunday=1 through Saturday=7 convention"
+            }
+        }
     }
 
     override suspend fun deleteCompound(id: String) {
@@ -67,6 +105,16 @@ class ProtocolRepositoryImpl @Inject constructor(
         protocolDao.deleteCompound(id)
         compound?.let {
             analyticsRepository.recomputeAnalyticsForProtocol(it.protocolId)
+        }
+    }
+
+    private fun validateProtocol(protocol: Protocol) {
+        require(protocol.id.isNotBlank()) { "Protocol ID is required" }
+        require(protocol.name.isNotBlank() && protocol.name.length <= 100) {
+            "Protocol name must be between 1 and 100 characters"
+        }
+        require(protocol.createdAt >= 0L && protocol.updatedAt >= 0L) {
+            "Protocol timestamps are invalid"
         }
     }
 }

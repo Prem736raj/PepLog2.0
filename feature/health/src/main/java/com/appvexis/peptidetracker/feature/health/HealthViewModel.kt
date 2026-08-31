@@ -35,6 +35,9 @@ class HealthViewModel @Inject constructor(
     private val patternDetector: HealthPatternDetector
 ) : ViewModel() {
 
+    /** Single source of truth for the permission request shown by the screen. */
+    val requiredHealthPermissions: Set<String> = healthConnectManager.requiredPermissions
+
     private val _uiState = MutableStateFlow(HealthScreenUiState())
     val uiState: StateFlow<HealthScreenUiState> = _uiState.asStateFlow()
 
@@ -76,8 +79,9 @@ class HealthViewModel @Inject constructor(
      * Called after permissions are granted by the Activity result callback.
      */
     fun onPermissionsGranted() {
-        _uiState.update { it.copy(permissionsGranted = true) }
-        syncAndLoad()
+        // The result may contain only a subset of requested permissions.
+        // Re-read Health Connect instead of treating any non-empty result as success.
+        refreshPermissions()
     }
 
     /**
@@ -232,13 +236,17 @@ class HealthViewModel @Inject constructor(
                     .toSet()
 
                 // Create correlation data points
-                val chartData = metrics.map { metric ->
-                    val dayMs = 24 * 60 * 60 * 1000L
-                    val metricDay = metric.timestamp / dayMs * dayMs
-                    val hasDose = doseTimestamps.any { doseTs ->
-                        val doseDay = doseTs / dayMs * dayMs
-                        doseDay == metricDay
-                    }
+                val zoneId = java.time.ZoneId.systemDefault()
+                val doseDays = doseTimestamps.mapNotNull { timestamp ->
+                    runCatching {
+                        java.time.Instant.ofEpochMilli(timestamp).atZone(zoneId).toLocalDate()
+                    }.getOrNull()
+                }.toSet()
+                val chartData = metrics.mapNotNull { metric ->
+                    val metricDay = runCatching {
+                        java.time.Instant.ofEpochMilli(metric.timestamp).atZone(zoneId).toLocalDate()
+                    }.getOrNull() ?: return@mapNotNull null
+                    val hasDose = metricDay in doseDays
                     CorrelationDataPoint(
                         timestamp = metric.timestamp,
                         healthValue = metric.value,

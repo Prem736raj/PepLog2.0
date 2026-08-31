@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.appvexis.peptidetracker.core.backup.drive.DriveBackupService
 import com.appvexis.peptidetracker.core.backup.export.CsvExporter
 import com.appvexis.peptidetracker.core.backup.export.DatabaseExporter
+import com.appvexis.peptidetracker.core.backup.export.DatabaseImporter
 import com.appvexis.peptidetracker.core.backup.model.BackupData
 import com.appvexis.peptidetracker.core.backup.model.BackupStatus
 import com.appvexis.peptidetracker.core.backup.model.DriveBackupFile
@@ -36,6 +37,7 @@ private val Context.backupPreferences by preferencesDataStore(name = "backup_pre
 class BackupManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val databaseExporter: DatabaseExporter,
+    private val databaseImporter: DatabaseImporter,
     private val csvExporter: CsvExporter,
     private val driveBackupService: DriveBackupService
 ) {
@@ -115,10 +117,8 @@ class BackupManager @Inject constructor(
             _backupStatus.value = BackupStatus.InProgress(0.6f, "Parsing backup data...")
             val backupData = databaseExporter.fromJson(json)
 
-            _backupStatus.value = BackupStatus.InProgress(0.8f, "Restore data ready...")
-            // Note: Actual database restoration (insert operations) should be handled
-            // by the caller (ViewModel) which has access to repositories.
-            // This returns the parsed data for the caller to process.
+            _backupStatus.value = BackupStatus.InProgress(0.8f, "Restoring database...")
+            databaseImporter.restore(backupData)
 
             _backupStatus.value = BackupStatus.Success(
                 timestamp = backupData.createdAt,
@@ -196,6 +196,7 @@ class BackupManager @Inject constructor(
 
             _backupStatus.value = BackupStatus.InProgress(0.6f, "Writing JSON...")
             val json = databaseExporter.toJson(data)
+            outputFile.parentFile?.mkdirs()
             outputFile.writeText(json, Charsets.UTF_8)
 
             _backupStatus.value = BackupStatus.Success(
@@ -224,12 +225,18 @@ class BackupManager @Inject constructor(
                 prefs[googleAccountEmailKey] = email
             } else {
                 prefs.remove(googleAccountEmailKey)
+                // Never leave a scheduled cloud export enabled after disconnecting.
+                prefs[autoBackupEnabledKey] = false
             }
         }
     }
 
     suspend fun getGoogleAccountEmailSync(): String? {
         return context.backupPreferences.data.first()[googleAccountEmailKey]
+    }
+
+    suspend fun isAutoBackupEnabledSync(): Boolean {
+        return context.backupPreferences.data.first()[autoBackupEnabledKey] ?: false
     }
 
     fun resetStatus() {

@@ -28,6 +28,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
@@ -35,6 +37,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -67,17 +70,29 @@ fun DailyLogScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val currentDate by viewModel.currentDate.collectAsState()
+    val actionError by viewModel.actionError.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val df = SimpleDateFormat("EEEE, MMM d", Locale.getDefault())
     val dateStr = df.format(Date(currentDate))
     
     var showManualLogDialog by remember { mutableStateOf(false) }
 
+    LaunchedEffect(actionError) {
+        actionError?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearActionError()
+        }
+    }
+
     if (showManualLogDialog) {
         ManualLogDialog(
+            availableCompounds = (uiState as? DailyLogUiState.Success)
+                ?.availableCompounds
+                .orEmpty(),
             onDismiss = { showManualLogDialog = false },
-            onConfirm = { name, amount, unit, notes ->
-                viewModel.logManualDose(name, amount, unit, notes)
+            onConfirm = { compoundId, amount, unit, notes ->
+                viewModel.logManualDose(compoundId, amount, unit, notes)
                 showManualLogDialog = false
             }
         )
@@ -85,6 +100,7 @@ fun DailyLogScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -124,7 +140,7 @@ fun DailyLogScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { viewModel.changeDate(currentDate - 86400000) }) {
+                IconButton(onClick = { viewModel.changeDateByDays(-1) }) {
                     Icon(Icons.Default.ChevronLeft, contentDescription = "Previous Day", tint = PepLogTheme.colors.primary)
                 }
                 
@@ -136,7 +152,7 @@ fun DailyLogScreen(
                     color = PepLogTheme.colors.textPrimary
                 )
                 
-                IconButton(onClick = { viewModel.changeDate(currentDate + 86400000) }) {
+                IconButton(onClick = { viewModel.changeDateByDays(1) }) {
                     Icon(Icons.Default.ChevronRight, contentDescription = "Next Day", tint = PepLogTheme.colors.primary)
                 }
             }
@@ -166,6 +182,8 @@ fun DailyLogScreen(
                             items(state.logs, key = { it.id }) { log ->
                                 SwipeableDoseItem(
                                     log = log,
+                                    compoundName = state.compoundNames[log.protocolCompoundId]
+                                        ?: "Unknown compound",
                                     onMarkTaken = { viewModel.markDoseAsTaken(log.id) }
                                 )
                             }
@@ -181,6 +199,7 @@ fun DailyLogScreen(
 @Composable
 private fun SwipeableDoseItem(
     log: DoseLog,
+    compoundName: String,
     onMarkTaken: () -> Unit
 ) {
     val dismissState = rememberSwipeToDismissBoxState(
@@ -253,7 +272,7 @@ private fun SwipeableDoseItem(
                 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Compound: ${log.protocolCompoundId.take(8)}", // Ideally fetched from DB relation
+                        text = compoundName,
                         fontFamily = OutfitFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,

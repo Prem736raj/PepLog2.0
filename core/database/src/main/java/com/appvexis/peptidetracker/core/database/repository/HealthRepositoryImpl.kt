@@ -7,6 +7,7 @@ import com.appvexis.peptidetracker.core.model.HealthMetricType
 import com.appvexis.peptidetracker.core.model.repository.HealthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,12 +21,12 @@ class HealthRepositoryImpl @Inject constructor(
 
     override fun getAllHealthMetrics(): Flow<List<HealthMetricRecord>> =
         healthMetricDao.getAllHealthMetrics().map { entities ->
-            entities.map { it.toDomain() }
+            entities.mapNotNull { it.toDomainOrNull() }
         }
 
     override fun getHealthMetricsByType(type: HealthMetricType): Flow<List<HealthMetricRecord>> =
         healthMetricDao.getHealthMetricsByType(type.name).map { entities ->
-            entities.map { it.toDomain() }
+            entities.mapNotNull { it.toDomainOrNull() }
         }
 
     override fun getHealthMetricsInRange(
@@ -33,7 +34,7 @@ class HealthRepositoryImpl @Inject constructor(
         endTime: Long
     ): Flow<List<HealthMetricRecord>> =
         healthMetricDao.getHealthMetricsInRange(startTime, endTime).map { entities ->
-            entities.map { it.toDomain() }
+            entities.mapNotNull { it.toDomainOrNull() }
         }
 
     override fun getHealthMetricsByTypeInRange(
@@ -42,11 +43,11 @@ class HealthRepositoryImpl @Inject constructor(
         endTime: Long
     ): Flow<List<HealthMetricRecord>> =
         healthMetricDao.getHealthMetricsByTypeInRange(type.name, startTime, endTime).map { entities ->
-            entities.map { it.toDomain() }
+            entities.mapNotNull { it.toDomainOrNull() }
         }
 
     override suspend fun getLatestMetricByType(type: HealthMetricType): HealthMetricRecord? =
-        healthMetricDao.getLatestMetricByType(type.name)?.toDomain()
+        healthMetricDao.getLatestMetricByType(type.name)?.toDomainOrNull()
 
     override suspend fun insertHealthMetric(record: HealthMetricRecord) {
         healthMetricDao.insertHealthMetric(record.toEntity())
@@ -65,15 +66,22 @@ class HealthRepositoryImpl @Inject constructor(
 
     // --- Mapping Functions ---
 
-    private fun HealthMetricEntity.toDomain(): HealthMetricRecord = HealthMetricRecord(
-        id = id,
-        metricType = try { HealthMetricType.valueOf(metricType) } catch (_: Exception) { HealthMetricType.WEIGHT },
-        value = value,
-        secondaryValue = secondaryValue,
-        timestamp = timestamp,
-        source = source,
-        protocolId = protocolId
-    )
+    private fun HealthMetricEntity.toDomainOrNull(): HealthMetricRecord? {
+        val type = runCatching { HealthMetricType.valueOf(metricType) }.getOrNull()
+        if (type == null) {
+            Timber.w("Ignoring health metric with unknown type: %s", metricType)
+            return null
+        }
+        return HealthMetricRecord(
+            id = id,
+            metricType = type,
+            value = value,
+            secondaryValue = secondaryValue,
+            timestamp = timestamp,
+            source = source,
+            protocolId = protocolId
+        )
+    }
 
     private fun HealthMetricRecord.toEntity(): HealthMetricEntity = HealthMetricEntity(
         id = id,

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.appvexis.peptidetracker.core.billing.SubscriptionManager
 import com.appvexis.peptidetracker.feature.health.data.HealthConnectSyncEngine
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -17,10 +18,15 @@ import timber.log.Timber
 class HealthSyncWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val syncEngine: HealthConnectSyncEngine
+    private val syncEngine: HealthConnectSyncEngine,
+    private val subscriptionManager: SubscriptionManager
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
+        if (!subscriptionManager.isPremium.value) {
+            Timber.d("HealthSyncWorker skipped: Health Connect is a Premium feature")
+            return Result.success()
+        }
         Timber.i("Starting scheduled HealthSyncWorker")
         return try {
             val count = syncEngine.syncAll()

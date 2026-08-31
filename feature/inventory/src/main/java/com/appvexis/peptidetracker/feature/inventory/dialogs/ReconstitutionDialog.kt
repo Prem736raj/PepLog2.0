@@ -74,7 +74,9 @@ fun ReconstitutionDialog(
     val bacWaterMl = bacWaterInput.toDoubleOrNull() ?: 0.0
 
     // Calculations
-    val concentrationMgMl = if (bacWaterMl > 0) strengthMg / bacWaterMl else 0.0
+    val concentrationMgMl = if (bacWaterMl.isFinite() && bacWaterMl > 0 && strengthMg.isFinite()) {
+        strengthMg / bacWaterMl
+    } else 0.0
     val mcgPerUnit = concentrationMgMl * 10.0 // 1 unit on U-100 = 0.01 mL -> 0.01 * 1000 mcg = 10 * conc
 
     val now = System.currentTimeMillis()
@@ -318,7 +320,7 @@ fun ReconstitutionDialog(
                                 onConfirmReconstitution(bacWaterMl, now)
                             }
                         },
-                        enabled = bacWaterMl > 0,
+                        enabled = bacWaterMl.isFinite() && bacWaterMl > 0 && concentrationMgMl.isFinite(),
                         variant = PepLogButtonVariant.Primary,
                         modifier = Modifier.weight(1f)
                     )
