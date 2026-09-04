@@ -21,6 +21,5 @@ object SecurityModule {
     @Singleton
     fun provideSecurityConfig(): SecurityConfig = SecurityConfig(
         releaseCertHash = BuildConfig.RELEASE_CERT_HASH,
-        cloudProjectNumber = BuildConfig.CLOUD_PROJECT_NUMBER,
     )
 }

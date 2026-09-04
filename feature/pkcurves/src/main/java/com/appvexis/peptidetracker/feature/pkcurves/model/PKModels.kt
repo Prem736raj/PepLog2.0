@@ -52,14 +52,14 @@ data class CompoundCurveData(
  */
 object PKChartColors {
     val palette = listOf(
-        Color(0xFF22D3EE), // Medical Teal
-        Color(0xFFFBBF24), // Warm Amber
-        Color(0xFF7C4DFF), // Deep Purple
-        Color(0xFFF43F5E), // Soft Coral
-        Color(0xFF00E676), // Neon Green
-        Color(0xFF40C4FF), // Sky Blue
-        Color(0xFFFF4081), // Pink Accent
-        Color(0xFFFFD740)  // Bright Gold
+        Color(0xFF5E9D90), // Mineral teal
+        Color(0xFFC39755), // Ochre
+        Color(0xFF7A8C83), // Sage
+        Color(0xFFC66F52), // Terracotta
+        Color(0xFF7C9A8B), // Sage
+        Color(0xFF6F92A0), // Slate blue
+        Color(0xFF9B7381), // Dusty plum
+        Color(0xFFB9A06A)  // Soft gold
     )
 
     fun getColor(index: Int): Color = palette[index % palette.size]

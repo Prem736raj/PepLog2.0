@@ -23,7 +23,7 @@ import javax.inject.Singleton
 /**
  * Exports all Room database data to a serializable [BackupData] object.
  * This is the canonical way to convert the full database into a portable format
- * for Google Drive backup or local JSON export.
+ * for the local JSON export.
  */
 @Singleton
 class DatabaseExporter @Inject constructor(

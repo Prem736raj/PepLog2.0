@@ -16,6 +16,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.viewinterop.AndroidView
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 
@@ -41,6 +42,7 @@ fun LegalScreen(
         "terms" -> "file:///android_asset/terms_of_service.html"
         else -> "file:///android_asset/privacy_policy.html"
     }
+    val webViewBackground = PepLogTheme.colors.background.toArgb()
 
     Column(modifier = modifier.fillMaxSize()) {
         TopAppBar(
@@ -74,7 +76,7 @@ fun LegalScreen(
                         loadWithOverviewMode = true
                         useWideViewPort = true
                     }
-                    setBackgroundColor(android.graphics.Color.parseColor("#0F0F1A"))
+                    setBackgroundColor(webViewBackground)
                     loadUrl(assetPath)
                 }
             },

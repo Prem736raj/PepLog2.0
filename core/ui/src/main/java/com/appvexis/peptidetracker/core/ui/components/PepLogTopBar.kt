@@ -11,9 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 
-/**
- * Premium top bar v2 — supports center-aligned and left-aligned variants.
- */
+/** Screen titles are left-aligned by default; centered bars are reserved for short modal contexts. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PepLogTopBar(
@@ -21,43 +19,38 @@ fun PepLogTopBar(
     modifier: Modifier = Modifier,
     navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
-    isCenterAligned: Boolean = true
+    isCenterAligned: Boolean = false,
 ) {
     val colors = PepLogTheme.colors
-    
-    val titleComposable = @Composable {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            color = colors.textPrimary
-        )
+    val titleContent: @Composable () -> Unit = {
+        Text(title, style = MaterialTheme.typography.titleLarge, color = colors.textPrimary)
     }
-
+    val barColors = TopAppBarDefaults.topAppBarColors(
+        containerColor = colors.background,
+        titleContentColor = colors.textPrimary,
+        navigationIconContentColor = colors.textPrimary,
+        actionIconContentColor = colors.textSecondary,
+    )
     if (isCenterAligned) {
         CenterAlignedTopAppBar(
-            title = titleComposable,
-            navigationIcon = navigationIcon ?: {},
-            actions = actions,
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = colors.background,
-                titleContentColor = colors.textPrimary,
-                navigationIconContentColor = colors.textPrimary,
-                actionIconContentColor = colors.textSecondary
-            ),
-            modifier = modifier
-        )
-    } else {
-        TopAppBar(
-            title = titleComposable,
+            title = titleContent,
             navigationIcon = navigationIcon ?: {},
             actions = actions,
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = colors.background,
                 titleContentColor = colors.textPrimary,
                 navigationIconContentColor = colors.textPrimary,
-                actionIconContentColor = colors.textSecondary
+                actionIconContentColor = colors.textSecondary,
             ),
-            modifier = modifier
+            modifier = modifier,
+        )
+    } else {
+        TopAppBar(
+            title = titleContent,
+            navigationIcon = navigationIcon ?: {},
+            actions = actions,
+            colors = barColors,
+            modifier = modifier,
         )
     }
 }

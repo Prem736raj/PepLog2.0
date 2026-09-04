@@ -207,7 +207,7 @@ fun PKInfoCards(
                         Text(
                             text = "Trough: ${formatConcentrationDisplay(trough.concentration)}",
                             fontSize = 11.sp,
-                            color = Color(0xFFF43F5E)
+                            color = PepLogTheme.colors.accent
                         )
                     }
                 }

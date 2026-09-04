@@ -1,6 +1,7 @@
 package com.appvexis.peptidetracker.feature.dashboard.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,42 +9,30 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.appvexis.peptidetracker.core.ui.components.PepLogCard
-import com.appvexis.peptidetracker.core.ui.theme.OutfitFontFamily
+import com.appvexis.peptidetracker.core.ui.components.PepLogTag
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 import com.appvexis.peptidetracker.feature.dashboard.model.TodayDoseUiModel
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
-/**
- * Today's dose schedule overview card integrating the circular adherence progress ring
- * and interactive dose items.
- */
+/** A compact daily schedule that favours legibility and deliberate actions. */
 @Composable
 fun TodayDoseSummaryCard(
     todayDoses: List<TodayDoseUiModel>,
@@ -52,78 +41,70 @@ fun TodayDoseSummaryCard(
     adherencePercent: Int,
     onMarkTaken: (doseId: String) -> Unit,
     onViewDailyLog: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val colors = PepLogTheme.colors
-    val dateFormat = SimpleDateFormat("EEEE, MMM d", Locale.getDefault())
-    val todayFormatted = dateFormat.format(Date())
+    val supportingCopy = when {
+        totalCount == 0 -> "No scheduled doses for today."
+        takenCount >= totalCount -> "All scheduled doses are logged."
+        else -> "${totalCount - takenCount} record${if (totalCount - takenCount == 1) "" else "s"} still need attention."
+    }
 
-    PepLogCard(
-        isGlassmorphic = true,
-        modifier = modifier.fillMaxWidth()
-    ) {
+    PepLogCard(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Header: Date + Motivational message + Circular Progress Ring
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = todayFormatted,
-                        fontFamily = OutfitFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 19.sp,
-                        color = colors.textPrimary
+                        text = "Today’s schedule",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(Modifier.height(3.dp))
                     Text(
-                        text = when {
-                            totalCount == 0 -> "No scheduled doses today"
-                            takenCount == totalCount -> "🎉 All doses completed today!"
-                            takenCount > 0 -> "$takenCount of $totalCount completed"
-                            else -> "Ready for today's protocol"
-                        },
-                        fontSize = 13.sp,
-                        color = if (takenCount == totalCount && totalCount > 0) colors.success else colors.textSecondary
+                        text = supportingCopy,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.textSecondary,
                     )
                 }
-
-                if (totalCount > 0) {
-                    Spacer(modifier = Modifier.width(PepLogTheme.spacing.medium))
-                    AdherenceProgressRing(
-                        progressPercent = adherencePercent,
-                        takenDoses = takenCount,
-                        totalDoses = totalCount,
-                        size = 72.dp,
-                        strokeWidth = 7.dp
-                    )
-                }
+                AdherenceProgressRing(
+                    progressPercent = adherencePercent,
+                    takenDoses = takenCount,
+                    totalDoses = totalCount,
+                    size = 72.dp,
+                    strokeWidth = 7.dp,
+                )
             }
 
             if (todayDoses.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(PepLogTheme.spacing.medium))
-                HorizontalDivider(color = colors.surfaceHigh)
-                Spacer(modifier = Modifier.height(PepLogTheme.spacing.small))
-
-                // Doses List
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    todayDoses.take(4).forEach { item ->
-                        TodayDoseItemRow(
-                            item = item,
-                            onMarkTaken = { onMarkTaken(item.doseLog.id) }
-                        )
-                    }
+                Spacer(Modifier.height(16.dp))
+                todayDoses.forEachIndexed { index, dose ->
+                    if (index > 0) HorizontalDivider(color = colors.surfaceDim)
+                    TodayDoseItemRow(dose = dose, onMarkTaken = onMarkTaken)
                 }
-
-                if (todayDoses.size > 4) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                HorizontalDivider(color = colors.surfaceDim)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp)
+                        .clickable(role = Role.Button, onClick = onViewDailyLog)
+                        .padding(vertical = 12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
-                        text = "+ ${todayDoses.size - 4} more doses scheduled",
-                        fontSize = 12.sp,
+                        text = "Open daily log",
+                        style = MaterialTheme.typography.labelLarge,
                         color = colors.primary,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.Schedule,
+                        contentDescription = null,
+                        tint = colors.primary,
+                        modifier = Modifier.size(18.dp),
                     )
                 }
             }
@@ -133,92 +114,65 @@ fun TodayDoseSummaryCard(
 
 @Composable
 private fun TodayDoseItemRow(
-    item: TodayDoseUiModel,
-    onMarkTaken: () -> Unit
+    dose: TodayDoseUiModel,
+    onMarkTaken: (doseId: String) -> Unit,
 ) {
     val colors = PepLogTheme.colors
-    val isTaken = item.isTaken
+    val statusColor = when {
+        dose.isTaken -> colors.success
+        dose.isOverdue -> colors.accent
+        else -> colors.primary
+    }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(if (isTaken) colors.surfaceHigh.copy(alpha = 0.5f) else colors.surface)
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .heightIn(min = 64.dp)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
+        Box(
+            modifier = Modifier
+                .size(36.dp)
+                .background(statusColor.copy(alpha = 0.12f), MaterialTheme.shapes.extraSmall),
+            contentAlignment = Alignment.Center,
         ) {
-            // Status Circle Indicator
-            Box(
-                modifier = Modifier
-                    .size(28.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (isTaken) colors.success.copy(alpha = 0.18f)
-                        else if (item.isOverdue) colors.accent.copy(alpha = 0.18f)
-                        else colors.primary.copy(alpha = 0.15f)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = if (isTaken) Icons.Default.Check else Icons.Default.Schedule,
-                    contentDescription = null,
-                    tint = if (isTaken) colors.success else if (item.isOverdue) colors.accent else colors.primary,
-                    modifier = Modifier.size(16.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column {
-                Text(
-                    text = item.compoundName,
-                    fontFamily = OutfitFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp,
-                    color = if (isTaken) colors.textSecondary else colors.textPrimary
-                )
-                Text(
-                    text = "${item.doseDisplay} • ${item.timeDisplay}",
-                    fontSize = 12.sp,
-                    color = if (isTaken) colors.textSecondary.copy(alpha = 0.7f) else colors.primary
-                )
-            }
+            Icon(
+                imageVector = if (dose.isTaken) Icons.Default.Check else Icons.Default.Schedule,
+                contentDescription = null,
+                tint = statusColor,
+                modifier = Modifier.size(18.dp),
+            )
         }
-
-        if (!isTaken) {
-            Surface(
-                shape = RoundedCornerShape(8.dp),
-                color = colors.primary.copy(alpha = 0.15f),
-                modifier = Modifier.clip(RoundedCornerShape(8.dp))
-            ) {
-                IconButton(
-                    onClick = onMarkTaken,
-                    modifier = Modifier.size(34.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "Mark Taken",
-                        tint = colors.primary,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-            }
+        Spacer(Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = dose.compoundName,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+            )
+            Text(
+                text = "${dose.doseDisplay} · ${dose.timeDisplay}",
+                style = MaterialTheme.typography.bodySmall,
+                color = colors.textSecondary,
+            )
+        }
+        if (dose.isOverdue && !dose.isTaken) {
+            PepLogTag(text = "Due", color = colors.accent)
+            Spacer(Modifier.width(4.dp))
+        }
+        if (dose.isTaken) {
+            Text(
+                text = "Logged",
+                style = MaterialTheme.typography.labelMedium,
+                color = colors.success,
+            )
         } else {
-            Surface(
-                shape = RoundedCornerShape(6.dp),
-                color = colors.success.copy(alpha = 0.15f)
-            ) {
-                Text(
-                    text = "Taken",
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.success,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+            IconButton(onClick = { onMarkTaken(dose.doseLog.id) }) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Mark ${dose.compoundName} as logged",
+                    tint = colors.primary,
                 )
             }
         }

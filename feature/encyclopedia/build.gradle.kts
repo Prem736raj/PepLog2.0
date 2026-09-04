@@ -53,7 +53,6 @@ dependencies {
     implementation(project(":core:model"))
     
     // Compose Icons Extended
-    implementation(libs.androidx.compose.material.icons.extended)
 
     // Navigation Compose
     implementation(libs.androidx.navigation.compose)

@@ -351,7 +351,7 @@ private fun PeptideDetailContent(peptide: Peptide) {
                 ) {
                     peptide.contraindications.forEach { contra ->
                         PepLogTag(
-                            text = "⚠️ $contra",
+                            text = contra,
                             color = PepLogTheme.colors.accent
                         )
                     }
@@ -527,7 +527,7 @@ private fun LegalStatusCard(
                         text = legalStatus,
                         style = MaterialTheme.typography.bodyMedium,
                         color = if (legalStatus.contains("FDA-Approved", ignoreCase = true)) {
-                            Color(0xFF4CAF50)
+                            PepLogTheme.colors.success
                         } else if (legalStatus.contains("Banned", ignoreCase = true)) {
                             PepLogTheme.colors.accent
                         } else {
@@ -675,7 +675,7 @@ private fun MandatoryMedicalDisclaimer() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "⚠️ EDUCATIONAL PURPOSES ONLY",
+                text = "EDUCATIONAL PURPOSES ONLY",
                 fontFamily = OutfitFontFamily,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,

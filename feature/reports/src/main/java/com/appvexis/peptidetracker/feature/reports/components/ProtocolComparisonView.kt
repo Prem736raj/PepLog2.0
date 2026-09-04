@@ -15,7 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.CompareArrows
-import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Healing
 import androidx.compose.material.icons.filled.Spa
@@ -103,7 +103,7 @@ fun ProtocolComparisonView(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Default.AutoAwesome,
+                            imageVector = Icons.Default.Analytics,
                             contentDescription = null,
                             tint = PepLogTheme.colors.primary,
                             modifier = Modifier.size(20.dp)
@@ -264,7 +264,7 @@ private fun ProtocolComparisonItemCard(
                                 .padding(horizontal = 8.dp, vertical = 4.dp)
                         ) {
                             Text(
-                                text = "✨ $highlight",
+                                text = highlight,
                                 fontSize = 11.sp,
                                 color = PepLogTheme.colors.primary,
                                 fontWeight = FontWeight.Medium

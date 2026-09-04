@@ -43,13 +43,13 @@ import java.util.Locale
 import javax.inject.Inject
 
 private val SymptomColors = listOf(
-    Color(0xFFF43F5E), // Rose
-    Color(0xFFFBBF24), // Amber
-    Color(0xFF22D3EE), // Cyan
-    Color(0xFFA78BFA), // Violet
-    Color(0xFFFF4081), // Pink
-    Color(0xFF34D399), // Emerald
-    Color(0xFF38BDF8)  // Sky Blue
+    Color(0xFFC66F52), // Terracotta
+    Color(0xFFC39755), // Ochre
+    Color(0xFF5E9D90), // Mineral teal
+    Color(0xFF819189), // Slate green
+    Color(0xFF9B7381), // Dusty plum
+    Color(0xFF7C9A8B), // Sage
+    Color(0xFF6F92A0)  // Slate blue
 )
 
 @HiltViewModel
@@ -177,13 +177,14 @@ class ReportsViewModel @Inject constructor(
     private fun computeAdherence(dailyList: List<DailyAnalyticsSummary>): AdherenceSummaryUiModel {
         if (dailyList.isEmpty()) return AdherenceSummaryUiModel()
 
-        val totalScheduled = dailyList.sumOf { it.totalDosesScheduled }
-        val totalTaken = dailyList.sumOf { it.totalDosesTaken }
-        val totalMissed = dailyList.sumOf { it.totalDosesMissed }
+        val orderedDays = dailyList.sortedBy { it.date }
+        val totalScheduled = orderedDays.sumOf { it.totalDosesScheduled }
+        val totalTaken = orderedDays.sumOf { it.totalDosesTaken }
+        val totalMissed = orderedDays.sumOf { it.totalDosesMissed }
         val overallPct = if (totalScheduled > 0) (totalTaken.toDouble() / totalScheduled) * 100.0 else 0.0
 
         val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
-        val points = dailyList.map { item ->
+        val points = orderedDays.map { item ->
             DailyAdherencePoint(
                 timestamp = item.date,
                 dayLabel = dateFormat.format(Date(item.date)),
@@ -196,7 +197,7 @@ class ReportsViewModel @Inject constructor(
 
         // Streak computation: count continuous days backwards with taken >= scheduled
         var streak = 0
-        val reversed = dailyList.sortedByDescending { it.date }
+        val reversed = orderedDays.asReversed()
         for (day in reversed) {
             if (day.totalDosesTaken > 0 && day.totalDosesMissed == 0) {
                 streak++
@@ -258,7 +259,7 @@ class ReportsViewModel @Inject constructor(
             }
             .sortedByDescending { it.count }
 
-        val recentList = sideEffectsOnly.take(10).map {
+        val recentList = sideEffectsOnly.sortedByDescending { it.date }.take(10).map {
             SideEffectItemUiModel(
                 id = it.id,
                 date = it.date,
@@ -348,12 +349,13 @@ class ReportsViewModel @Inject constructor(
     private fun computeWellness(dailyList: List<DailyAnalyticsSummary>): WellnessTrendUiModel {
         if (dailyList.isEmpty()) return WellnessTrendUiModel()
 
+        val orderedDays = dailyList.sortedBy { it.date }
         val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
 
-        val moodScores = dailyList.mapNotNull { it.avgMood }
-        val energyScores = dailyList.mapNotNull { it.avgEnergy }
-        val sleepScores = dailyList.mapNotNull { it.avgSleepQuality }
-        val painScores = dailyList.mapNotNull { it.avgPainLevel }
+        val moodScores = orderedDays.mapNotNull { it.avgMood }
+        val energyScores = orderedDays.mapNotNull { it.avgEnergy }
+        val sleepScores = orderedDays.mapNotNull { it.avgSleepQuality }
+        val painScores = orderedDays.mapNotNull { it.avgPainLevel }
 
         val moodAvg = if (moodScores.isNotEmpty()) moodScores.average() else 0.0
         val energyAvg = if (energyScores.isNotEmpty()) energyScores.average() else 0.0
@@ -365,7 +367,7 @@ class ReportsViewModel @Inject constructor(
         val sleepDelta = if (sleepScores.size > 1) sleepScores.last() - sleepScores.first() else 0.0
         val painDelta = if (painScores.size > 1) painScores.last() - painScores.first() else 0.0
 
-        val points = dailyList.map { item ->
+        val points = orderedDays.map { item ->
             DailyWellnessPoint(
                 timestamp = item.date,
                 dayLabel = dateFormat.format(Date(item.date)),

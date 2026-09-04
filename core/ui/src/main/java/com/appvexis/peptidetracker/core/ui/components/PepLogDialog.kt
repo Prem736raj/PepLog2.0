@@ -1,18 +1,13 @@
 package com.appvexis.peptidetracker.core.ui.components
 
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 
-/**
- * Premium dialog v2 with refined shape and color tokens.
- */
 @Composable
 fun PepLogDialog(
     onDismissRequest: () -> Unit,
@@ -23,57 +18,30 @@ fun PepLogDialog(
     modifier: Modifier = Modifier,
     dismissButtonText: String? = null,
     onDismiss: (() -> Unit)? = null,
-    icon: (@Composable () -> Unit)? = null
+    icon: (@Composable () -> Unit)? = null,
 ) {
     val colors = PepLogTheme.colors
-    
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            TextButton(onClick = {
-                onConfirm()
-                onDismissRequest()
-            }) {
-                Text(
-                    text = confirmButtonText,
-                    color = colors.primary,
-                    style = MaterialTheme.typography.labelLarge
-                )
+            TextButton(onClick = { onConfirm(); onDismissRequest() }) {
+                Text(confirmButtonText, style = MaterialTheme.typography.labelLarge)
             }
         },
-        dismissButton = dismissButtonText?.let {
+        dismissButton = dismissButtonText?.let { label ->
             {
-                TextButton(onClick = {
-                    onDismiss?.invoke()
-                    onDismissRequest()
-                }) {
-                    Text(
-                        text = it,
-                        color = colors.textSecondary,
-                        style = MaterialTheme.typography.labelLarge
-                    )
+                TextButton(onClick = { onDismiss?.invoke(); onDismissRequest() }) {
+                    Text(label, style = MaterialTheme.typography.labelLarge, color = colors.textSecondary)
                 }
             }
         },
-        title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                color = colors.textPrimary
-            )
-        },
-        text = {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium,
-                color = colors.textSecondary
-            )
-        },
+        title = { Text(title, style = MaterialTheme.typography.titleLarge) },
+        text = { Text(text, style = MaterialTheme.typography.bodyMedium, color = colors.textSecondary) },
         icon = icon,
-        shape = RoundedCornerShape(20.dp),
-        containerColor = colors.surfaceHigh,
+        shape = MaterialTheme.shapes.large,
+        containerColor = colors.surface,
         titleContentColor = colors.textPrimary,
         textContentColor = colors.textSecondary,
-        modifier = modifier
+        modifier = modifier,
     )
 }

@@ -1,6 +1,5 @@
 package com.appvexis.peptidetracker.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -9,10 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -40,9 +38,13 @@ import com.appvexis.peptidetracker.core.model.ProtocolsRoute
 import com.appvexis.peptidetracker.core.model.SplashRoute
 import com.appvexis.peptidetracker.core.model.LegalRoute
 import com.appvexis.peptidetracker.core.ui.components.AnimatedBottomBar
+import com.appvexis.peptidetracker.core.ui.components.PepLogBrandMark
+import com.appvexis.peptidetracker.core.ui.components.PepLogButton
+import com.appvexis.peptidetracker.core.ui.components.PepLogCard
 import com.appvexis.peptidetracker.core.ui.components.PepLogLoadingState
 import com.appvexis.peptidetracker.core.ui.components.PepLogTopBar
 import com.appvexis.peptidetracker.core.ui.splash.SplashScreen
+import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 import com.appvexis.peptidetracker.feature.dashboard.DashboardScreen
 import com.appvexis.peptidetracker.feature.onboarding.OnboardingScreen
 import com.appvexis.peptidetracker.feature.protocol.ProtocolScreen
@@ -187,30 +189,10 @@ private fun AppNavigationContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(if (showBars) innerPadding else PaddingValues(0.dp)),
-            enterTransition = {
-                val initialRoute = initialState.destination.route
-                val targetRoute = targetState.destination.route
-                val direction = getTransitionDirection(initialRoute, targetRoute)
-                slideIntoContainer(direction, animationSpec = tween(350)) + fadeIn(animationSpec = tween(350))
-            },
-            exitTransition = {
-                val initialRoute = initialState.destination.route
-                val targetRoute = targetState.destination.route
-                val direction = getTransitionDirection(initialRoute, targetRoute)
-                slideOutOfContainer(direction, animationSpec = tween(350)) + fadeOut(animationSpec = tween(350))
-            },
-            popEnterTransition = {
-                val initialRoute = initialState.destination.route
-                val targetRoute = targetState.destination.route
-                val direction = getTransitionDirection(initialRoute, targetRoute)
-                slideIntoContainer(direction, animationSpec = tween(350)) + fadeIn(animationSpec = tween(350))
-            },
-            popExitTransition = {
-                val initialRoute = initialState.destination.route
-                val targetRoute = targetState.destination.route
-                val direction = getTransitionDirection(initialRoute, targetRoute)
-                slideOutOfContainer(direction, animationSpec = tween(350)) + fadeOut(animationSpec = tween(350))
-            }
+            enterTransition = { fadeIn(animationSpec = tween(160)) },
+            exitTransition = { fadeOut(animationSpec = tween(120)) },
+            popEnterTransition = { fadeIn(animationSpec = tween(160)) },
+            popExitTransition = { fadeOut(animationSpec = tween(120)) },
         ) {
             composable<DashboardRoute>(
                 deepLinks = listOf(
@@ -494,73 +476,34 @@ private fun PremiumRequiredScreen(
     featureName: String,
     onUnlock: () -> Unit
 ) {
+    val colors = PepLogTheme.colors
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp),
+            .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "Premium feature",
-                fontWeight = FontWeight.Bold,
-                color = com.appvexis.peptidetracker.core.ui.theme.PepLogTheme.colors.textPrimary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "$featureName is included with PepLog Premium. Your existing dose logs remain available on the free plan.",
-                color = com.appvexis.peptidetracker.core.ui.theme.PepLogTheme.colors.textSecondary
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            Button(onClick = onUnlock) {
-                Text("View Premium plans")
+        PepLogCard(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                PepLogBrandMark(size = 56.dp)
+                Text(
+                    text = "Keep the essentials free",
+                    style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
+                    color = colors.textPrimary,
+                )
+                Text(
+                    text = "$featureName is part of PepLog Premium. Your existing records remain available on the free plan.",
+                    color = colors.textSecondary,
+                )
+                PepLogButton(
+                    text = "View Premium plans",
+                    onClick = onUnlock,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
-    }
-}
-
-/**
- * Helper function to determine transition slide direction based on relative tab indices.
- */
-private fun getTransitionDirection(
-    initialRoute: String?,
-    targetRoute: String?
-): AnimatedContentTransitionScope.SlideDirection {
-    val initialIndex = getRouteIndex(initialRoute)
-    val targetIndex = getRouteIndex(targetRoute)
-    return if (targetIndex > initialIndex) {
-        AnimatedContentTransitionScope.SlideDirection.Left
-    } else {
-        AnimatedContentTransitionScope.SlideDirection.Right
-    }
-}
-
-/**
- * Maps a route string to its respective tab index for transition computations.
- */
-private fun getRouteIndex(route: String?): Int {
-    if (route == null) return 0
-    return when {
-        route.contains("DashboardRoute") -> 0
-        route.contains("ProtocolsRoute") -> 1
-        route.contains("InsightsRoute") -> 2
-        route.contains("MoreRoute") -> 3
-        route.contains("EncyclopediaRoute") -> 4
-        route.contains("CalculatorRoute") -> 5
-        route.contains("PeptideDetailRoute") -> 6
-        route.contains("InjectionTrackerRoute") -> 7
-        route.contains("InventoryRoute") -> 8
-        route.contains("ProgressRoute") -> 9
-        route.contains("PhotoComparisonRoute") -> 10
-        route.contains("PKVisualizerRoute") -> 11
-        route.contains("HealthConnectRoute") -> 12
-        route.contains("PaywallRoute") -> 13
-        route.contains("BackupSettingsRoute") -> 14
-        route.contains("SplashRoute") -> -1
-        route.contains("LegalRoute") -> 15
-        else -> 0
     }
 }

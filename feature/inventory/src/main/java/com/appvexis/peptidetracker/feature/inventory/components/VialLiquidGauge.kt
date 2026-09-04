@@ -66,16 +66,16 @@ fun VialLiquidGauge(
     val liquidColors = when {
         !isReconstituted -> listOf(Color(0xFFE2E8F0), Color(0xFF94A3B8)) // Lyophilized powder
         expirationStatus == ExpirationStatus.EXPIRED || expirationStatus == ExpirationStatus.CRITICAL -> listOf(
-            Color(0xFFF43F5E),
-            Color(0xFFDC2626)
+            Color(0xFFC66F52),
+            Color(0xFF9E4B35)
         )
         expirationStatus == ExpirationStatus.EXPIRING_SOON -> listOf(
-            Color(0xFFFBBF24),
-            Color(0xFFD97706)
+            Color(0xFFC39755),
+            Color(0xFF956D36)
         )
         else -> listOf(
-            Color(0xFF22D3EE),
-            Color(0xFF0D9488)
+            Color(0xFF8FC4B6),
+            Color(0xFF4F897E)
         )
     }
 

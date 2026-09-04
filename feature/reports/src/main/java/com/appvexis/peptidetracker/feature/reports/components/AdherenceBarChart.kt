@@ -35,6 +35,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -261,10 +262,10 @@ private fun DailyAdherenceBarCanvas(
     }
 
     val density = LocalDensity.current
-    val textPaint = remember {
+    val textPaint = remember(textColor, density) {
         android.graphics.Paint().apply {
             isAntiAlias = true
-            color = android.graphics.Color.parseColor("#8888A0")
+            color = textColor.toArgb()
             textSize = with(density) { 10.dp.toPx() }
             typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
             textAlign = android.graphics.Paint.Align.CENTER

@@ -228,7 +228,11 @@ class DashboardViewModel @Inject constructor(
     }
 
     private fun calculateStreak(logs: List<DoseLog>, now: Long): StreakInfo {
-        val takenLogs = logs.filter { it.status == DoseStatus.TAKEN && it.actualTime != null }
+        val takenLogs = logs.filter {
+            it.status == DoseStatus.TAKEN &&
+                it.actualTime != null &&
+                it.actualTime!! <= now
+        }
             .sortedByDescending { it.actualTime }
 
         if (takenLogs.isEmpty()) {

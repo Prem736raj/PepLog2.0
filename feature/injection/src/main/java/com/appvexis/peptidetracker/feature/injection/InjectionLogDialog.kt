@@ -102,12 +102,13 @@ fun InjectionLogDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
+                    val colors = PepLogTheme.colors
                     val painOptions = listOf(
-                        PainOption(1, Icons.Default.SentimentVerySatisfied, "None", Color(0xFF4CAF50)),
-                        PainOption(2, Icons.Default.SentimentSatisfied, "Mild", Color(0xFF8BC34A)),
-                        PainOption(3, Icons.Default.SentimentNeutral, "Moderate", Color(0xFFFBBF24)),
-                        PainOption(4, Icons.Default.SentimentDissatisfied, "Strong", Color(0xFFFF9800)),
-                        PainOption(5, Icons.Default.SentimentVeryDissatisfied, "Severe", Color(0xFFF43F5E))
+                        PainOption(1, Icons.Default.SentimentVerySatisfied, "None", colors.success),
+                        PainOption(2, Icons.Default.SentimentSatisfied, "Mild", colors.primary),
+                        PainOption(3, Icons.Default.SentimentNeutral, "Moderate", colors.warning),
+                        PainOption(4, Icons.Default.SentimentDissatisfied, "Strong", colors.warning),
+                        PainOption(5, Icons.Default.SentimentVeryDissatisfied, "Severe", colors.accent)
                     )
                     painOptions.forEach { option ->
                         PainLevelButton(

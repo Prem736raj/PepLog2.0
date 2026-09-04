@@ -294,9 +294,8 @@ class SubscriptionManager @Inject constructor(
             PremiumFeature.ADVANCED_ANALYTICS -> isPremium.value
             PremiumFeature.PK_VISUALIZER -> isPremium.value
             PremiumFeature.HEALTH_CONNECT -> isPremium.value
-            PremiumFeature.CLOUD_BACKUP -> isPremium.value
             // Local export is always available so users can retrieve their data
-            // without paying; cloud backup remains Premium-only.
+            // without paying.
             PremiumFeature.EXPORT_DATA -> true
             // Free tier features
             PremiumFeature.BASIC_LOGGING -> true
@@ -330,7 +329,6 @@ enum class PremiumFeature {
     ADVANCED_ANALYTICS,
     PK_VISUALIZER,
     HEALTH_CONNECT,
-    CLOUD_BACKUP,
     EXPORT_DATA,
 
     // Free tier (always available)

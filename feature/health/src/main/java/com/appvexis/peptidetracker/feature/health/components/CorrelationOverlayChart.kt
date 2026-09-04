@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -166,7 +167,7 @@ fun CorrelationOverlayChart(
                     8f,
                     y + 4f,
                     android.graphics.Paint().apply {
-                        color = textColor.hashCode()
+                        color = textColor.toArgb()
                         textSize = 24f
                         isAntiAlias = true
                     }
@@ -262,12 +263,6 @@ fun CorrelationOverlayChart(
                     radius = 3.dp.toPx(),
                     center = point
                 )
-                // Glow effect
-                drawCircle(
-                    color = curveColor.copy(alpha = 0.15f * animationProgress.value),
-                    radius = 6.dp.toPx(),
-                    center = point
-                )
             }
 
             // Highlight dose-day data points with outer ring
@@ -318,7 +313,7 @@ private fun DrawScope.drawXAxisLabels(
             x - 20f,
             y,
             android.graphics.Paint().apply {
-                color = textColor.hashCode()
+                color = textColor.toArgb()
                 textSize = 22f
                 isAntiAlias = true
             }

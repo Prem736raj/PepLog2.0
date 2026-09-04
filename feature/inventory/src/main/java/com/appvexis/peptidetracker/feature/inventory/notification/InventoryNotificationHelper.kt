@@ -55,7 +55,7 @@ object InventoryNotificationHelper {
         // Alert for expiring vials
         if (criticalVials.isNotEmpty() || expiredVials.isNotEmpty()) {
             val title = when {
-                expiredVials.isNotEmpty() -> "⚠️ Peptide Expiration Alert"
+                expiredVials.isNotEmpty() -> "Peptide expiration alert"
                 criticalVials.any { it.expirationStatus == ExpirationStatus.CRITICAL } -> "⏳ Peptide Expiring in ≤3 Days"
                 else -> "ℹ️ Peptide Shelf Life Notice"
             }

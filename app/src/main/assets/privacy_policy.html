@@ -5,54 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy — PepLog</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #f0f0f5; background: #0f0f1a; padding: 16px; margin: 0; }
-        h1, h2 { color: #4ecdc4; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #17201c; background: #f6f6f1; padding: 16px; margin: 0; }
+        h1, h2 { color: #1e625d; }
         h1 { font-size: 24px; }
         h2 { font-size: 18px; margin-top: 24px; }
-        p, li { color: #c0c0d0; font-size: 14px; }
-        a { color: #4ecdc4; }
-        .effective-date { color: #8888a0; font-size: 12px; }
+        p, li { color: #637069; font-size: 14px; }
+        a { color: #1e625d; }
+        .effective-date { color: #7a857e; font-size: 12px; }
     </style>
 </head>
 <body>
     <h1>Privacy Policy</h1>
-    <p class="effective-date">Last updated: August 2026</p>
+    <p class="effective-date">Last updated: September 2026</p>
 
     <h2>1. Scope</h2>
     <p>PepLog ("we", "our", or "the App") is a personal tracking and organization tool developed by Appvexis. This policy describes the information the App stores and the optional services it uses.</p>
 
     <h2>2. Information stored on your device</h2>
-    <p>Protocols, dose logs, inventory, biomarkers, progress photos, calculator presets, preferences, and locally imported health metrics are stored in the App's private Android storage. The App has no PepLog-operated account or application server. Android app isolation and device security protect this local storage; PepLog does not claim that the database has custom SQLCipher encryption.</p>
+    <p>Protocols, dose logs, inventory, biomarkers, progress photos, calculator presets, preferences, and locally imported health metrics are stored in the App's private Android storage. PepLog has no PepLog-operated account or application server. Android app isolation and device security protect this local storage; PepLog does not claim that the database has custom SQLCipher encryption.</p>
 
-    <h2>3. Optional Google Drive backup</h2>
-    <p>If you connect Google Drive and start a backup, the App uploads a JSON copy of the selected PepLog data to Google's Drive <code>appDataFolder</code> using HTTPS. Google handles the account authentication and storage under Google's terms and privacy policy. The App stores the selected Google account email locally so it can display and reuse that account. PepLog does not operate a server that receives the backup.</p>
-    <p>Backups can contain sensitive health information and any notes or photos represented by your data. Review the export before sharing it. You can delete App-created backups from the App or through Google's account controls.</p>
+    <h2>3. Health Connect</h2>
+    <p>If you grant Health Connect permissions, the App reads only the health record types shown in the permission screen and processes them locally for the App's charts and logs. Health Connect access is optional and can be revoked in Android Health Connect settings.</p>
 
-    <h2>4. Health Connect</h2>
-    <p>If you grant Health Connect permissions, the App reads only the health record types shown in the permission screen and processes them locally for the App's charts and logs. Health Connect data is included in a Drive backup or local export only when it is part of the data you choose to back up or share.</p>
-
-    <h2>5. Billing and diagnostics</h2>
+    <h2>4. Billing and diagnostics</h2>
     <p>Subscriptions and payment details are handled by Google Play. PepLog stores a local cache of the current entitlement and product identifier; it does not receive your payment card information.</p>
-    <p>Release builds may record crash diagnostics through the configured diagnostics integration. PepLog does not intentionally put dose values, notes, photos, or health records in diagnostic messages. Debug builds may write technical logs visible to a development tool.</p>
+    <p>Release builds suppress debug logs and may write warning or error messages to the Android system log for troubleshooting. No third-party crash-reporting service is bundled in this build, and PepLog does not intentionally put dose values, notes, photos, or health records in log messages. Debug builds may write technical logs visible to a development tool.</p>
+
+    <h2>5. Exports and sharing</h2>
+    <p>PepLog can create CSV or JSON exports in its private app cache when you request one. The App does not upload an export by itself. Android's system share sheet lets you choose a destination, and that destination's own terms and privacy policy then apply. Exports can contain sensitive health information, notes, and timestamps; review them before sharing.</p>
 
     <h2>6. Information we do not use</h2>
     <ul>
         <li>No location tracking or advertising SDK is used.</li>
         <li>PepLog does not sell personal or health information.</li>
         <li>PepLog does not run a social profile or public health-data feed.</li>
-        <li>Network requests are intended to use HTTPS and are limited to optional Google services and Google Play or Health Connect integrations.</li>
+        <li>Network requests are intended to use HTTPS and are limited to Google Play billing and optional Health Connect integrations.</li>
     </ul>
 
     <h2>7. Retention and deletion</h2>
-    <p>Clear the App's storage or uninstall the App to remove its local database and preferences. Delete Drive backups separately; uninstalling PepLog does not guarantee removal of files already stored in your Google account. Shared exports may also remain with the recipient or service where you shared them.</p>
+    <p>Clear the App's storage or uninstall the App to remove its local database, preferences, and cached exports. Shared exports may remain with the recipient or service where you shared them, so delete those copies separately when no longer needed.</p>
 
-    <h2>8. Your choices</h2>
-    <p>Health Connect access, Google Drive backup, automatic backup, and sharing are optional. You can revoke Health Connect access in Health Connect settings and remove PepLog's Google access from your Google account settings.</p>
-
-    <h2>9. Children's privacy</h2>
+    <h2>8. Children's privacy</h2>
     <p>PepLog is not intended for children under 18. Do not use the App to store another person's information without appropriate permission.</p>
 
-    <h2>10. Changes and contact</h2>
+    <h2>9. Changes and contact</h2>
     <p>We may update this policy when the App's data practices change. The effective date above will be updated with material changes.</p>
     <p>For privacy questions, contact <a href="mailto:privacy@appvexis.com">privacy@appvexis.com</a>. Verify this address and publish this policy at a stable public URL before submitting the App to Google Play.</p>
 </body>

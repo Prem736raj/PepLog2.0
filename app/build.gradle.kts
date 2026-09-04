@@ -21,11 +21,6 @@ val releaseStoreFile = keystoreProperties.getProperty("storeFile").orEmpty().tri
 val releaseSigningConfigured = keystorePropertiesFile.isFile &&
     signingPropertyNames.all { !keystoreProperties.getProperty(it).isNullOrBlank() } &&
     releaseStoreFile.isNotBlank() && rootProject.file(releaseStoreFile).isFile
-val cloudProjectNumber = keystoreProperties.getProperty("CLOUD_PROJECT_NUMBER")
-    ?.trim()
-    ?.toLongOrNull()
-    ?: 0L
-
 android {
     namespace = "com.appvexis.peptidetracker"
     compileSdk = 36
@@ -44,11 +39,6 @@ android {
             "String",
             "RELEASE_CERT_HASH",
             "\"${keystoreProperties.getProperty("RELEASE_CERT_HASH", "")}\""
-        )
-        buildConfigField(
-            "long",
-            "CLOUD_PROJECT_NUMBER",
-            "${cloudProjectNumber}L"
         )
     }
 
@@ -143,9 +133,6 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
-    
-    // Compose Icons Extended
-    implementation(libs.androidx.compose.material.icons.extended)
     
     // Timber
     implementation(libs.timber)

@@ -1,7 +1,5 @@
 package com.appvexis.peptidetracker.feature.injection.bodymap
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -33,11 +30,11 @@ import com.appvexis.peptidetracker.feature.injection.model.ReadinessLevel
 import com.appvexis.peptidetracker.feature.injection.model.SiteStatus
 
 // Color constants for zone readiness
-private val RecentColor = Color(0xFFF43F5E)       // Coral red — used within 48h
-private val HealingColor = Color(0xFFFBBF24)       // Warm amber — 2-7 days
-private val ReadyColor = Color(0xFF4CAF50)         // Green — ready
-private val UnusedColor = Color(0xFF8888A0)        // Muted gray — never used
-private val SelectedRingColor = Color(0xFF22D3EE)  // Teal — selected
+private val RecentColor = Color(0xFFB85E3C)       // Terracotta — used within 48h
+private val HealingColor = Color(0xFF99681F)      // Ochre — 2-7 days
+private val ReadyColor = Color(0xFF2F7656)        // Evergreen — ready
+private val UnusedColor = Color(0xFF7D8A82)       // Slate — never used
+private val SelectedRingColor = Color(0xFF1E625D) // Mineral teal — selected
 
 /**
  * Interactive body map Canvas composable for the FRONT body view.
@@ -55,12 +52,6 @@ fun BodyMapFrontCanvas(
     val textMeasurer = rememberTextMeasurer()
     var canvasSize by remember { mutableStateOf(Size.Zero) }
 
-    val selectedPulse by animateFloatAsState(
-        targetValue = if (selectedSite != null) 1.15f else 1f,
-        animationSpec = tween(400),
-        label = "selectedPulse"
-    )
-
     Canvas(
         modifier = modifier
             .fillMaxSize()
@@ -77,7 +68,7 @@ fun BodyMapFrontCanvas(
         canvasSize = size
         val w = size.width
         val h = size.height
-        val outlineColor = if (isDark) Color(0xFF3A3A5C) else Color(0xFFCBD5E1)
+        val outlineColor = if (isDark) Color(0xFF526159) else Color(0xFFC8CEC7)
 
         // Draw human body silhouette outline
         drawHumanFrontOutline(w, h, outlineColor)
@@ -90,7 +81,6 @@ fun BodyMapFrontCanvas(
                 zone = zone,
                 status = status,
                 isSelected = isSelected,
-                selectedPulse = selectedPulse,
                 textMeasurer = textMeasurer,
                 isDark = isDark
             )
@@ -112,12 +102,6 @@ fun BodyMapBackCanvas(
     val textMeasurer = rememberTextMeasurer()
     var canvasSize by remember { mutableStateOf(Size.Zero) }
 
-    val selectedPulse by animateFloatAsState(
-        targetValue = if (selectedSite != null) 1.15f else 1f,
-        animationSpec = tween(400),
-        label = "selectedPulse"
-    )
-
     Canvas(
         modifier = modifier
             .fillMaxSize()
@@ -134,7 +118,7 @@ fun BodyMapBackCanvas(
         canvasSize = size
         val w = size.width
         val h = size.height
-        val outlineColor = if (isDark) Color(0xFF3A3A5C) else Color(0xFFCBD5E1)
+        val outlineColor = if (isDark) Color(0xFF526159) else Color(0xFFC8CEC7)
 
         // Draw human body back silhouette outline
         drawHumanBackOutline(w, h, outlineColor)
@@ -147,7 +131,6 @@ fun BodyMapBackCanvas(
                 zone = zone,
                 status = status,
                 isSelected = isSelected,
-                selectedPulse = selectedPulse,
                 textMeasurer = textMeasurer,
                 isDark = isDark
             )
@@ -162,13 +145,12 @@ private fun DrawScope.drawInjectionZone(
     zone: BodyMapZone,
     status: SiteStatus?,
     isSelected: Boolean,
-    selectedPulse: Float,
     textMeasurer: TextMeasurer,
     isDark: Boolean
 ) {
     val center = zone.toAbsoluteCenter(size.width, size.height)
     val baseRadius = zone.absoluteRadius(size.width)
-    val radius = if (isSelected) baseRadius * selectedPulse else baseRadius
+    val radius = baseRadius
 
     val readiness = status?.readinessLevel ?: ReadinessLevel.UNUSED
     val zoneColor = when (readiness) {
@@ -176,19 +158,6 @@ private fun DrawScope.drawInjectionZone(
         ReadinessLevel.HEALING -> HealingColor
         ReadinessLevel.READY -> ReadyColor
         ReadinessLevel.UNUSED -> UnusedColor
-    }
-
-    // Outer glow for selected
-    if (isSelected) {
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(SelectedRingColor.copy(alpha = 0.4f), Color.Transparent),
-                center = center,
-                radius = radius * 1.8f
-            ),
-            center = center,
-            radius = radius * 1.8f
-        )
     }
 
     // Fill circle with semi-transparent zone color
@@ -221,7 +190,7 @@ private fun DrawScope.drawInjectionZone(
     val count = status?.usageCount ?: 0
     if (count > 0) {
         val labelStyle = TextStyle(
-            color = if (isDark) Color(0xFFF0F0F5) else Color(0xFF111827),
+            color = if (isDark) Color(0xFFF0F3EE) else Color(0xFF17201C),
             fontSize = 9.sp,
             fontWeight = FontWeight.Bold
         )

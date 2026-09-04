@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -271,10 +272,10 @@ private fun BiomarkerCurveCanvas(
     }
 
     val density = LocalDensity.current
-    val textPaint = remember {
+    val textPaint = remember(textColor, density) {
         android.graphics.Paint().apply {
             isAntiAlias = true
-            color = android.graphics.Color.parseColor("#8888A0")
+            color = textColor.toArgb()
             textSize = with(density) { 10.dp.toPx() }
             typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
             textAlign = android.graphics.Paint.Align.CENTER

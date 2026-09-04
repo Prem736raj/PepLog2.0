@@ -87,41 +87,6 @@
 -dontwarn com.android.billingclient.**
 
 # ============================================================
-# Google Play Integrity
-# ============================================================
-
--keep class com.google.android.play.core.integrity.** { *; }
--dontwarn com.google.android.play.core.integrity.**
-
-# ============================================================
-# Google Drive API / Google API Client
-# ============================================================
-
--keep class com.google.api.** { *; }
--keep class com.google.api.client.** { *; }
--keep class com.google.api.services.drive.** { *; }
--dontwarn com.google.api.client.**
--dontwarn com.google.api.services.**
-
-# Keep Google HTTP client internals
--keep class com.google.api.client.http.** { *; }
--keep class com.google.api.client.json.** { *; }
--keep class com.google.api.client.googleapis.** { *; }
--dontwarn com.google.api.client.googleapis.**
-
-# Google Auth
--keep class com.google.auth.** { *; }
--dontwarn com.google.auth.**
-
-# ============================================================
-# Credential Manager / Google Identity
-# ============================================================
-
--keep class androidx.credentials.** { *; }
--keep class com.google.android.libraries.identity.googleid.** { *; }
--dontwarn androidx.credentials.**
-
-# ============================================================
 # Health Connect
 # ============================================================
 
@@ -143,13 +108,6 @@
 
 -keep class com.patrykandpatrick.vico.** { *; }
 -dontwarn com.patrykandpatrick.vico.**
-
-# ============================================================
-# Ktor
-# ============================================================
-
--keep class io.ktor.** { *; }
--dontwarn io.ktor.**
 
 # ============================================================
 # Timber
@@ -194,7 +152,7 @@
 # Miscellaneous
 # ============================================================
 
-# OkHttp (pulled in by Ktor/Google API client)
+# OkHttp (used by selected Android libraries)
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -keep class okhttp3.** { *; }
@@ -202,10 +160,8 @@
 # Javax annotations
 -dontwarn javax.annotation.**
 
-# Apache HTTP (legacy, pulled by Google API)
+# Legacy optional HTTP/XML warnings from Android libraries.
 -dontwarn org.apache.http.**
 -dontwarn android.net.http.**
-
-# JAXB (Google API uses some javax.xml)
 -dontwarn javax.xml.**
 -dontwarn org.codehaus.**

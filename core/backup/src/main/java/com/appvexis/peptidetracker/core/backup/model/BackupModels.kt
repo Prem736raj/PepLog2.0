@@ -5,7 +5,7 @@ import com.appvexis.peptidetracker.core.model.TitrationStep
 
 /**
  * Complete backup payload containing all user data.
- * Serialized to JSON for Google Drive backup and full export.
+ * Serialized to JSON for the full local export.
  */
 @Serializable
 data class BackupData(
@@ -172,13 +172,3 @@ sealed class BackupStatus {
     data class Success(val timestamp: Long, val sizeBytes: Long) : BackupStatus()
     data class Error(val message: String) : BackupStatus()
 }
-
-/**
- * Represents a backup file stored on Google Drive.
- */
-data class DriveBackupFile(
-    val id: String,
-    val name: String,
-    val createdTime: Long,
-    val sizeBytes: Long
-)

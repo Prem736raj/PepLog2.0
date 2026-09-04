@@ -45,7 +45,7 @@ import com.appvexis.peptidetracker.feature.inventory.model.VialUiModel
 import java.util.Locale
 
 /**
- * Premium glassmorphic vial inventory card displaying complete lifecycle status,
+ * Vial inventory card displaying complete lifecycle status,
  * custom liquid vial animation, concentration metrics, batch & vendor tags, and actions.
  */
 @OptIn(ExperimentalLayoutApi::class)

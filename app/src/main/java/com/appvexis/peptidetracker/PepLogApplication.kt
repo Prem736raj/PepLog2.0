@@ -5,7 +5,6 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.appvexis.peptidetracker.core.analytics.worker.AnalyticsWorkerScheduler
 import com.appvexis.peptidetracker.core.billing.SubscriptionManager
-import com.appvexis.peptidetracker.core.common.security.AppIntegrityChecker
 import com.appvexis.peptidetracker.core.common.security.TamperDetectionManager
 import com.appvexis.peptidetracker.feature.health.worker.HealthSyncScheduler
 import com.appvexis.peptidetracker.logging.CrashReportingTree
@@ -24,9 +23,6 @@ class PepLogApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var healthSyncScheduler: HealthSyncScheduler
-
-    @Inject
-    lateinit var appIntegrityChecker: AppIntegrityChecker
 
     @Inject
     lateinit var tamperDetectionManager: TamperDetectionManager
@@ -48,7 +44,6 @@ class PepLogApplication : Application(), Configuration.Provider {
         }
 
         // Security checks
-        appIntegrityChecker.checkIntegrity()
         tamperDetectionManager.runChecks()
 
         // Connect to Google Play once at process start so product prices and

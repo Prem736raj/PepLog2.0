@@ -132,9 +132,9 @@ fun SyringeVisualization(
         if (animatedFill > 0.001f) {
             val liquidGradient = Brush.verticalGradient(
                 colors = listOf(
-                    Color(0xFF22D3EE).copy(alpha = 0.4f),   // Light teal at top
-                    Color(0xFF22D3EE).copy(alpha = 0.7f),   // Deeper teal
-                    Color(0xFF06B6D4).copy(alpha = 0.85f)   // Darkest at bottom
+                    Color(0xFF8FC4B6).copy(alpha = 0.4f),
+                    Color(0xFF5E9D90).copy(alpha = 0.7f),
+                    Color(0xFF3F786F).copy(alpha = 0.85f)
                 ),
                 startY = fillTop,
                 endY = barrelBottom
@@ -169,7 +169,7 @@ fun SyringeVisualization(
             }
             drawPath(
                 meniscusPath,
-                Color(0xFF22D3EE).copy(alpha = 0.6f),
+                Color(0xFF5E9D90).copy(alpha = 0.6f),
                 style = Stroke(width = 2f, cap = StrokeCap.Round)
             )
         }
@@ -319,7 +319,7 @@ fun SyringeVisualization(
             // Dashed indicator line extending from fill level to right label
             val indicatorX = barrelRight + 12f
             drawLine(
-                color = Color(0xFF22D3EE),
+                color = Color(0xFF5E9D90),
                 start = Offset(barrelRight + 2f, fillTop),
                 end = Offset(indicatorX + 4f, fillTop),
                 strokeWidth = 1.5f,
@@ -333,7 +333,7 @@ fun SyringeVisualization(
                 style = TextStyle(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF22D3EE)
+                    color = Color(0xFF5E9D90)
                 )
             )
             drawText(

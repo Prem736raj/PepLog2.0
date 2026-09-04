@@ -22,7 +22,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Science
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Face
@@ -64,9 +64,9 @@ import com.appvexis.peptidetracker.core.ui.theme.OutfitFontFamily
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 
 enum class EvidenceLevel(val title: String, val color: Color, val description: String) {
-    CLINICAL("Clinical 🟢", Color(0xFF4CAF50), "FDA-approved or supported by published human clinical trials"),
-    PRACTITIONER("Practitioner 🟡", Color(0xFFFBBF24), "Commonly used in clinical practice based on practitioner protocols"),
-    PRECLINICAL("Preclinical 🔴", Color(0xFFF43F5E), "Based on animal studies or anecdotal reports; no human clinical trials")
+    CLINICAL("Clinical evidence", Color(0xFF2F7656), "FDA-approved or supported by published human clinical trials"),
+    PRACTITIONER("Practitioner use", Color(0xFF99681F), "Commonly used in clinical practice based on practitioner protocols"),
+    PRECLINICAL("Preclinical", Color(0xFFB85E3C), "Based on animal studies or anecdotal reports; no human clinical trials")
 }
 
 /**
@@ -87,7 +87,7 @@ private fun getCategoryIcon(category: String): ImageVector {
         "GH Secretagogues" -> Icons.Default.Bolt
         "Healing & Recovery" -> Icons.Default.Favorite
         "Weight Loss / Metabolic" -> Icons.AutoMirrored.Filled.TrendingDown
-        "Mitochondrial / Longevity" -> Icons.Default.AutoAwesome
+        "Mitochondrial / Longevity" -> Icons.Default.Science
         "Cognitive / Nootropic" -> Icons.Default.Psychology
         "Anti-Aging / Skin" -> Icons.Default.Star
         "Sexual Health" -> Icons.Default.Face

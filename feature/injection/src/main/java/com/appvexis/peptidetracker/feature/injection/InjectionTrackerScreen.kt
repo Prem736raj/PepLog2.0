@@ -82,14 +82,16 @@ fun InjectionTrackerScreen(
     val showLogDialog by viewModel.showLogDialog.collectAsState()
 
     // Log dialog
-    if (showLogDialog && selectedSite != null) {
-        InjectionLogDialog(
-            selectedSite = selectedSite!!,
-            onDismiss = { viewModel.hideLogDialog() },
-            onConfirm = { painLevel, healingStatus, notes ->
-                viewModel.logInjectionSite(painLevel, healingStatus, notes)
-            }
-        )
+    if (showLogDialog) {
+        selectedSite?.let { site ->
+            InjectionLogDialog(
+                selectedSite = site,
+                onDismiss = { viewModel.hideLogDialog() },
+                onConfirm = { painLevel, healingStatus, notes ->
+                    viewModel.logInjectionSite(painLevel, healingStatus, notes)
+                }
+            )
+        }
     }
 
     Scaffold(
@@ -336,16 +338,17 @@ private fun ViewToggle(isShowingFront: Boolean, onToggle: () -> Unit) {
 
 @Composable
 private fun MapLegend() {
+    val colors = PepLogTheme.colors
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = PepLogTheme.spacing.small),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        LegendItem(color = Color(0xFFF43F5E), label = "Recent (<48h)")
-        LegendItem(color = Color(0xFFFBBF24), label = "Healing (2-7d)")
-        LegendItem(color = Color(0xFF4CAF50), label = "Ready (7d+)")
-        LegendItem(color = Color(0xFF8888A0), label = "Unused")
+        LegendItem(color = colors.accent, label = "Recent (<48h)")
+        LegendItem(color = colors.warning, label = "Healing (2-7d)")
+        LegendItem(color = colors.success, label = "Ready (7d+)")
+        LegendItem(color = colors.textSecondary, label = "Unused")
     }
 }
 

@@ -4,45 +4,40 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Calculate
-import androidx.compose.material.icons.filled.Inventory2
-import androidx.compose.material.icons.filled.Vaccines
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Gavel
+import androidx.compose.material.icons.filled.InsertChart
+import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material.icons.filled.PrivacyTip
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Timeline
+import androidx.compose.material.icons.filled.Vaccines
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.appvexis.peptidetracker.core.ui.components.PepLogCard
-import com.appvexis.peptidetracker.core.ui.theme.OutfitFontFamily
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
-
-import androidx.compose.material.icons.filled.InsertChart
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Timeline
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.CloudUpload
-import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.PrivacyTip
 
 @Composable
 fun MoreScreen(
@@ -57,149 +52,105 @@ fun MoreScreen(
     onNavigateToBackupSettings: () -> Unit = {},
     onNavigateToPrivacyPolicy: () -> Unit = {},
     onNavigateToTermsOfService: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val options = listOf(
-        MoreOption(
-            title = "Progress & Biomarkers",
-            description = "Photo gallery with before/after comparison slider, 50+ biomarker lab logs, daily wellness, and body composition.",
-            icon = Icons.Default.InsertChart,
-            onClick = onNavigateToProgress
+    val sections = listOf(
+        MoreSection(
+            "Tools",
+            listOf(
+                MoreOption("Reference library", "Compound notes and research status", Icons.AutoMirrored.Filled.MenuBook, onNavigateToEncyclopedia),
+                MoreOption("Dose calculator", "Dilution, concentration, and syringe units", Icons.Default.Calculate, onNavigateToCalculator),
+                MoreOption("Site rotation", "Body map and previous injection sites", Icons.Default.Vaccines, onNavigateToInjection),
+                MoreOption("Inventory", "Vials, remaining volume, and expiry dates", Icons.Default.Inventory2, onNavigateToInventory),
+            ),
         ),
-        MoreOption(
-            title = "Peptide Encyclopedia",
-            description = "Reference information for 100+ compounds, research status, and caution notes.",
-            icon = Icons.AutoMirrored.Filled.MenuBook,
-            onClick = onNavigateToEncyclopedia
+        MoreSection(
+            "Review",
+            listOf(
+                MoreOption("Progress & biomarkers", "Photos, measurements, and lab records", Icons.Default.InsertChart, onNavigateToProgress),
+                MoreOption("PK visualizer", "Estimated level curves and timing", Icons.Default.Timeline, onNavigateToPKVisualizer),
+                MoreOption("Health Connect", "Optional local trend integration", Icons.Default.Favorite, onNavigateToHealthConnect),
+            ),
         ),
-        MoreOption(
-            title = "Reconstitution Calculator",
-            description = "Calculate syringe units and concentrations for bacteriostatic water dilution.",
-            icon = Icons.Default.Calculate,
-            onClick = onNavigateToCalculator
+        MoreSection(
+            "Account & data",
+            listOf(
+                MoreOption("Export your data", "Create CSV or JSON copies", Icons.Default.CloudUpload, onNavigateToBackupSettings),
+                MoreOption("PepLog Premium", "More protocols and analysis tools", Icons.Default.Star, onNavigateToPaywall),
+            ),
         ),
-        MoreOption(
-            title = "Injection Site Tracker",
-            description = "Interactive body map to track injection sites, rotation, pain levels, and healing.",
-            icon = Icons.Default.Vaccines,
-            onClick = onNavigateToInjection
+        MoreSection(
+            "About",
+            listOf(
+                MoreOption("Privacy policy", "Local storage, permissions, and sharing", Icons.Default.PrivacyTip, onNavigateToPrivacyPolicy),
+                MoreOption("Terms of service", "Usage terms and medical disclaimer", Icons.Default.Gavel, onNavigateToTermsOfService),
+            ),
         ),
-        MoreOption(
-            title = "PK Half-Life Visualizer",
-            description = "Animated pharmacokinetic decay curves showing compound blood levels over time with peak and trough markers.",
-            icon = Icons.Default.Timeline,
-            onClick = onNavigateToPKVisualizer
-        ),
-        MoreOption(
-            title = "Inventory Tracker",
-            description = "Track vial stocks, purchase history, batch details, remaining volume, and 28-day expiration countdowns.",
-            icon = Icons.Default.Inventory2,
-            onClick = onNavigateToInventory
-        ),
-        MoreOption(
-            title = "Health Connect Sync",
-            description = "Sync weight, sleep, heart rate, blood pressure, and steps for local trend views.",
-            icon = Icons.Default.Favorite,
-            onClick = onNavigateToHealthConnect
-        ),
-        MoreOption(
-            title = "Backup & Export",
-            description = "Export dose logs, biomarkers, protocols, and inventory as CSV or JSON. Google Drive backup requires account setup.",
-            icon = Icons.Default.CloudUpload,
-            onClick = onNavigateToBackupSettings
-        ),
-        MoreOption(
-            title = "Go Premium",
-            description = "Unlock unlimited protocols, advanced analytics, PK curves, Health Connect sync, and cloud backup when Drive is configured.",
-            icon = Icons.Default.Star,
-            onClick = onNavigateToPaywall
-        ),
-        MoreOption(
-            title = "Privacy Policy",
-            description = "How local storage, optional Google Drive backup, and sharing handle your data.",
-            icon = Icons.Default.PrivacyTip,
-            onClick = onNavigateToPrivacyPolicy
-        ),
-        MoreOption(
-            title = "Terms of Service",
-            description = "Usage terms, medical disclaimer, subscription info, and legal notices.",
-            icon = Icons.Default.Gavel,
-            onClick = onNavigateToTermsOfService
-        )
     )
+    val colors = PepLogTheme.colors
 
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(PepLogTheme.colors.background)
-            .padding(PepLogTheme.spacing.medium)
+            .background(colors.background),
+        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 96.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Text(
-            text = "More Options",
-            fontFamily = OutfitFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            color = PepLogTheme.colors.textPrimary,
-            modifier = Modifier.padding(bottom = PepLogTheme.spacing.medium)
-        )
+        item {
+            Text(
+                text = "More",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Spacer(Modifier.height(8.dp))
+        }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(1),
-            verticalArrangement = Arrangement.spacedBy(PepLogTheme.spacing.medium),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(options.size) { index ->
-                val option = options[index]
-                PepLogCard(
-                    onClick = option.onClick,
-                    isGlassmorphic = false,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(PepLogTheme.spacing.small),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(PepLogTheme.colors.primary.copy(alpha = 0.12f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = option.icon,
-                                contentDescription = null,
-                                tint = PepLogTheme.colors.primary,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(PepLogTheme.spacing.medium))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = option.title,
-                                fontFamily = OutfitFontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                color = PepLogTheme.colors.textPrimary
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = option.description,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = PepLogTheme.colors.textSecondary,
-                                lineHeight = 16.sp
-                            )
-                        }
-                    }
-                }
+        sections.forEach { section ->
+            item(key = "header_${section.title}") {
+                Text(
+                    text = section.title,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = colors.textSecondary,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
+            items(items = section.options, key = { it.title }) { option ->
+                MoreOptionRow(option)
+            }
+            item(key = "space_${section.title}") { Spacer(Modifier.height(6.dp)) }
         }
     }
 }
+
+@Composable
+private fun MoreOptionRow(option: MoreOption) {
+    val colors = PepLogTheme.colors
+    PepLogCard(onClick = option.onClick, modifier = Modifier.fillMaxWidth(), cornerRadius = 12.dp) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(colors.primary.copy(alpha = 0.11f), MaterialTheme.shapes.small),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(option.icon, contentDescription = null, tint = colors.primary, modifier = Modifier.size(20.dp))
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(option.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                Text(option.description, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
+            }
+            Spacer(Modifier.width(8.dp))
+            Icon(Icons.Default.ChevronRight, contentDescription = null, tint = colors.textSecondary, modifier = Modifier.size(20.dp))
+        }
+    }
+}
+
+private data class MoreSection(val title: String, val options: List<MoreOption>)
 
 private data class MoreOption(
     val title: String,
     val description: String,
     val icon: ImageVector,
-    val onClick: () -> Unit
+    val onClick: () -> Unit,
 )

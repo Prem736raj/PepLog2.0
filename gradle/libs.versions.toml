@@ -12,20 +12,14 @@ room = "2.6.1"
 ksp = "2.0.21-1.0.26"
 coroutines = "1.10.1"
 datastore = "1.1.2"
-ktor = "2.3.12"
 serialization = "1.7.3"
 coil = "2.6.0"
 vico = "1.15.0"
 playBilling = "8.0.0"
 healthConnect = "1.1.0-alpha07"
-playIntegrity = "1.4.0"
 sqlite = "2.4.0"
 timber = "5.0.1"
 work = "2.9.1"
-googleApiClient = "2.7.0"
-googleDriveApi = "v3-rev20241206-2.0.0"
-credentialManager = "1.5.0-beta01"
-googleIdIdentity = "1.1.1"
 
 # Testing versions
 junit = "4.13.2"
@@ -52,7 +46,7 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
 
 # Navigation
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
@@ -75,11 +69,7 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 
-# Networking (Ktor) & Serialization
-ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
-ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
-ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
-ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+# Serialization
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 
 # Image Loading
@@ -96,18 +86,10 @@ play-billing = { group = "com.android.billingclient", name = "billing-ktx", vers
 androidx-health-connect-client = { group = "androidx.health.connect", name = "connect-client", version.ref = "healthConnect" }
 
 # Security & Encryption
-play-integrity = { group = "com.google.android.play", name = "integrity", version.ref = "playIntegrity" }
 androidx-sqlite-ktx = { group = "androidx.sqlite", name = "sqlite-ktx", version.ref = "sqlite" }
 
 # Logging
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
-
-# Google Drive & Auth
-google-api-client-android = { group = "com.google.api-client", name = "google-api-client-android", version.ref = "googleApiClient" }
-google-api-services-drive = { group = "com.google.apis", name = "google-api-services-drive", version.ref = "googleDriveApi" }
-credential-manager = { group = "androidx.credentials", name = "credentials", version.ref = "credentialManager" }
-credential-manager-play = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialManager" }
-google-id-identity = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleIdIdentity" }
 
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }

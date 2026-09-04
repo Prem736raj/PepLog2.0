@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -70,14 +71,14 @@ fun WellnessTrendsView(
                     title = "Mood",
                     score = wellnessData.moodScore,
                     delta = wellnessData.moodDelta,
-                    color = Color(0xFF22D3EE),
+                    color = Color(0xFF5E9D90),
                     modifier = Modifier.weight(1f)
                 )
                 WellnessScoreCard(
                     title = "Energy",
                     score = wellnessData.energyScore,
                     delta = wellnessData.energyDelta,
-                    color = Color(0xFFFBBF24),
+                    color = Color(0xFFC39755),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -91,14 +92,14 @@ fun WellnessTrendsView(
                     title = "Sleep Quality",
                     score = wellnessData.sleepScore,
                     delta = wellnessData.sleepDelta,
-                    color = Color(0xFF7C4DFF),
+                    color = Color(0xFF7A8C83),
                     modifier = Modifier.weight(1f)
                 )
                 WellnessScoreCard(
                     title = "Pain Level",
                     score = wellnessData.painScore,
                     delta = wellnessData.painDelta,
-                    color = Color(0xFFF43F5E),
+                    color = Color(0xFFC66F52),
                     isPain = true,
                     modifier = Modifier.weight(1f)
                 )
@@ -113,7 +114,7 @@ fun WellnessTrendsView(
                     title = "Libido",
                     score = wellnessData.libidoScore,
                     delta = wellnessData.libidoDelta,
-                    color = Color(0xFFFF4081),
+                    color = Color(0xFF9B7381),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -156,11 +157,11 @@ fun WellnessTrendsView(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LegendDot(name = "Mood", color = Color(0xFF22D3EE))
-                    LegendDot(name = "Energy", color = Color(0xFFFBBF24))
-                    LegendDot(name = "Sleep", color = Color(0xFF7C4DFF))
-                    LegendDot(name = "Pain", color = Color(0xFFF43F5E))
-                    LegendDot(name = "Libido", color = Color(0xFFFF4081))
+                    LegendDot(name = "Mood", color = Color(0xFF5E9D90))
+                    LegendDot(name = "Energy", color = Color(0xFFC39755))
+                    LegendDot(name = "Sleep", color = Color(0xFF7A8C83))
+                    LegendDot(name = "Pain", color = Color(0xFFC66F52))
+                    LegendDot(name = "Libido", color = Color(0xFF9B7381))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -286,10 +287,10 @@ private fun WellnessMultiLineCanvas(
     }
 
     val density = LocalDensity.current
-    val textPaint = remember {
+    val textPaint = remember(textColor, density) {
         android.graphics.Paint().apply {
             isAntiAlias = true
-            color = android.graphics.Color.parseColor("#8888A0")
+            color = textColor.toArgb()
             textSize = with(density) { 10.dp.toPx() }
             typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
             textAlign = android.graphics.Paint.Align.CENTER
@@ -355,11 +356,11 @@ private fun WellnessMultiLineCanvas(
         }
 
         // Draw lines for each metric
-        drawMetricLine(points.map { it.mood }, Color(0xFF22D3EE))
-        drawMetricLine(points.map { it.energy }, Color(0xFFFBBF24))
-        drawMetricLine(points.map { it.sleep }, Color(0xFF7C4DFF))
-        drawMetricLine(points.map { it.pain }, Color(0xFFF43F5E))
-        drawMetricLine(points.map { it.libido }, Color(0xFFFF4081))
+        drawMetricLine(points.map { it.mood }, Color(0xFF5E9D90))
+        drawMetricLine(points.map { it.energy }, Color(0xFFC39755))
+        drawMetricLine(points.map { it.sleep }, Color(0xFF7A8C83))
+        drawMetricLine(points.map { it.pain }, Color(0xFFC66F52))
+        drawMetricLine(points.map { it.libido }, Color(0xFF9B7381))
 
         // Draw date labels
         points.forEachIndexed { i, pt ->

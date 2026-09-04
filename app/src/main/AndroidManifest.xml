@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Required only for the explicitly user-triggered Google Drive backup. -->
+    <!-- Required by Google Play Billing and other explicitly user-triggered integrations. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- Health Connect Permissions -->

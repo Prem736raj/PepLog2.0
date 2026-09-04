@@ -56,27 +56,16 @@ dependencies {
     implementation(project(":core:database"))
     implementation(project(":core:model"))
 
-    // Room (needed to access PepLogDatabase)
+    // Database API types are referenced by the local exporter.
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.androidx.hilt.work)
-
-    // Google Drive & Auth
-    implementation(libs.google.api.client.android)
-    implementation(libs.google.api.services.drive)
-    implementation(libs.credential.manager)
-    implementation(libs.credential.manager.play)
-    implementation(libs.google.id.identity)
 
     // Serialization
     implementation(libs.kotlinx.serialization.json)
-
-    // WorkManager
-    implementation(libs.androidx.work.runtime.ktx)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)

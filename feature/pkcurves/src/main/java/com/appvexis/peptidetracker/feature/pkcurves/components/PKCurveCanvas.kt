@@ -23,7 +23,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
@@ -33,6 +32,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -44,7 +44,7 @@ import com.appvexis.peptidetracker.feature.pkcurves.model.TimeWindow
  * Custom Canvas composable rendering pharmacokinetic decay curves.
  *
  * Features:
- * - Multi-compound overlay with gradient-filled areas
+ * - Multi-compound overlay with restrained area fills
  * - Animated reveal (left-to-right curve drawing)
  * - Peak/trough markers with circles
  * - Time axis + concentration axis with gridlines
@@ -58,25 +58,25 @@ fun PKCurveCanvas(
     animationProgress: Float,
     onCrosshairUpdate: (Double?) -> Unit,
     modifier: Modifier = Modifier,
-    surfaceColor: Color = Color(0xFF111827),
-    gridColor: Color = Color(0xFF2A2A4A),
-    textColor: Color = Color(0xFF8888A0),
-    axisColor: Color = Color(0xFF3A3A5A)
+    surfaceColor: Color = Color(0xFF151D19),
+    gridColor: Color = Color(0xFF2A3530),
+    textColor: Color = Color(0xFFA6B0AA),
+    axisColor: Color = Color(0xFF526159)
 ) {
     val density = LocalDensity.current
-    val textPaint = remember {
+    val textPaint = remember(textColor, density) {
         android.graphics.Paint().apply {
             isAntiAlias = true
-            color = android.graphics.Color.parseColor("#8888A0")
+            color = textColor.toArgb()
             textSize = with(density) { 10.dp.toPx() }
             typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
         }
     }
 
-    val markerLabelPaint = remember {
+    val markerLabelPaint = remember(textColor, density) {
         android.graphics.Paint().apply {
             isAntiAlias = true
-            color = android.graphics.Color.parseColor("#F0F0F5")
+            color = textColor.toArgb()
             textSize = with(density) { 9.dp.toPx() }
             typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
         }
@@ -95,7 +95,7 @@ fun PKCurveCanvas(
         modifier = modifier
             .fillMaxWidth()
             .height(280.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(12.dp))
             .background(surfaceColor)
             .padding(4.dp)
     ) {
@@ -177,7 +177,7 @@ fun PKCurveCanvas(
                 if (cx in chartLeft..chartRight) {
                     // Vertical dashed line
                     drawLine(
-                        color = Color.White.copy(alpha = 0.5f),
+                        color = textColor.copy(alpha = 0.55f),
                         start = Offset(cx, chartTop),
                         end = Offset(cx, chartBottom),
                         strokeWidth = 1.5f,
@@ -194,13 +194,6 @@ fun PKCurveCanvas(
                         if (point != null) {
                             val yNorm = (point.concentration / safeMaxConc).coerceIn(0.0, 1.0)
                             val y = chartBottom - (yNorm * chartHeight).toFloat()
-                            // Outer glow
-                            drawCircle(
-                                color = compound.color.copy(alpha = 0.3f),
-                                radius = 10f,
-                                center = Offset(cx, y)
-                            )
-                            // Inner dot
                             drawCircle(
                                 color = compound.color,
                                 radius = 5f,
@@ -287,7 +280,7 @@ private fun DrawScope.drawGridLines(
 }
 
 /**
- * Draw a single compound's curve with gradient fill.
+ * Draw a single compound's curve with a quiet area fill.
  */
 private fun DrawScope.drawCompoundCurve(
     compound: CompoundCurveData,
@@ -335,17 +328,10 @@ private fun DrawScope.drawCompoundCurve(
         fillPath.close()
     }
 
-    // Gradient fill under the curve
+    // Subtle fill under the curve keeps the chart legible without a decorative glow.
     drawPath(
         path = fillPath,
-        brush = Brush.verticalGradient(
-            colors = listOf(
-                compound.color.copy(alpha = 0.25f),
-                compound.color.copy(alpha = 0.02f)
-            ),
-            startY = chartTop,
-            endY = chartBottom
-        )
+        color = compound.color.copy(alpha = 0.08f)
     )
 
     // The curve line itself
@@ -382,17 +368,9 @@ private fun DrawScope.drawMarkers(
         val x = chartLeft + (xNorm * chartWidth).toFloat()
         val y = chartBottom - (yNorm * chartHeight).toFloat()
 
-        // Outer glow ring
-        drawCircle(
-            color = if (marker.isPeak) compound.color.copy(alpha = 0.3f)
-            else Color(0xFFF43F5E).copy(alpha = 0.3f),
-            radius = 8f,
-            center = Offset(x, y)
-        )
-
         // Inner filled circle
         drawCircle(
-            color = if (marker.isPeak) compound.color else Color(0xFFF43F5E),
+            color = if (marker.isPeak) compound.color else Color(0xFFC66F52),
             radius = 4.5f,
             center = Offset(x, y)
         )
@@ -413,7 +391,7 @@ private fun DrawScope.drawMarkers(
         }
         drawPath(
             path = triPath,
-            color = if (marker.isPeak) compound.color else Color(0xFFF43F5E)
+            color = if (marker.isPeak) compound.color else Color(0xFFC66F52)
         )
     }
 }

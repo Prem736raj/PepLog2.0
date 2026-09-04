@@ -15,7 +15,7 @@ It is a record-keeping and calculation aid, not medical advice. It does not diag
 - A local progress area for biomarkers, wellness entries, body metrics, and private progress-photo copies.
 - A reference encyclopedia, pharmacokinetic visualization, and adherence/trend reports.
 - Optional Health Connect import when the user grants permissions.
-- Local CSV/JSON export. Google Drive backup is optional and requires the account/authentication connection to be configured for the build.
+- Local CSV/JSON export through Android's system share sheet. PepLog does not upload exports by itself.
 
 ## Privacy and security posture
 
@@ -28,7 +28,7 @@ It is a record-keeping and calculation aid, not medical advice. It does not diag
 
 ## Subscription model
 
-Google Play Billing manages the subscription products. The free plan supports basic tracking and one protocol. Premium gates unlimited protocols, advanced insights, PK curves, Health Connect sync, and cloud backup. Local export remains available for data portability. Product IDs and trial terms must be configured and tested in Play Console before publishing.
+Google Play Billing manages the subscription products. The free plan supports basic tracking and one protocol. Premium gates unlimited protocols, advanced insights, PK curves, and Health Connect sync. Local export remains available to every user for data portability. Product IDs and trial terms must be configured and tested in Play Console before publishing.
 
 ## Build locally
 
@@ -39,5 +39,5 @@ Google Play Billing manages the subscription products. The free plan supports ba
 
 The app module targets API 36, with a minimum API level of 28. Release packaging intentionally fails unless an ignored `keystore.properties` file points to the real release keystore. Never commit that file or any signing credential.
 
-Before a Play release, configure the release keystore, package name and Play products, the hosted privacy-policy URL and support contact, Google Drive OAuth/account flow if cloud backup is offered, Health Connect declarations, store assets, Data Safety answers, content rating, and real-device billing/Health Connect/backup journeys.
+Before a Play release, configure the release keystore, package name and Play products, the hosted privacy-policy URL and support contact, Health Connect declarations, store assets, Data Safety answers, content rating, and real-device billing/Health Connect/export journeys.
 
