@@ -186,7 +186,7 @@ fun VialDetailDialog(
 
                 DetailItem(label = "Vendor / Supplier", value = item.vendor ?: "Not specified")
                 DetailItem(label = "Batch / Lot Number", value = item.batchNumber ?: "Not specified")
-                DetailItem(label = "Purchase Date", value = vial.formattedPurchaseDate)
+                DetailItem(label = "Acquired date", value = vial.formattedAcquiredDate)
                 DetailItem(label = "Storage Location", value = item.storageLocation ?: "Not specified")
 
                 item.notes?.takeIf { it.isNotBlank() }?.let { notesText ->

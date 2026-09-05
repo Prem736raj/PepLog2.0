@@ -22,13 +22,12 @@
     <p>PepLog ("we", "our", or "the App") is a personal tracking and organization tool developed by Appvexis. This policy describes the information the App stores and the optional services it uses.</p>
 
     <h2>2. Information stored on your device</h2>
-    <p>Protocols, dose logs, inventory, biomarkers, progress photos, calculator presets, preferences, and locally imported health metrics are stored in the App's private Android storage. PepLog has no PepLog-operated account or application server. Android app isolation and device security protect this local storage; PepLog does not claim that the database has custom SQLCipher encryption.</p>
+    <p>Protocols, dose logs, inventory, biomarkers, progress photos, calculator presets, preferences, and locally imported health metrics are stored in the App's private Android storage. PepLog has no PepLog-operated account or application server. Android app isolation and device security protect this local storage. The optional App lock uses the device's existing screen lock; PepLog never receives or stores your PIN, password, or biometric template. The lock is an access gate, not a custom database-encryption layer.</p>
 
     <h2>3. Health Connect</h2>
     <p>If you grant Health Connect permissions, the App reads only the health record types shown in the permission screen and processes them locally for the App's charts and logs. Health Connect access is optional and can be revoked in Android Health Connect settings.</p>
 
-    <h2>4. Billing and diagnostics</h2>
-    <p>Subscriptions and payment details are handled by Google Play. PepLog stores a local cache of the current entitlement and product identifier; it does not receive your payment card information.</p>
+    <h2>4. Diagnostics</h2>
     <p>Release builds suppress debug logs and may write warning or error messages to the Android system log for troubleshooting. No third-party crash-reporting service is bundled in this build, and PepLog does not intentionally put dose values, notes, photos, or health records in log messages. Debug builds may write technical logs visible to a development tool.</p>
 
     <h2>5. Exports and sharing</h2>
@@ -42,7 +41,8 @@
         <li>No location tracking or advertising SDK is used.</li>
         <li>PepLog does not sell personal or health information.</li>
         <li>PepLog does not run a social profile or public health-data feed.</li>
-        <li>Network requests are intended to use HTTPS and are limited to Google Play billing in this build. Health Connect data is read through Android's local Health Connect service.</li>
+        <li>This build makes no PepLog network requests. Health Connect data is read through Android's local Health Connect service.</li>
+        <li>PepLog has no subscriptions, in-app purchases, advertising, or payment-data collection.</li>
     </ul>
 
     <h2>8. Retention and deletion</h2>

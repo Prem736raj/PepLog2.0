@@ -15,6 +15,11 @@ interface ProtocolRepository {
     fun getActiveProtocols(): Flow<List<ProtocolWithCompounds>>
     fun getProtocolById(id: String): Flow<ProtocolWithCompounds?>
     suspend fun insertProtocol(protocol: Protocol)
+    suspend fun insertProtocolWithCompoundAndDoseSchedule(
+        protocol: Protocol,
+        compound: ProtocolCompound,
+        doseLogs: List<DoseLog>,
+    )
     suspend fun updateProtocol(protocol: Protocol)
     suspend fun deleteProtocol(id: String)
     suspend fun insertCompound(compound: ProtocolCompound)

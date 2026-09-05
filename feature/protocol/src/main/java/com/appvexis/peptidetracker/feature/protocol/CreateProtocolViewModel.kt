@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appvexis.peptidetracker.core.model.Protocol
 import com.appvexis.peptidetracker.core.model.ProtocolStatus
-import com.appvexis.peptidetracker.core.billing.SubscriptionManager
 import com.appvexis.peptidetracker.core.model.repository.ProtocolRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,14 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.first
 import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateProtocolViewModel @Inject constructor(
-    private val protocolRepository: ProtocolRepository,
-    private val subscriptionManager: SubscriptionManager
+    private val protocolRepository: ProtocolRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateProtocolUiState())
@@ -63,16 +60,6 @@ class CreateProtocolViewModel @Inject constructor(
         _uiState.update { it.copy(isSaving = true, errorMessage = null) }
         viewModelScope.launch {
             try {
-                val existingProtocols = protocolRepository.getAllProtocols().first()
-                if (!subscriptionManager.isPremium.value && existingProtocols.isNotEmpty()) {
-                    _uiState.update {
-                        it.copy(
-                            isSaving = false,
-                            errorMessage = "The free plan includes one protocol. Upgrade to create more."
-                        )
-                    }
-                    return@launch
-                }
                 protocolRepository.insertProtocol(protocol)
                 _uiState.update { it.copy(isSaving = false) }
                 onSuccess(protocolId)

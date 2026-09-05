@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface InventoryDao {
-    @Query("SELECT * FROM inventory_item ORDER BY purchase_date DESC")
+    @Query("SELECT * FROM inventory_item ORDER BY acquired_date DESC")
     fun getAllInventoryItems(): Flow<List<InventoryItemEntity>>
 
     @Query("SELECT * FROM inventory_item WHERE id = :id LIMIT 1")
@@ -22,7 +22,7 @@ interface InventoryDao {
     @Query("SELECT * FROM inventory_item WHERE status = 'IN_USE' ORDER BY reconstitution_date DESC")
     fun getInUseItems(): Flow<List<InventoryItemEntity>>
 
-    @Query("SELECT * FROM inventory_item WHERE peptide_id = :peptideId ORDER BY purchase_date DESC")
+    @Query("SELECT * FROM inventory_item WHERE peptide_id = :peptideId ORDER BY acquired_date DESC")
     fun getInventoryItemsByPeptide(peptideId: String): Flow<List<InventoryItemEntity>>
 
     @Query("SELECT * FROM inventory_item WHERE id = :id LIMIT 1")
@@ -56,6 +56,6 @@ interface InventoryDao {
     suspend fun updateInventoryStatus(id: String, status: String)
 
     // Sync query for backup export
-    @Query("SELECT * FROM inventory_item ORDER BY purchase_date DESC")
+    @Query("SELECT * FROM inventory_item ORDER BY acquired_date DESC")
     suspend fun getAllItemsSync(): List<InventoryItemEntity>
 }

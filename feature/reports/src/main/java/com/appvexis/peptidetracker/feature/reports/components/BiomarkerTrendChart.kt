@@ -95,7 +95,7 @@ fun BiomarkersTrendsView(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Log lab results in the Progress tab to visualize biomarker trends across your cycle stacks.",
+                            text = "Log lab results in the Progress tab to visualize biomarker trends across your protocols.",
                             style = MaterialTheme.typography.bodySmall,
                             color = PepLogTheme.colors.textSecondary,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center

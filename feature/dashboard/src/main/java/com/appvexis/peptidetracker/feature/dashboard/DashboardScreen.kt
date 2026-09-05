@@ -44,6 +44,7 @@ import java.util.Locale
 @Composable
 fun DashboardScreen(
     onNavigateToCreateProtocol: () -> Unit = {},
+    onNavigateToQuickStart: () -> Unit = {},
     onNavigateToProtocolDetail: (String) -> Unit = {},
     onNavigateToCalculator: () -> Unit = {},
     onNavigateToInjectionSites: () -> Unit = {},
@@ -133,6 +134,7 @@ fun DashboardScreen(
                         item(key = "empty_state") {
                             DashboardEmptyState(
                                 onCreateProtocol = onNavigateToCreateProtocol,
+                                onQuickStart = onNavigateToQuickStart,
                                 onExploreEncyclopedia = onNavigateToEncyclopedia,
                             )
                         }

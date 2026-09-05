@@ -119,7 +119,7 @@ class DatabaseExporter @Inject constructor(
                 peptideId = entity.peptideId,
                 vendor = entity.vendor,
                 batchNumber = entity.batchNumber,
-                purchaseDate = entity.purchaseDate,
+                acquiredDate = entity.acquiredDate,
                 vialStrengthMg = entity.vialStrengthMg,
                 quantity = entity.quantity,
                 storageLocation = entity.storageLocation,

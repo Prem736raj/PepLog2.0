@@ -341,7 +341,7 @@ class DatabaseImporter @Inject constructor(
         peptideId = peptideId,
         vendor = vendor,
         batchNumber = batchNumber,
-        purchaseDate = purchaseDate,
+        acquiredDate = acquiredDate,
         vialStrengthMg = vialStrengthMg,
         quantity = quantity,
         storageLocation = storageLocation,

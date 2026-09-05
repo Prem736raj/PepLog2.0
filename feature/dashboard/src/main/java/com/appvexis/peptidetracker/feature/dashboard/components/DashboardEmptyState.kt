@@ -26,6 +26,7 @@ import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 @Composable
 fun DashboardEmptyState(
     onCreateProtocol: () -> Unit,
+    onQuickStart: () -> Unit,
     onExploreEncyclopedia: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -52,9 +53,17 @@ fun DashboardEmptyState(
             )
             Spacer(Modifier.height(20.dp))
             PepLogButton(
-                text = "Create a protocol",
+                text = "Set up a first reminder",
+                onClick = onQuickStart,
+                modifier = Modifier.fillMaxWidth(),
+                icon = { Icon(Icons.Default.Add, contentDescription = null) },
+            )
+            Spacer(Modifier.height(8.dp))
+            PepLogButton(
+                text = "Create an advanced protocol",
                 onClick = onCreateProtocol,
                 modifier = Modifier.fillMaxWidth(),
+                variant = PepLogButtonVariant.Outlined,
                 icon = { Icon(Icons.Default.Add, contentDescription = null) },
             )
             Spacer(Modifier.height(8.dp))
@@ -62,7 +71,7 @@ fun DashboardEmptyState(
                 text = "Browse reference notes",
                 onClick = onExploreEncyclopedia,
                 modifier = Modifier.fillMaxWidth(),
-                variant = PepLogButtonVariant.Outlined,
+                variant = PepLogButtonVariant.Ghost,
                 icon = { Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null) },
             )
         }

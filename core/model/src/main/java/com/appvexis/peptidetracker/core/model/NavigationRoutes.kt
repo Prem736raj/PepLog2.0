@@ -57,6 +57,10 @@ data class ProtocolDetailRoute(val protocolId: String)
 @Serializable
 object CreateProtocolRoute
 
+/** A compact first-run path for creating one daily reminder. */
+@Serializable
+object QuickStartRoute
+
 @Serializable
 data class AddCompoundRoute(val protocolId: String)
 
@@ -95,10 +99,6 @@ object PKVisualizerRoute
 // Health Connect Integration Route
 @Serializable
 object HealthConnectRoute
-
-// Paywall / Subscription Route
-@Serializable
-object PaywallRoute
 
 // Backup & Export Settings Route
 @Serializable

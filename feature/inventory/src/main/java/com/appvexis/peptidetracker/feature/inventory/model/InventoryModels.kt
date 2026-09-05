@@ -45,7 +45,7 @@ data class VialUiModel(
     val isLowVolume: Boolean,
     val concentrationDisplay: String?,
     val syringeUnitDoseDisplay: String?,
-    val formattedPurchaseDate: String,
+    val formattedAcquiredDate: String,
     val formattedReconstitutionDate: String?,
     val formattedExpirationDate: String?
 )
@@ -57,7 +57,7 @@ fun InventoryItem.toUiModel(peptideName: String, peptideCategory: String): VialU
     val now = System.currentTimeMillis()
     val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
 
-    val formattedPurchase = purchaseDate?.let { dateFormat.format(Date(it)) } ?: "Not specified"
+    val formattedAcquired = acquiredDate?.let { dateFormat.format(Date(it)) } ?: "Not specified"
     val formattedRecon = reconstitutionDate?.let { dateFormat.format(Date(it)) }
     val formattedExp = expirationDate?.let { dateFormat.format(Date(it)) }
 
@@ -127,7 +127,7 @@ fun InventoryItem.toUiModel(peptideName: String, peptideCategory: String): VialU
         isLowVolume = isLow,
         concentrationDisplay = concentrationStr,
         syringeUnitDoseDisplay = syringeDoseStr,
-        formattedPurchaseDate = formattedPurchase,
+        formattedAcquiredDate = formattedAcquired,
         formattedReconstitutionDate = formattedRecon,
         formattedExpirationDate = formattedExp
     )

@@ -52,6 +52,27 @@ class ProtocolRepositoryImpl @Inject constructor(
         analyticsRepository.recomputeAnalyticsForProtocol(protocol.id)
     }
 
+    override suspend fun insertProtocolWithCompoundAndDoseSchedule(
+        protocol: Protocol,
+        compound: ProtocolCompound,
+        doseLogs: List<DoseLog>,
+    ) {
+        validateProtocol(protocol)
+        require(compound.protocolId == protocol.id) {
+            "The first compound must belong to the new protocol"
+        }
+        validateCompound(compound)
+        validateGeneratedDoseLogs(compound, doseLogs)
+        database.withTransaction {
+            protocolDao.insertProtocol(protocol.toEntity())
+            protocolDao.insertCompound(compound.toEntity())
+            if (doseLogs.isNotEmpty()) {
+                database.logDao().insertDoseLogs(doseLogs.map { it.toEntity() })
+            }
+        }
+        analyticsRepository.recomputeAnalyticsForProtocol(protocol.id)
+    }
+
     override suspend fun updateProtocol(protocol: Protocol) {
         validateProtocol(protocol)
         protocolDao.updateProtocol(protocol.toEntity())
@@ -73,24 +94,7 @@ class ProtocolRepositoryImpl @Inject constructor(
 
     override suspend fun insertCompoundWithDoseSchedule(compound: ProtocolCompound, doseLogs: List<DoseLog>) {
         validateCompound(compound)
-        require(doseLogs.map { it.id }.distinct().size == doseLogs.size) {
-            "Generated dose rows must have unique IDs"
-        }
-        require(doseLogs.all { it.protocolCompoundId == compound.id }) {
-            "Generated dose rows must reference the new compound"
-        }
-        doseLogs.forEach { doseLog ->
-            require(doseLog.status == DoseStatus.PENDING && doseLog.actualTime == null) {
-                "A new schedule can only contain pending doses"
-            }
-            require(doseLog.id.isNotBlank()) { "A generated dose must have an ID" }
-            require(doseLog.scheduledTime >= 0L && doseLog.createdAt >= 0L) {
-                "Generated dose timestamps are invalid"
-            }
-            require(doseLog.doseAmount.isFinite() && doseLog.doseAmount > 0.0) {
-                "Generated dose amount is invalid"
-            }
-        }
+        validateGeneratedDoseLogs(compound, doseLogs)
         database.withTransaction {
             protocolDao.insertCompound(compound.toEntity())
             if (doseLogs.isNotEmpty()) {
@@ -142,6 +146,27 @@ class ProtocolRepositoryImpl @Inject constructor(
             }
             require(steps.all { it.week in 1..52 && it.doseAmount.isFinite() && it.doseAmount > 0.0 }) {
                 "Titration steps must use valid weeks and doses"
+            }
+        }
+    }
+
+    private fun validateGeneratedDoseLogs(compound: ProtocolCompound, doseLogs: List<DoseLog>) {
+        require(doseLogs.map { it.id }.distinct().size == doseLogs.size) {
+            "Generated dose rows must have unique IDs"
+        }
+        require(doseLogs.all { it.protocolCompoundId == compound.id }) {
+            "Generated dose rows must reference the new compound"
+        }
+        doseLogs.forEach { doseLog ->
+            require(doseLog.status == DoseStatus.PENDING && doseLog.actualTime == null) {
+                "A new schedule can only contain pending doses"
+            }
+            require(doseLog.id.isNotBlank()) { "A generated dose must have an ID" }
+            require(doseLog.scheduledTime >= 0L && doseLog.createdAt >= 0L) {
+                "Generated dose timestamps are invalid"
+            }
+            require(doseLog.doseAmount.isFinite() && doseLog.doseAmount > 0.0) {
+                "Generated dose amount is invalid"
             }
         }
     }

@@ -11,7 +11,7 @@ data class InventoryItem(
     val peptideId: String,
     val vendor: String?,
     val batchNumber: String?,
-    val purchaseDate: Long?,
+    val acquiredDate: Long?,
     val vialStrengthMg: Double,
     val quantity: Int = 1,
     val storageLocation: String?,

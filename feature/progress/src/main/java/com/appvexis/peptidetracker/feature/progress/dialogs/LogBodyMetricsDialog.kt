@@ -172,7 +172,7 @@ fun LogBodyMetricsDialog(
                 if (protocols.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(PepLogTheme.spacing.medium))
                     Text(
-                        text = "Associated Protocol Stack",
+                        text = "Associated protocol",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
                         color = colors.textPrimary

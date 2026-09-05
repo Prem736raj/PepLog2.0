@@ -442,7 +442,7 @@ fun AddEditVialDialog(
                                 peptideId = selectedPeptideId,
                                 vendor = vendor.takeIf { it.isNotBlank() },
                                 batchNumber = batchNumber.takeIf { it.isNotBlank() },
-                                purchaseDate = System.currentTimeMillis(),
+                                acquiredDate = System.currentTimeMillis(),
                                 vialStrengthMg = strength,
                                 quantity = quantity,
                                 storageLocation = storageLocation.takeIf { it.isNotBlank() },

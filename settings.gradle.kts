@@ -33,7 +33,6 @@ include(":core:database")
 include(":core:common")
 include(":core:model")
 include(":core:datastore")
-include(":core:billing")
 include(":core:backup")
 include(":core:analytics")
 
@@ -51,5 +50,3 @@ include(":feature:health")
 include(":feature:reports")
 include(":feature:settings")
 include(":feature:onboarding")
-include(":feature:paywall")
-

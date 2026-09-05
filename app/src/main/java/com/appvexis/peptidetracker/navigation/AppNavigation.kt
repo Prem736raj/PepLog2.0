@@ -4,21 +4,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -38,16 +30,12 @@ import com.appvexis.peptidetracker.core.model.ProtocolsRoute
 import com.appvexis.peptidetracker.core.model.SplashRoute
 import com.appvexis.peptidetracker.core.model.LegalRoute
 import com.appvexis.peptidetracker.core.ui.components.AnimatedBottomBar
-import com.appvexis.peptidetracker.core.ui.components.PepLogBrandMark
-import com.appvexis.peptidetracker.core.ui.components.PepLogButton
-import com.appvexis.peptidetracker.core.ui.components.PepLogCard
 import com.appvexis.peptidetracker.core.ui.components.PepLogLoadingState
 import com.appvexis.peptidetracker.core.ui.components.PepLogTopBar
 import com.appvexis.peptidetracker.core.ui.splash.SplashScreen
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 import com.appvexis.peptidetracker.feature.dashboard.DashboardScreen
 import com.appvexis.peptidetracker.feature.onboarding.OnboardingScreen
-import com.appvexis.peptidetracker.feature.protocol.ProtocolScreen
 import com.appvexis.peptidetracker.feature.reports.InsightsScreen
 import com.appvexis.peptidetracker.feature.settings.MoreScreen
 import com.appvexis.peptidetracker.feature.settings.LegalScreen
@@ -80,15 +68,14 @@ import com.appvexis.peptidetracker.core.model.ProgressRoute
 import com.appvexis.peptidetracker.core.model.PhotoComparisonRoute
 import com.appvexis.peptidetracker.core.model.PKVisualizerRoute
 import com.appvexis.peptidetracker.core.model.HealthConnectRoute
-import com.appvexis.peptidetracker.core.model.PaywallRoute
-import com.appvexis.peptidetracker.core.ui.components.PepLogTab
 import com.appvexis.peptidetracker.core.model.BackupSettingsRoute
 import com.appvexis.peptidetracker.feature.progress.ProgressScreen
 import com.appvexis.peptidetracker.feature.progress.PhotoComparisonScreen
 import com.appvexis.peptidetracker.feature.pkcurves.PKVisualizerScreen
 import com.appvexis.peptidetracker.feature.health.HealthConnectScreen
-import com.appvexis.peptidetracker.feature.paywall.PaywallScreen
 import com.appvexis.peptidetracker.feature.settings.BackupSettingsScreen
+import com.appvexis.peptidetracker.feature.protocol.QuickStartScreen
+import com.appvexis.peptidetracker.core.model.QuickStartRoute
 
 /**
  * Main application shell managing bottom navigation bar state and transitions.
@@ -119,8 +106,6 @@ private fun AppNavigationContent(
     modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
-    val subscriptionViewModel: SubscriptionAccessViewModel = hiltViewModel()
-    val isPremium by subscriptionViewModel.isPremium.collectAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     
     // Extract current route from backstack
@@ -166,12 +151,7 @@ private fun AppNavigationContent(
                 AnimatedBottomBar(
                     currentRoute = currentRoute,
                     onTabSelected = { tab ->
-                        val destination = if (tab == PepLogTab.INSIGHTS && !isPremium) {
-                            PaywallRoute
-                        } else {
-                            tab.route
-                        }
-                        navController.navigate(destination) {
+                        navController.navigate(tab.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
                             }
@@ -201,6 +181,7 @@ private fun AppNavigationContent(
             ) {
                 DashboardScreen(
                     onNavigateToCreateProtocol = { navController.navigate(CreateProtocolRoute) },
+                    onNavigateToQuickStart = { navController.navigate(QuickStartRoute) },
                     onNavigateToProtocolDetail = { protocolId -> navController.navigate(ProtocolDetailRoute(protocolId)) },
                     onNavigateToCalculator = { navController.navigate(CalculatorRoute) },
                     onNavigateToInjectionSites = { navController.navigate(InjectionTrackerRoute) },
@@ -239,6 +220,40 @@ private fun AppNavigationContent(
                     }
                 )
             }
+
+            composable<QuickStartRoute> {
+                QuickStartScreen(
+                    onBackClick = {
+                        val cameFromOnboarding = navController.previousBackStackEntry
+                            ?.destination
+                            ?.route
+                            ?.contains("OnboardingRoute") == true
+                        if (cameFromOnboarding) {
+                            navController.navigate(DashboardRoute) {
+                                popUpTo(OnboardingRoute) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        } else {
+                            navController.popBackStack()
+                        }
+                    },
+                    onSetupComplete = {
+                        val cameFromOnboarding = navController.previousBackStackEntry
+                            ?.destination
+                            ?.route
+                            ?.contains("OnboardingRoute") == true
+                        if (cameFromOnboarding) {
+                            navController.navigate(DashboardRoute) {
+                                popUpTo(OnboardingRoute) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        } else {
+                            // The dashboard is already underneath this route.
+                            navController.popBackStack()
+                        }
+                    },
+                )
+            }
             
             composable<AddCompoundRoute> { backStackEntry ->
                 val args = backStackEntry.toRoute<AddCompoundRoute>()
@@ -264,14 +279,7 @@ private fun AppNavigationContent(
                     navDeepLink { uriPattern = "peplog://insights" }
                 )
             ) {
-                if (isPremium) {
-                    InsightsScreen()
-                } else {
-                    PremiumRequiredScreen(
-                        featureName = "Advanced insights",
-                        onUnlock = { navController.navigate(PaywallRoute) }
-                    )
-                }
+                InsightsScreen()
             }
             
             composable<MoreRoute>(
@@ -296,21 +304,10 @@ private fun AppNavigationContent(
                         navController.navigate(ProgressRoute)
                     },
                     onNavigateToPKVisualizer = {
-                        if (isPremium) {
-                            navController.navigate(PKVisualizerRoute)
-                        } else {
-                            navController.navigate(PaywallRoute)
-                        }
+                        navController.navigate(PKVisualizerRoute)
                     },
                     onNavigateToHealthConnect = {
-                        if (isPremium) {
-                            navController.navigate(HealthConnectRoute)
-                        } else {
-                            navController.navigate(PaywallRoute)
-                        }
-                    },
-                    onNavigateToPaywall = {
-                        navController.navigate(PaywallRoute)
+                        navController.navigate(HealthConnectRoute)
                     },
                     onNavigateToBackupSettings = {
                         navController.navigate(BackupSettingsRoute)
@@ -387,45 +384,17 @@ private fun AppNavigationContent(
             }
 
             composable<PKVisualizerRoute> {
-                if (isPremium) {
-                    PKVisualizerScreen(
-                        onBackClick = {
-                            navController.popBackStack()
-                        }
-                    )
-                } else {
-                    PremiumRequiredScreen(
-                        featureName = "PK half-life curves",
-                        onUnlock = { navController.navigate(PaywallRoute) }
-                    )
-                }
+                PKVisualizerScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
             }
 
             composable<HealthConnectRoute> {
-                if (isPremium) {
-                    HealthConnectScreen(
-                        onBackClick = {
-                            navController.popBackStack()
-                        }
-                    )
-                } else {
-                    PremiumRequiredScreen(
-                        featureName = "Health Connect sync",
-                        onUnlock = { navController.navigate(PaywallRoute) }
-                    )
-                }
-            }
-
-            composable<PaywallRoute> {
-                PaywallScreen(
+                HealthConnectScreen(
                     onBackClick = {
                         navController.popBackStack()
-                    },
-                    onNavigateToPrivacyPolicy = {
-                        navController.navigate(LegalRoute(type = "privacy"))
-                    },
-                    onNavigateToTermsOfService = {
-                        navController.navigate(LegalRoute(type = "terms"))
                     }
                 )
             }
@@ -454,7 +423,8 @@ private fun AppNavigationContent(
                         navController.navigate(DashboardRoute) {
                             popUpTo(OnboardingRoute) { inclusive = true }
                         }
-                    }
+                    },
+                    onStartSetup = { navController.navigate(QuickStartRoute) },
                 )
             }
 
@@ -465,43 +435,6 @@ private fun AppNavigationContent(
                     onNavigateBack = {
                         navController.popBackStack()
                     }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun PremiumRequiredScreen(
-    featureName: String,
-    onUnlock: () -> Unit
-) {
-    val colors = PepLogTheme.colors
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        PepLogCard(modifier = Modifier.fillMaxWidth()) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                PepLogBrandMark(size = 56.dp)
-                Text(
-                    text = "Keep the essentials free",
-                    style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
-                    color = colors.textPrimary,
-                )
-                Text(
-                    text = "$featureName is part of PepLog Premium. Your existing records remain available on the free plan.",
-                    color = colors.textSecondary,
-                )
-                PepLogButton(
-                    text = "View Premium plans",
-                    onClick = onUnlock,
-                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }

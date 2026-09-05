@@ -37,8 +37,8 @@ data class InventoryItemEntity(
     @ColumnInfo(name = "batch_number") 
     val batchNumber: String?,
     
-    @ColumnInfo(name = "purchase_date") 
-    val purchaseDate: Long?,
+    @ColumnInfo(name = "acquired_date")
+    val acquiredDate: Long?,
     
     @ColumnInfo(name = "vial_strength_mg") 
     val vialStrengthMg: Double,
@@ -75,7 +75,7 @@ fun InventoryItemEntity.toDomain() = InventoryItem(
     peptideId = peptideId,
     vendor = vendor,
     batchNumber = batchNumber,
-    purchaseDate = purchaseDate,
+    acquiredDate = acquiredDate,
     vialStrengthMg = vialStrengthMg,
     quantity = quantity,
     storageLocation = storageLocation,
@@ -94,7 +94,7 @@ fun InventoryItem.toEntity() = InventoryItemEntity(
     peptideId = peptideId,
     vendor = vendor,
     batchNumber = batchNumber,
-    purchaseDate = purchaseDate,
+    acquiredDate = acquiredDate,
     vialStrengthMg = vialStrengthMg,
     quantity = quantity,
     storageLocation = storageLocation,

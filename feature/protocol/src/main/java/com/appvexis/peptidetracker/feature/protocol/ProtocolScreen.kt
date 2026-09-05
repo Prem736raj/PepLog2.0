@@ -33,13 +33,13 @@ fun ProtocolScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Protocols & Stacks",
+                    text = "My protocols",
                     style = androidx.compose.material3.MaterialTheme.typography.headlineMedium,
                     color = PepLogTheme.colors.textPrimary
                 )
                 Spacer(modifier = Modifier.height(PepLogTheme.spacing.small))
                 Text(
-                    text = "Manage your peptide dosing schedules, titration ramps, and cycle duration stacks here.",
+                    text = "Organize your personal schedules, optional titration notes, reminders, and cycle dates here.",
                     style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
                     color = PepLogTheme.colors.textSecondary
                 )

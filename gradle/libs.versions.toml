@@ -15,7 +15,6 @@ datastore = "1.1.2"
 serialization = "1.7.3"
 coil = "2.6.0"
 vico = "1.15.0"
-playBilling = "8.0.0"
 healthConnect = "1.1.0-alpha07"
 sqlite = "2.4.0"
 timber = "5.0.1"
@@ -78,9 +77,6 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 # Charts (Vico)
 vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
 vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
-
-# Play Billing
-play-billing = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "playBilling" }
 
 # Health Connect
 androidx-health-connect-client = { group = "androidx.health.connect", name = "connect-client", version.ref = "healthConnect" }

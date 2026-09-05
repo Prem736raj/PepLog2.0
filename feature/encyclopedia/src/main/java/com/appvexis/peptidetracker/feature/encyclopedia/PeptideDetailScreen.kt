@@ -19,24 +19,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.HealthAndSafety
 import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.LocalPharmacy
-import androidx.compose.material.icons.filled.Loop
-import androidx.compose.material.icons.filled.Scale
-import androidx.compose.material.icons.filled.Science
-import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Thermostat
-import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Vaccines
-import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -223,7 +213,9 @@ private fun PeptideDetailContent(peptide: Peptide) {
             )
         }
 
-        // Quick Info Metrics Grid (Admin Route, Half-life, Frequency, Dose Range)
+        ReferenceOnlyCard()
+
+        // Useful reference metadata without presenting dosing or cycle guidance.
         QuickMetricsGrid(peptide = peptide)
 
         // Description Section
@@ -254,11 +246,6 @@ private fun PeptideDetailContent(peptide: Peptide) {
                     lineHeight = 22.sp
                 )
             }
-        }
-
-        // Cycle & Onset Section (NEW)
-        if (peptide.cycleRecommendation != null || peptide.onsetDays != null) {
-            CycleInfoCard(peptide = peptide)
         }
 
         // Storage & Handling Section
@@ -297,34 +284,6 @@ private fun PeptideDetailContent(peptide: Peptide) {
                         PepLogTag(
                             text = effect,
                             color = PepLogTheme.colors.accent.copy(alpha = 0.8f)
-                        )
-                    }
-                }
-            }
-        }
-
-        // Synergies Section (now renders as chips)
-        DetailSection(
-            title = "Synergistic Stacks",
-            icon = Icons.Default.Loop,
-            iconColor = PepLogTheme.colors.primary
-        ) {
-            if (peptide.synergies.isEmpty()) {
-                Text(
-                    text = "None commonly listed.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = PepLogTheme.colors.textSecondary,
-                    lineHeight = 22.sp
-                )
-            } else {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(PepLogTheme.spacing.small),
-                    verticalArrangement = Arrangement.spacedBy(PepLogTheme.spacing.small)
-                ) {
-                    peptide.synergies.forEach { synergy ->
-                        PepLogTag(
-                            text = synergy,
-                            color = PepLogTheme.colors.primary.copy(alpha = 0.8f)
                         )
                     }
                 }
@@ -422,24 +381,47 @@ private fun QuickMetricsGrid(peptide: Peptide) {
                     modifier = Modifier.weight(1f)
                 )
                 MetricItem(
-                    label = "Half-life",
+                    label = "Reported half-life",
                     value = peptide.halfLifeDisplay ?: "N/A",
                     icon = Icons.Default.HourglassEmpty,
                     modifier = Modifier.weight(1f)
                 )
             }
-            Row(modifier = Modifier.fillMaxWidth()) {
-                MetricItem(
-                    label = "Dosing Range",
-                    value = peptide.typicalDoseRange ?: "N/A",
-                    icon = Icons.Default.Scale,
-                    modifier = Modifier.weight(1f)
+        }
+    }
+}
+
+@Composable
+private fun ReferenceOnlyCard() {
+    PepLogCard(
+        isGlassmorphic = false,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.Top,
+            modifier = Modifier.padding(PepLogTheme.spacing.small)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = null,
+                tint = PepLogTheme.colors.secondary,
+                modifier = Modifier.size(22.dp)
+            )
+            Spacer(modifier = Modifier.width(PepLogTheme.spacing.small))
+            Column {
+                Text(
+                    text = "Reference notes only",
+                    fontFamily = OutfitFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    color = PepLogTheme.colors.textPrimary
                 )
-                MetricItem(
-                    label = "Typical Frequency",
-                    value = peptide.typicalFrequency ?: "N/A",
-                    icon = Icons.Default.Loop,
-                    modifier = Modifier.weight(1f)
+                Spacer(modifier = Modifier.height(PepLogTheme.spacing.extraSmall))
+                Text(
+                    text = "PepLog does not recommend doses, schedules, cycles, combinations, or outcomes. Use product instructions and a qualified clinician for decisions.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = PepLogTheme.colors.textSecondary,
+                    lineHeight = 17.sp
                 )
             }
         }
@@ -559,75 +541,6 @@ private fun LegalStatusCard(
 }
 
 @Composable
-private fun CycleInfoCard(peptide: Peptide) {
-    PepLogCard(
-        isGlassmorphic = false,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(PepLogTheme.spacing.small),
-            verticalArrangement = Arrangement.spacedBy(PepLogTheme.spacing.small)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.CalendarToday,
-                    contentDescription = null,
-                    tint = PepLogTheme.colors.primary,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(PepLogTheme.spacing.small))
-                Text(
-                    text = "Cycle & Onset",
-                    fontFamily = OutfitFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = PepLogTheme.colors.textPrimary
-                )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(PepLogTheme.spacing.medium)
-            ) {
-                peptide.cycleRecommendation?.takeIf { it.isNotBlank() && it != "Not established" }?.let { cycle ->
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Cycle Protocol",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = PepLogTheme.colors.textSecondary
-                        )
-                        Text(
-                            text = cycle,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = PepLogTheme.colors.textPrimary,
-                            fontWeight = FontWeight.SemiBold,
-                            lineHeight = 18.sp
-                        )
-                    }
-                }
-                peptide.onsetDays?.takeIf { it.isNotBlank() && it != "Unknown" }?.let { onset ->
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Expected Onset",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = PepLogTheme.colors.textSecondary
-                        )
-                        Text(
-                            text = "$onset days",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = PepLogTheme.colors.textPrimary,
-                            fontWeight = FontWeight.SemiBold,
-                            lineHeight = 18.sp
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
 private fun ResearchWarningCard() {
     PepLogCard(
         isGlassmorphic = true,
@@ -654,7 +567,7 @@ private fun ResearchWarningCard() {
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "This compound has NOT been evaluated or approved by the FDA for human use. Dosing ranges and safety profiles are derived from animal research models or anecdotal clinical reports. Proceed with extreme caution.",
+                    text = "This compound has NOT been evaluated or approved by the FDA for human use. The available reference information is limited and may come from animal research or anecdotal reports. Proceed with extreme caution.",
                     style = MaterialTheme.typography.bodySmall,
                     color = PepLogTheme.colors.textSecondary,
                     lineHeight = 16.sp
@@ -683,7 +596,7 @@ private fun MandatoryMedicalDisclaimer() {
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Dosing ranges, stacking synergies, and contraindications are provided strictly as historical/clinical reference aggregates. PepLog is not a substitute for professional medical counsel. Always seek advice from a licensed healthcare provider before using peptides.",
+                text = "Reference notes and contraindication information are provided for context only. PepLog is not a substitute for professional medical counsel. Always seek advice from a licensed healthcare provider before making health decisions.",
                 style = MaterialTheme.typography.bodySmall,
                 color = PepLogTheme.colors.textSecondary,
                 lineHeight = 16.sp

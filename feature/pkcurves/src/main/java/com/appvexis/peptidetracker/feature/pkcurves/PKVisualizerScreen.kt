@@ -52,10 +52,10 @@ import com.appvexis.peptidetracker.feature.pkcurves.components.PKInfoCards
 import com.appvexis.peptidetracker.feature.pkcurves.model.TimeWindow
 
 /**
- * PK Half-Life Visualizer Screen.
+ * Relative level visualizer screen.
  *
- * Displays animated pharmacokinetic decay curves for all active compounds
- * with time window switching, compound legend toggle, and crosshair interaction.
+ * Displays an educational first-order decay model for active compounds with
+ * time window switching, compound legend toggles, and crosshair interaction.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,7 +102,7 @@ fun PKVisualizerScreen(
                     )
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
-                        text = "PK Visualizer",
+                        text = "Relative levels",
                         fontFamily = OutfitFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
@@ -272,7 +272,7 @@ private fun PKEmptyState(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "No PK Data Yet",
+            text = "No relative estimate yet",
             fontFamily = OutfitFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 22.sp,
@@ -283,7 +283,7 @@ private fun PKEmptyState(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Log doses for compounds with known half-lives\nto see your pharmacokinetic decay curves here.",
+            text = "Log doses for compounds with a reported half-life\nto see an educational relative-level model here.",
             fontSize = 14.sp,
             color = PepLogTheme.colors.textSecondary,
             textAlign = TextAlign.Center,

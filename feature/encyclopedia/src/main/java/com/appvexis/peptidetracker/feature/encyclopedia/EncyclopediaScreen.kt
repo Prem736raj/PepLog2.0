@@ -276,7 +276,7 @@ private fun MedicalDisclaimerCard() {
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "PepLog is strictly an educational tracking tool. Dosing ranges and evidence levels represent aggregate research literature, not medical recommendations. Always consult a physician before use.",
+                    text = "PepLog is strictly an educational tracking tool. Reference notes and evidence labels are not medical recommendations. Always consult a qualified clinician before making health decisions.",
                     style = MaterialTheme.typography.bodySmall,
                     color = PepLogTheme.colors.textSecondary,
                     lineHeight = 16.sp

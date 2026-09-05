@@ -79,14 +79,6 @@
 -keepnames @dagger.hilt.android.lifecycle.HiltViewModel class * extends androidx.lifecycle.ViewModel
 
 # ============================================================
-# Google Play Billing
-# ============================================================
-
--keep class com.android.vending.billing.** { *; }
--keep class com.android.billingclient.** { *; }
--dontwarn com.android.billingclient.**
-
-# ============================================================
 # Health Connect
 # ============================================================
 

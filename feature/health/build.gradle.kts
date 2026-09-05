@@ -47,7 +47,6 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:database"))
     implementation(project(":core:common"))
-    implementation(project(":core:billing"))
 
     // Compose
     implementation(platform(libs.androidx.compose.bom))

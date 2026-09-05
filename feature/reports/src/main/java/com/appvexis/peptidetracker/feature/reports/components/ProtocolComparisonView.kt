@@ -38,7 +38,7 @@ import com.appvexis.peptidetracker.feature.reports.model.ProtocolComparisonCardM
 import com.appvexis.peptidetracker.feature.reports.model.ProtocolComparisonUiModel
 
 /**
- * Cross-protocol comparison view analyzing comparative stack performance.
+ * Cross-protocol comparison view for adherence and observed trends.
  */
 @Composable
 fun ProtocolComparisonView(
@@ -77,7 +77,7 @@ fun ProtocolComparisonView(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Create multiple protocol stacks and log doses to compare adherence and observed trends.",
+                            text = "Create multiple protocols and log doses to compare adherence and observed trends.",
                             style = MaterialTheme.typography.bodySmall,
                             color = PepLogTheme.colors.textSecondary,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -112,7 +112,7 @@ fun ProtocolComparisonView(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Stack Performance Analysis",
+                            text = "Protocol comparison",
                             fontFamily = OutfitFontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp,
@@ -124,7 +124,7 @@ fun ProtocolComparisonView(
                                 "Top adherence: \"${comparisonData.bestAdherenceProtocol}\""
                             comparisonData.lowestSideEffectProtocol != null ->
                                 "Lowest side effects: \"${comparisonData.lowestSideEffectProtocol}\""
-                            else -> "Comparing ${comparisonData.protocols.size} protocol stacks"
+                            else -> "Comparing ${comparisonData.protocols.size} protocols"
                         }
                         Text(
                             text = insightText,

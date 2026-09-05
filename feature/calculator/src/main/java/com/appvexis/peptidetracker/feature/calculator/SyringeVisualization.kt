@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 
 /**
- * Premium animated syringe visualization showing the fill level for a given draw volume.
+ * Animated syringe visualization showing the fill level for a given draw volume.
  *
  * Renders a photorealistic U-100 insulin syringe with:
  * - Barrel with graduated tick marks (every 10 units)

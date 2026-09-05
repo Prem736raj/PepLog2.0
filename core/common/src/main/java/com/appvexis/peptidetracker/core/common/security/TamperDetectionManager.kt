@@ -23,8 +23,7 @@ import javax.inject.Singleton
  * - Known patching tool packages (LuckyPatcher, etc.)
  * - App signature mismatch (repackaged APK)
  *
- * Results are combined into [isTampered]. In production, premium
- * features can be gated when tampering is detected.
+ * Results are combined into [isTampered] for diagnostic logging only.
  */
 @Singleton
 class TamperDetectionManager @Inject constructor(
@@ -160,9 +159,6 @@ class TamperDetectionManager @Inject constructor(
             "com.chelpus.lackypatch",
             "com.dimonvideo.luckypatcher",
             "com.forpda.lp",
-            "com.android.vending.billing.InAppBillingService.LUCK",
-            "com.android.vending.billing.InAppBillingService.CRAC",
-            "com.android.vending.billing.InAppBillingService.LACK",
             "com.android.protips",
             "cc.madkite.freedom",
             "com.happymod.apk",

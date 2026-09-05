@@ -5,7 +5,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.appvexis.peptidetracker.core.database.converters.DatabaseConverters
 import com.appvexis.peptidetracker.core.database.dao.AnalyticsDao
-import com.appvexis.peptidetracker.core.database.dao.DeviceDao
 import com.appvexis.peptidetracker.core.database.dao.HealthMetricDao
 import com.appvexis.peptidetracker.core.database.dao.InventoryDao
 import com.appvexis.peptidetracker.core.database.dao.LogDao
@@ -14,7 +13,6 @@ import com.appvexis.peptidetracker.core.database.dao.ProtocolDao
 import com.appvexis.peptidetracker.core.database.entity.BiomarkerLogEntity
 import com.appvexis.peptidetracker.core.database.entity.CalculatorPresetEntity
 import com.appvexis.peptidetracker.core.database.entity.DailyAnalyticsSummaryEntity
-import com.appvexis.peptidetracker.core.database.entity.DeviceEntity
 import com.appvexis.peptidetracker.core.database.entity.DoseLogEntity
 import com.appvexis.peptidetracker.core.database.entity.HealthMetricEntity
 import com.appvexis.peptidetracker.core.database.entity.InjectionSiteLogEntity
@@ -31,7 +29,6 @@ import com.appvexis.peptidetracker.core.database.entity.SideEffectLogEntity
  */
 @Database(
     entities = [
-        DeviceEntity::class,
         PeptideEntity::class,
         ProtocolEntity::class,
         ProtocolCompoundEntity::class,
@@ -46,12 +43,11 @@ import com.appvexis.peptidetracker.core.database.entity.SideEffectLogEntity
         ProtocolAnalyticsSummaryEntity::class,
         HealthMetricEntity::class
     ],
-    version = 4,
+    version = 6,
     exportSchema = true
 )
 @TypeConverters(DatabaseConverters::class)
 abstract class PepLogDatabase : RoomDatabase() {
-    abstract fun deviceDao(): DeviceDao
     abstract fun peptideDao(): PeptideDao
     abstract fun protocolDao(): ProtocolDao
     abstract fun inventoryDao(): InventoryDao

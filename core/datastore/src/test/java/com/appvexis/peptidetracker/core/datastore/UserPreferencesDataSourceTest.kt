@@ -54,6 +54,13 @@ class UserPreferencesDataSourceTest {
     }
 
     @Test
+    fun isAppLockEnabled_defaultsToFalse() = runTest(testDispatcher) {
+        dataSource.isAppLockEnabled.test {
+            assertFalse(awaitItem())
+        }
+    }
+
+    @Test
     fun setOnboardingCompleted_updatesFlow() = runTest(testDispatcher) {
         dataSource.isOnboardingCompleted.test {
             assertFalse(awaitItem())
@@ -74,6 +81,19 @@ class UserPreferencesDataSourceTest {
             val goals = setOf("FAT_LOSS", "HEALING")
             dataSource.setSelectedGoals(goals)
             assertEquals(goals, awaitItem())
+        }
+    }
+
+    @Test
+    fun setAppLockEnabled_updatesFlow() = runTest(testDispatcher) {
+        dataSource.isAppLockEnabled.test {
+            assertFalse(awaitItem())
+
+            dataSource.setAppLockEnabled(true)
+            assertTrue(awaitItem())
+
+            dataSource.setAppLockEnabled(false)
+            assertFalse(awaitItem())
         }
     }
 }

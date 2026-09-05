@@ -1,6 +1,8 @@
 package com.appvexis.peptidetracker.core.backup.model
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.JsonNames
 import com.appvexis.peptidetracker.core.model.Peptide
 import com.appvexis.peptidetracker.core.model.TitrationStep
 
@@ -91,13 +93,15 @@ data class InjectionSiteLogBackup(
     val timestamp: Long
 )
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 data class InventoryItemBackup(
     val id: String,
     val peptideId: String,
     val vendor: String? = null,
     val batchNumber: String? = null,
-    val purchaseDate: Long? = null,
+    @JsonNames("purchaseDate")
+    val acquiredDate: Long? = null,
     val vialStrengthMg: Double,
     val quantity: Int,
     val storageLocation: String? = null,

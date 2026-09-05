@@ -17,8 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -29,7 +29,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -46,15 +50,19 @@ import kotlinx.coroutines.launch
 @Composable
 fun OnboardingScreen(
     onOnboardingCompleted: () -> Unit,
+    onStartSetup: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
+    var shouldStartSetup by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.isOnboardingCompleted) {
-        if (uiState.isOnboardingCompleted) onOnboardingCompleted()
+    LaunchedEffect(uiState.isOnboardingCompleted, shouldStartSetup) {
+        if (uiState.isOnboardingCompleted) {
+            if (shouldStartSetup) onStartSetup() else onOnboardingCompleted()
+        }
     }
 
     Scaffold(modifier = modifier.fillMaxSize(), containerColor = PepLogTheme.colors.background) { innerPadding ->
@@ -62,7 +70,7 @@ fun OnboardingScreen(
             HorizontalPager(state = pagerState, modifier = Modifier.weight(1f).fillMaxWidth()) { page ->
                 when (page) {
                     0 -> OnboardingPage(
-                        icon = Icons.Default.List,
+                        icon = Icons.AutoMirrored.Filled.List,
                         title = "Your record, in one place",
                         body = "Keep protocols, doses, vials, site notes, and personal observations together on this device.",
                         showBrand = true,
@@ -79,13 +87,19 @@ fun OnboardingScreen(
                     else -> OnboardingPage(
                         icon = Icons.Default.Lock,
                         title = "Private by default",
-                        body = "Your records stay in private app storage. The free plan supports one protocol; Google Play shows any upgrade price and renewal terms before purchase.",
+                        body = "Your records stay in private app storage. Every PepLog feature is free, with no subscriptions, ads, accounts, or cloud upload.",
                     )
                 }
             }
             OnboardingFooter(
                 page = pagerState.currentPage,
                 onBack = { scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) } },
+                onStartSetup = {
+                    if (!shouldStartSetup) {
+                        shouldStartSetup = true
+                        viewModel.completeOnboarding()
+                    }
+                },
                 onNext = {
                     scope.launch {
                         if (pagerState.currentPage == 3) viewModel.completeOnboarding()
@@ -182,32 +196,45 @@ private fun GoalsPage(
 private fun OnboardingFooter(
     page: Int,
     onBack: () -> Unit,
+    onStartSetup: () -> Unit,
     onNext: () -> Unit,
 ) {
     val colors = PepLogTheme.colors
-    Row(
+    Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        if (page > 0) {
-            PepLogButton("Back", onBack, variant = PepLogButtonVariant.Ghost, modifier = Modifier.width(82.dp))
-        } else {
-            Spacer(Modifier.width(82.dp))
+        if (page == 0) {
+            PepLogButton(
+                text = "Set up a first reminder",
+                onClick = onStartSetup,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            repeat(4) { index ->
-                Box(
-                    modifier = Modifier
-                        .size(if (index == page) 8.dp else 6.dp)
-                        .background(if (index == page) colors.primary else colors.textSecondary.copy(alpha = 0.28f), androidx.compose.foundation.shape.CircleShape),
-                )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            if (page > 0) {
+                PepLogButton("Back", onBack, variant = PepLogButtonVariant.Ghost, modifier = Modifier.width(82.dp))
+            } else {
+                Spacer(Modifier.width(82.dp))
             }
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                repeat(4) { index ->
+                    Box(
+                        modifier = Modifier
+                            .size(if (index == page) 8.dp else 6.dp)
+                            .background(if (index == page) colors.primary else colors.textSecondary.copy(alpha = 0.28f), androidx.compose.foundation.shape.CircleShape),
+                    )
+                }
+            }
+            PepLogButton(
+                text = if (page == 3) "Start" else "Next",
+                onClick = onNext,
+                modifier = Modifier.width(if (page == 3) 92.dp else 82.dp),
+            )
         }
-        PepLogButton(
-            text = if (page == 3) "Start" else "Next",
-            onClick = onNext,
-            modifier = Modifier.width(if (page == 3) 92.dp else 82.dp),
-        )
     }
 }

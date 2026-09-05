@@ -17,6 +17,7 @@ class UserPreferencesDataSource @Inject constructor(
 ) {
     private object PreferencesKeys {
         val IS_ONBOARDING_COMPLETED = booleanPreferencesKey("is_onboarding_completed")
+        val IS_APP_LOCK_ENABLED = booleanPreferencesKey("is_app_lock_enabled")
         val SELECTED_GOALS = stringSetPreferencesKey("selected_goals")
     }
 
@@ -44,6 +45,19 @@ class UserPreferencesDataSource @Inject constructor(
             preferences[PreferencesKeys.SELECTED_GOALS] ?: emptySet()
         }
 
+    /** Whether PepLog should require the device credential when reopened. */
+    val isAppLockEnabled: Flow<Boolean> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            preferences[PreferencesKeys.IS_APP_LOCK_ENABLED] ?: false
+        }
+
     suspend fun setOnboardingCompleted(completed: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_ONBOARDING_COMPLETED] = completed
@@ -53,6 +67,12 @@ class UserPreferencesDataSource @Inject constructor(
     suspend fun setSelectedGoals(goals: Set<String>) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SELECTED_GOALS] = goals
+        }
+    }
+
+    suspend fun setAppLockEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IS_APP_LOCK_ENABLED] = enabled
         }
     }
 }

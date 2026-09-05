@@ -143,7 +143,6 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:database"))
     implementation(project(":core:datastore"))
-    implementation(project(":core:billing"))
     implementation(project(":core:backup"))
     implementation(project(":core:analytics"))
 
@@ -161,7 +160,6 @@ dependencies {
     implementation(project(":feature:reports"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:onboarding"))
-    implementation(project(":feature:paywall"))
 
     // Testing
     testImplementation(libs.junit)

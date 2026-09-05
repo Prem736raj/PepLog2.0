@@ -207,7 +207,7 @@ private fun DrawScope.drawInjectionZone(
 
 /**
  * Draw a simplified human body front silhouette using Path.
- * Uses smooth proportional curves for a premium, non-clinical look.
+ * Uses smooth proportional curves for a polished, non-clinical look.
  */
 private fun DrawScope.drawHumanFrontOutline(w: Float, h: Float, color: Color) {
     val stroke = Stroke(width = 2f, cap = StrokeCap.Round, join = StrokeJoin.Round)
