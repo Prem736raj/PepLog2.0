@@ -162,7 +162,7 @@ fun SyringeVisualization(
             // Liquid meniscus (curved top surface)
             val meniscusPath = Path().apply {
                 moveTo(barrelLeft + 2f, fillTop)
-                quadraticBezierTo(
+                quadraticTo(
                     (barrelLeft + barrelRight) / 2f, fillTop + 4f,
                     barrelRight - 2f, fillTop
                 )

@@ -1,4 +1,4 @@
-@file:Suppress("UnusedReceiverParameter")
+@file:Suppress("UnusedReceiverParameter", "DEPRECATION")
 
 package androidx.compose.material.icons.automirrored.filled
 

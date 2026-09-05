@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.appvexis.peptidetracker.core.ui.components
 
 import androidx.compose.material.icons.Icons
