@@ -39,8 +39,13 @@ interface ProtocolDao {
     @Update
     suspend fun updateProtocol(protocol: ProtocolEntity)
 
-    @Query("DELETE FROM protocol WHERE id = :id")
-    suspend fun deleteProtocol(id: String)
+    /**
+     * Archives a protocol instead of deleting it. Dose history, symptoms,
+     * biomarkers, and progress photos are records in their own right and
+     * must survive a protocol being removed from the active list.
+     */
+    @Query("UPDATE protocol SET status = 'ARCHIVED', updated_at = :updatedAt WHERE id = :id")
+    suspend fun archiveProtocol(id: String, updatedAt: Long): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCompound(compound: ProtocolCompoundEntity)
@@ -54,8 +59,9 @@ interface ProtocolDao {
     @Query("SELECT * FROM protocol_compound WHERE id = :id LIMIT 1")
     suspend fun getCompoundById(id: String): ProtocolCompoundEntity?
 
-    @Query("DELETE FROM protocol_compound WHERE id = :id")
-    suspend fun deleteCompound(id: String)
+    /** Keeps the compound row so existing dose logs retain their foreign key. */
+    @Query("UPDATE protocol_compound SET is_active = 0 WHERE id = :id")
+    suspend fun deactivateCompound(id: String): Int
 
     @Query("DELETE FROM protocol_compound")
     suspend fun deleteAllCompounds()

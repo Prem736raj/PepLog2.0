@@ -1,5 +1,6 @@
 package com.appvexis.peptidetracker.feature.inventory.notification
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -41,7 +42,7 @@ object InventoryNotificationHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(
                 context,
-                "android.permission.POST_NOTIFICATIONS"
+                Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             return
@@ -56,8 +57,8 @@ object InventoryNotificationHelper {
         if (criticalVials.isNotEmpty() || expiredVials.isNotEmpty()) {
             val title = when {
                 expiredVials.isNotEmpty() -> "Peptide expiration alert"
-                criticalVials.any { it.expirationStatus == ExpirationStatus.CRITICAL } -> "⏳ Peptide Expiring in ≤3 Days"
-                else -> "ℹ️ Peptide Shelf Life Notice"
+                criticalVials.any { it.expirationStatus == ExpirationStatus.CRITICAL } -> "Peptide expires within 3 days"
+                else -> "Peptide shelf-life notice"
             }
 
             val summaryText = buildString {
@@ -82,9 +83,17 @@ object InventoryNotificationHelper {
             sendNotification(
                 context = context,
                 notificationId = NOTIFICATION_ID_LOW_STOCK,
-                title = "📦 Low Vial Volume Alert",
+                title = "Low vial volume alert",
                 message = "${lowStockVials.size} vial(s) have low remaining volume. Open PepLog for details."
             )
+        }
+
+        val notificationManager = NotificationManagerCompat.from(context)
+        if (criticalVials.isEmpty() && expiredVials.isEmpty()) {
+            notificationManager.cancel(NOTIFICATION_ID_EXPIRATION)
+        }
+        if (lowStockVials.isEmpty()) {
+            notificationManager.cancel(NOTIFICATION_ID_LOW_STOCK)
         }
     }
 

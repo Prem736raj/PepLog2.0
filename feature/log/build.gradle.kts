@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.work)
     
     // Timber for logging
     implementation(libs.timber)
@@ -64,4 +65,5 @@ dependencies {
     // Base core dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
 }

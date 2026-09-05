@@ -4,12 +4,14 @@ import com.appvexis.peptidetracker.core.model.DoseLog
 import com.appvexis.peptidetracker.core.model.DoseStatus
 import com.appvexis.peptidetracker.core.model.FrequencyType
 import com.appvexis.peptidetracker.core.model.ProtocolCompound
+import com.appvexis.peptidetracker.core.model.TitrationStep
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 /** Creates a finite, timezone-aware set of pending dose rows for a new compound. */
@@ -46,7 +48,7 @@ object DoseScheduleGenerator {
                     protocolCompoundId = compound.id,
                     scheduledTime = scheduled,
                     actualTime = null,
-                    doseAmount = compound.doseAmount,
+                    doseAmount = doseAmountForDate(compound, firstDate, date),
                     doseUnit = compound.doseUnit,
                     status = DoseStatus.PENDING,
                     injectionSite = null,
@@ -76,6 +78,22 @@ object DoseScheduleGenerator {
             val offDays = compound.frequencyDays?.getOrNull(1)?.coerceAtLeast(0) ?: 2
             dayIndex % (onDays + offDays) < onDays
         }
+    }
+
+    private fun doseAmountForDate(
+        compound: ProtocolCompound,
+        firstDate: LocalDate,
+        date: LocalDate
+    ): Double {
+        if (!compound.titrationEnabled) return compound.doseAmount
+        val week = (ChronoUnit.DAYS.between(firstDate, date) / 7L).toInt() + 1
+        return compound.titrationSchedule
+            .orEmpty()
+            .asSequence()
+            .filter { it.week <= week && it.doseAmount.isFinite() && it.doseAmount > 0.0 }
+            .maxByOrNull(TitrationStep::week)
+            ?.doseAmount
+            ?: compound.doseAmount
     }
 
     private fun parseTimeOfDay(value: String): LocalTime {

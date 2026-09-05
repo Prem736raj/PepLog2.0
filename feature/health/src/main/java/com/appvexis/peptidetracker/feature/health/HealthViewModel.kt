@@ -36,7 +36,7 @@ class HealthViewModel @Inject constructor(
 ) : ViewModel() {
 
     /** Single source of truth for the permission request shown by the screen. */
-    val requiredHealthPermissions: Set<String> = healthConnectManager.requiredPermissions
+    val requiredHealthPermissions: Set<String> = healthConnectManager.requestedPermissions
 
     private val _uiState = MutableStateFlow(HealthScreenUiState())
     val uiState: StateFlow<HealthScreenUiState> = _uiState.asStateFlow()

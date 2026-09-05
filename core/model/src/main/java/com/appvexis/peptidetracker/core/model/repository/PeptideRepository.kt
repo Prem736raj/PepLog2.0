@@ -14,4 +14,5 @@ interface PeptideRepository {
     fun getPeptideById(id: String): Flow<Peptide?>
     suspend fun setBookmarked(id: String, isBookmarked: Boolean)
     suspend fun seedPeptides(peptides: List<Peptide>)
+    suspend fun addCustomPeptide(peptide: Peptide)
 }

@@ -5,6 +5,7 @@ import com.appvexis.peptidetracker.core.model.DoseStatus
 import com.appvexis.peptidetracker.core.model.DoseUnit
 import com.appvexis.peptidetracker.core.model.FrequencyType
 import com.appvexis.peptidetracker.core.model.ProtocolCompound
+import com.appvexis.peptidetracker.core.model.TitrationStep
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -37,6 +38,27 @@ class DoseScheduleGeneratorTest {
         val result = DoseScheduleGenerator.generate(compound, start, zone)
 
         assertEquals(53, result.size)
+    }
+
+    @Test
+    fun scheduleUsesChosenTimeAndTitrationDoseByWeek() {
+        val compound = compound(FrequencyType.DAILY).copy(
+            timeOfDay = "22:30",
+            titrationEnabled = true,
+            titrationSchedule = listOf(
+                TitrationStep(week = 1, doseAmount = 100.0),
+                TitrationStep(week = 2, doseAmount = 200.0),
+            ),
+        )
+
+        val result = DoseScheduleGenerator.generate(compound, start, zone)
+
+        assertEquals(22, java.time.Instant.ofEpochMilli(result.first().scheduledTime)
+            .atZone(zone).hour)
+        assertEquals(30, java.time.Instant.ofEpochMilli(result.first().scheduledTime)
+            .atZone(zone).minute)
+        assertEquals(100.0, result[0].doseAmount, 0.0)
+        assertEquals(200.0, result[7].doseAmount, 0.0)
     }
 
     private fun compound(frequencyType: FrequencyType) = ProtocolCompound(

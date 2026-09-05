@@ -36,7 +36,11 @@ fun ProtocolEntity.toDomain() = Protocol(
     id = id,
     name = name,
     goal = goal,
-    status = ProtocolStatus.valueOf(status),
+    // Unknown persisted states are kept out of active workflows rather than
+    // crashing every query that touches the protocol table.
+    status = ProtocolStatus.entries.firstOrNull {
+        it.name.equals(status.trim(), ignoreCase = true)
+    } ?: ProtocolStatus.ARCHIVED,
     startDate = startDate,
     endDate = endDate,
     notes = notes,

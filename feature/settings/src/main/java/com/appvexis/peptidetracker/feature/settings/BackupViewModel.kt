@@ -1,8 +1,10 @@
 package com.appvexis.peptidetracker.feature.settings
 
 import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appvexis.peptidetracker.core.backup.BackupConfig
 import com.appvexis.peptidetracker.core.backup.BackupManager
 import com.appvexis.peptidetracker.core.backup.model.BackupStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +17,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
+import java.io.FileOutputStream
+import java.util.UUID
 import javax.inject.Inject
 
 /** Controls the local, user-initiated export flow. */
@@ -64,9 +68,55 @@ class BackupViewModel @Inject constructor(
         }
     }
 
+    fun exportArchive() {
+        viewModelScope.launch {
+            val exportFile = File(context.cacheDir, "exports/${UUID.randomUUID()}_${BackupConfig.EXPORT_FULL_ARCHIVE}")
+            backupManager.exportToArchive(exportFile).onSuccess { file ->
+                _shareRequest.value = ShareRequest(files = listOf(file), mimeType = BackupConfig.MIME_TYPE_ARCHIVE)
+            }
+        }
+    }
+
+    fun exportPdf() {
+        viewModelScope.launch {
+            val exportFile = File(context.cacheDir, "exports/${UUID.randomUUID()}_${BackupConfig.EXPORT_CLINICIAN_REPORT}")
+            backupManager.exportToPdf(exportFile).onSuccess { file ->
+                _shareRequest.value = ShareRequest(files = listOf(file), mimeType = BackupConfig.MIME_TYPE_PDF)
+            }
+        }
+    }
+
+    fun restoreFromUri(uri: Uri) {
+        viewModelScope.launch {
+            val importFile = File(context.cacheDir, "imports/${UUID.randomUUID()}_peplog_backup")
+            runCatching {
+                importFile.parentFile?.mkdirs()
+                context.contentResolver.openInputStream(uri)?.use { input ->
+                    FileOutputStream(importFile).use { output ->
+                        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                        var total = 0L
+                        while (true) {
+                            val count = input.read(buffer)
+                            if (count < 0) break
+                            total += count
+                            require(total <= MAX_IMPORT_BYTES) { "Backup file is too large" }
+                            output.write(buffer, 0, count)
+                        }
+                    }
+                } ?: error("The selected backup file could not be opened")
+                backupManager.importFromFile(importFile)
+            }.onFailure(backupManager::reportError)
+            importFile.delete()
+        }
+    }
+
     fun resetStatus() = backupManager.resetStatus()
 
     fun clearShareRequest() {
         _shareRequest.value = null
+    }
+
+    private companion object {
+        const val MAX_IMPORT_BYTES = 200L * 1024L * 1024L
     }
 }

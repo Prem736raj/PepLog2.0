@@ -38,13 +38,22 @@ data class CompoundCurveData(
     val peptideId: String,
     val peptideName: String,
     val halfLifeHours: Double,
-    val doseAmountMg: Double,
+    /** Last dose amount in the unit the user logged. It is not a serum level. */
+    val doseAmount: Double,
     val doseUnit: String,
     val color: Color,
     val points: List<PKCurvePoint>,
     val markers: List<PKMarker>,
-    val currentLevel: Double, // current concentration at "now"
-    val isVisible: Boolean = true
+    /** Relative model amount at "now"; never a measured concentration. */
+    val currentLevel: Double,
+    val isVisible: Boolean = true,
+    /** IU and other non-mass units cannot be compared by this mass-based model. */
+    val isPkAvailable: Boolean = true,
+    val unavailableReason: String? = null,
+    /** Warning shown when only part of a compound's dose history is modelled. */
+    val dataWarning: String? = null,
+    /** Window-relative x-coordinate of now, used to distinguish history from forecast. */
+    val projectionStartHours: Double = 0.0
 )
 
 /**
@@ -73,6 +82,7 @@ data class PKVisualizerUiState(
     val activeTimeWindow: TimeWindow = TimeWindow.DAYS_7,
     val compounds: List<CompoundCurveData> = emptyList(),
     val hasData: Boolean = false,
+    val hasUnavailableData: Boolean = false,
     val animationProgress: Float = 0f,
     val crosshairTimeHours: Double? = null, // null = no crosshair
     val maxConcentration: Double = 1.0

@@ -47,7 +47,7 @@ fun HealthConnectPermissionCard(
         HealthConnectStatus.NOT_SUPPORTED ->
             "This device cannot provide Health Connect records. PepLog’s manual tracking remains available."
         else ->
-            "Choose whether PepLog may read weight, sleep, heart rate, blood pressure, steps, and body-composition records for local trend views."
+            "Choose whether PepLog may read weight, sleep, heart rate, blood pressure, steps, and body-composition records for local trend views. Background access is a separate optional consent for periodic sync."
     }
     val icon = when (status) {
         HealthConnectStatus.NOT_INSTALLED -> Icons.Default.Warning

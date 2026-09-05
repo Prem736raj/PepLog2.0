@@ -13,14 +13,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,7 +34,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -40,9 +48,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.appvexis.peptidetracker.core.model.AdminRoute
 import com.appvexis.peptidetracker.core.model.DoseUnit
@@ -65,6 +74,10 @@ fun AddCompoundScreen(
     val uiState by viewModel.uiState.collectAsState()
     val peptides by viewModel.peptides.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showTimePicker by remember { mutableStateOf(false) }
+    var showCustomPeptideDialog by remember { mutableStateOf(false) }
+    var customPeptideName by remember { mutableStateOf("") }
+    var customPeptideCategory by remember { mutableStateOf("") }
 
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let {
@@ -137,6 +150,15 @@ fun AddCompoundScreen(
                             }
                         )
                     }
+                    DropdownMenuItem(
+                        text = { Text("Add custom compound") },
+                        onClick = {
+                            peptideMenuExpanded = false
+                            customPeptideName = ""
+                            customPeptideCategory = ""
+                            showCustomPeptideDialog = true
+                        }
+                    )
                 }
 
                 if (peptides.isEmpty()) {
@@ -179,6 +201,94 @@ fun AddCompoundScreen(
                                 }
                             )
                         }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(PepLogTheme.spacing.medium))
+
+                Text(
+                    text = "Dose time",
+                    color = PepLogTheme.colors.textSecondary,
+                    style = MaterialTheme.typography.labelMedium
+                )
+                OutlinedButton(
+                    onClick = { showTimePicker = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 52.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Schedule,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(formatDoseTime(uiState.timeOfDay), modifier = Modifier.fillMaxWidth())
+                }
+
+                Spacer(modifier = Modifier.height(PepLogTheme.spacing.medium))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Titration schedule",
+                            color = PepLogTheme.colors.textPrimary,
+                            style = MaterialTheme.typography.titleSmall
+                        )
+                        Text(
+                            text = "Change the logged dose by week when your clinician has given you a ramp plan.",
+                            color = PepLogTheme.colors.textSecondary,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    Switch(
+                        checked = uiState.titrationEnabled,
+                        onCheckedChange = viewModel::setTitrationEnabled
+                    )
+                }
+
+                if (uiState.titrationEnabled) {
+                    Spacer(modifier = Modifier.height(PepLogTheme.spacing.small))
+                    uiState.titrationSteps.forEachIndexed { index, step ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            PepLogTextField(
+                                value = step.week,
+                                onValueChange = { viewModel.updateTitrationWeek(index, it) },
+                                label = "Week",
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.weight(0.7f)
+                            )
+                            Spacer(modifier = Modifier.width(PepLogTheme.spacing.small))
+                            PepLogTextField(
+                                value = step.doseAmount,
+                                onValueChange = { viewModel.updateTitrationDose(index, it) },
+                                label = "Dose",
+                                placeholder = uiState.doseAmount.ifBlank { "250" },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                modifier = Modifier.weight(1.3f)
+                            )
+                            if (uiState.titrationSteps.size > 1) {
+                                IconButton(onClick = { viewModel.removeTitrationStep(index) }) {
+                                    Icon(
+                                        imageVector = Icons.Default.DeleteOutline,
+                                        contentDescription = "Remove week ${index + 1}",
+                                        tint = PepLogTheme.colors.accent
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(PepLogTheme.spacing.small))
+                    }
+                    TextButton(onClick = viewModel::addTitrationStep) {
+                        Icon(Icons.Default.Add, contentDescription = null)
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Add week")
                     }
                 }
 
@@ -304,6 +414,85 @@ fun AddCompoundScreen(
             }
         }
     }
+
+    if (showTimePicker) {
+        val initialTime = uiState.timeOfDay.toLocalTimeOrNull()
+            ?: java.time.LocalTime.of(8, 0)
+        val timePickerState = androidx.compose.material3.rememberTimePickerState(
+            initialHour = initialTime.hour,
+            initialMinute = initialTime.minute,
+            is24Hour = false
+        )
+        AlertDialog(
+            onDismissRequest = { showTimePicker = false },
+            title = { Text("Choose dose time") },
+            text = { TimePicker(state = timePickerState) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.updateTimeOfDay(
+                        "%02d:%02d".format(timePickerState.hour, timePickerState.minute)
+                    )
+                    showTimePicker = false
+                }) {
+                    Text("Use this time")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTimePicker = false }) { Text("Cancel") }
+            }
+        )
+    }
+
+    if (showCustomPeptideDialog) {
+        AlertDialog(
+            onDismissRequest = { if (!uiState.isCreatingCustomPeptide) showCustomPeptideDialog = false },
+            title = { Text("Add custom compound") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text(
+                        text = "Use this for an unlisted compound. PepLog will track it, but will not show a PK estimate without validated reference data.",
+                        color = PepLogTheme.colors.textSecondary,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    PepLogTextField(
+                        value = customPeptideName,
+                        onValueChange = { customPeptideName = it },
+                        label = "Name",
+                        placeholder = "e.g. Retatrutide",
+                        enabled = !uiState.isCreatingCustomPeptide,
+                    )
+                    PepLogTextField(
+                        value = customPeptideCategory,
+                        onValueChange = { customPeptideCategory = it },
+                        label = "Category (optional)",
+                        placeholder = "Custom",
+                        enabled = !uiState.isCreatingCustomPeptide,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    enabled = !uiState.isCreatingCustomPeptide,
+                    onClick = {
+                        viewModel.addCustomPeptide(
+                            nameInput = customPeptideName,
+                            categoryInput = customPeptideCategory,
+                        ) {
+                            showCustomPeptideDialog = false
+                        }
+                    }
+                ) {
+                    Text(if (uiState.isCreatingCustomPeptide) "Adding…" else "Add compound")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    enabled = !uiState.isCreatingCustomPeptide,
+                    onClick = { showCustomPeptideDialog = false }
+                ) { Text("Cancel") }
+            }
+        )
+    }
 }
 
 @Composable
@@ -352,4 +541,16 @@ private fun AdminRoute.toDisplayLabel(): String = when (this) {
     AdminRoute.INTRANASAL -> "Intranasal"
     AdminRoute.ORAL -> "Oral"
     AdminRoute.TOPICAL -> "Topical"
+}
+
+private fun String.toLocalTimeOrNull(): java.time.LocalTime? = runCatching {
+    java.time.LocalTime.parse(trim())
+}.getOrNull()
+
+private fun formatDoseTime(value: String): String {
+    val time = value.toLocalTimeOrNull() ?: return value
+    val hour = time.hour % 12
+    val displayHour = if (hour == 0) 12 else hour
+    val period = if (time.hour < 12) "AM" else "PM"
+    return "%d:%02d %s".format(displayHour, time.minute, period)
 }

@@ -3,6 +3,7 @@ package com.appvexis.peptidetracker.core.database.repository
 import com.appvexis.peptidetracker.core.database.dao.InventoryDao
 import com.appvexis.peptidetracker.core.database.dao.LogDao
 import com.appvexis.peptidetracker.core.database.dao.ProtocolDao
+import com.appvexis.peptidetracker.core.database.PepLogDatabase
 import com.appvexis.peptidetracker.core.database.entity.toDomain
 import com.appvexis.peptidetracker.core.database.entity.toEntity
 import com.appvexis.peptidetracker.core.model.BiomarkerLog
@@ -19,6 +20,7 @@ import com.appvexis.peptidetracker.core.model.repository.AnalyticsRepository
 import com.appvexis.peptidetracker.core.model.repository.LogRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import androidx.room.withTransaction
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,7 +33,8 @@ class LogRepositoryImpl @Inject constructor(
     private val logDao: LogDao,
     private val protocolDao: ProtocolDao,
     private val inventoryDao: InventoryDao,
-    private val analyticsRepository: AnalyticsRepository
+    private val analyticsRepository: AnalyticsRepository,
+    private val database: PepLogDatabase
 ) : LogRepository {
 
     // Helper to find protocol ID for a compound
@@ -83,49 +86,86 @@ class LogRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertDoseLog(log: DoseLog) {
-        requireCompoundExists(log.protocolCompoundId)
-        validateDoseLog(log)
-        logDao.insertDoseLog(log.toEntity())
-        if (log.status == DoseStatus.TAKEN) {
-            deductInventoryForDose(log.protocolCompoundId, log.doseAmount, log.doseUnit)
+        database.withTransaction {
+            requireCompoundExists(log.protocolCompoundId)
+            validateDoseLog(log)
+            val existing = logDao.getDoseLogById(log.id)
+            validateDoseReplacement(existing, log)
+            logDao.insertDoseLog(log.toEntity())
+            if (log.status == DoseStatus.TAKEN && existing?.status != DoseStatus.TAKEN) {
+                deductInventoryForDose(log.protocolCompoundId, log.doseAmount, log.doseUnit)
+            }
         }
         triggerRecomputeForCompound(log.protocolCompoundId)
     }
 
     override suspend fun insertDoseLogs(logs: List<DoseLog>) {
         if (logs.isEmpty()) return
-        logs.forEach { log ->
-            requireCompoundExists(log.protocolCompoundId)
-            validateDoseLog(log)
+        require(logs.map { it.id }.distinct().size == logs.size) {
+            "Dose records must have unique IDs"
         }
-        logDao.insertDoseLogs(logs.map { it.toEntity() })
+        database.withTransaction {
+            logs.forEach { log ->
+                requireCompoundExists(log.protocolCompoundId)
+                validateDoseLog(log)
+                validateDoseReplacement(logDao.getDoseLogById(log.id), log)
+            }
+            logs.forEach { log ->
+                val existing = logDao.getDoseLogById(log.id)
+                logDao.insertDoseLog(log.toEntity())
+                if (log.status == DoseStatus.TAKEN && existing?.status != DoseStatus.TAKEN) {
+                    deductInventoryForDose(log.protocolCompoundId, log.doseAmount, log.doseUnit)
+                }
+            }
+        }
         for (compoundId in logs.map { it.protocolCompoundId }.distinct()) {
             triggerRecomputeForCompound(compoundId)
         }
     }
 
     override suspend fun updateDoseLog(log: DoseLog) {
-        requireCompoundExists(log.protocolCompoundId)
-        validateDoseLog(log)
-        logDao.updateDoseLog(log.toEntity())
+        database.withTransaction {
+            requireCompoundExists(log.protocolCompoundId)
+            validateDoseLog(log)
+            val existing = logDao.getDoseLogById(log.id)
+                ?: error("The selected dose log no longer exists")
+            validateDoseReplacement(existing, log)
+            logDao.updateDoseLog(log.toEntity())
+            if (log.status == DoseStatus.TAKEN && existing.status != DoseStatus.TAKEN) {
+                deductInventoryForDose(log.protocolCompoundId, log.doseAmount, log.doseUnit)
+            }
+        }
         triggerRecomputeForCompound(log.protocolCompoundId)
     }
 
     override suspend fun deleteDoseLog(id: String) {
         val log = logDao.getDoseLogById(id)
-        logDao.deleteDoseLog(id)
+        val deletedRows = logDao.deleteDoseLogIfNotTaken(id)
+        if (deletedRows == 0) {
+            require(log?.status != DoseStatus.TAKEN) {
+                "Completed dose records cannot be deleted after inventory was deducted"
+            }
+            return
+        }
         log?.let { triggerRecomputeForCompound(it.protocolCompoundId) }
     }
 
     override suspend fun logDoseTaken(id: String, actualTime: Long, site: String?, side: String?) {
+        require(actualTime >= 0L) { "Dose time must be a valid timestamp" }
         // The conditional update is important: a double tap, retry, or two
         // simultaneous UI callers can only transition a pending dose once.
-        val updatedRows = logDao.logDoseTakenIfPending(id, actualTime, site, side)
-        if (updatedRows == 0) return
-        val log = logDao.getDoseLogById(id)
-        log?.let {
-            deductInventoryForDose(it.protocolCompoundId, it.doseAmount, it.doseUnit)
-            triggerRecomputeForCompound(it.protocolCompoundId)
+        var compoundId: String? = null
+        database.withTransaction {
+            val updatedRows = logDao.logDoseTakenIfPending(id, actualTime, site, side)
+            if (updatedRows > 0) {
+                compoundId = logDao.getDoseLogById(id)?.protocolCompoundId
+                logDao.getDoseLogById(id)?.let { log ->
+                    deductInventoryForDose(log.protocolCompoundId, log.doseAmount, log.doseUnit)
+                }
+            }
+        }
+        compoundId?.let {
+            triggerRecomputeForCompound(it)
         }
     }
 
@@ -263,6 +303,20 @@ class LogRepositoryImpl @Inject constructor(
         }
         require(log.doseAmount.isFinite() && log.doseAmount > 0.0) {
             "Dose amount must be a finite value greater than zero"
+        }
+        if (log.status == DoseStatus.TAKEN) {
+            require(log.actualTime != null) { "A taken dose must have an actual time" }
+        }
+    }
+
+    private fun validateDoseReplacement(existing: com.appvexis.peptidetracker.core.database.entity.DoseLogEntity?, incoming: DoseLog) {
+        if (existing?.status == DoseStatus.TAKEN) {
+            require(incoming.status == DoseStatus.TAKEN) {
+                "A completed dose cannot be changed back to pending"
+            }
+            require(existing.doseAmount == incoming.doseAmount && existing.doseUnit == incoming.doseUnit) {
+                "The dose amount or unit cannot be changed after inventory was deducted"
+            }
         }
     }
 

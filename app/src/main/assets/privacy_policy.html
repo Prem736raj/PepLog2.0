@@ -32,23 +32,26 @@
     <p>Release builds suppress debug logs and may write warning or error messages to the Android system log for troubleshooting. No third-party crash-reporting service is bundled in this build, and PepLog does not intentionally put dose values, notes, photos, or health records in log messages. Debug builds may write technical logs visible to a development tool.</p>
 
     <h2>5. Exports and sharing</h2>
-    <p>PepLog can create CSV or JSON exports in its private app cache when you request one. The App does not upload an export by itself. Android's system share sheet lets you choose a destination, and that destination's own terms and privacy policy then apply. Exports can contain sensitive health information, notes, and timestamps; review them before sharing.</p>
+    <p>PepLog can create CSV, JSON, clinician-summary PDF, or photo-inclusive ZIP backups in its private app cache when you request one. The App does not upload an export by itself. Android's system share sheet lets you choose a destination, and that destination's own terms and privacy policy then apply. Exports can contain sensitive health information, notes, timestamps, and (for ZIP backups) private progress-photo copies; review them before sharing.</p>
 
-    <h2>6. Information we do not use</h2>
+    <h2>6. Notifications</h2>
+    <p>If you grant Android notification permission, PepLog may run local background checks for upcoming dose reminders and inventory/expiration alerts. These notifications are generated from records stored on your device; no reminder content is sent to a PepLog server. You can revoke notification permission or disable the notification channels in Android settings.</p>
+
+    <h2>7. Information we do not use</h2>
     <ul>
         <li>No location tracking or advertising SDK is used.</li>
         <li>PepLog does not sell personal or health information.</li>
         <li>PepLog does not run a social profile or public health-data feed.</li>
-        <li>Network requests are intended to use HTTPS and are limited to Google Play billing and optional Health Connect integrations.</li>
+        <li>Network requests are intended to use HTTPS and are limited to Google Play billing in this build. Health Connect data is read through Android's local Health Connect service.</li>
     </ul>
 
-    <h2>7. Retention and deletion</h2>
+    <h2>8. Retention and deletion</h2>
     <p>Clear the App's storage or uninstall the App to remove its local database, preferences, and cached exports. Shared exports may remain with the recipient or service where you shared them, so delete those copies separately when no longer needed.</p>
 
-    <h2>8. Children's privacy</h2>
+    <h2>9. Children's privacy</h2>
     <p>PepLog is not intended for children under 18. Do not use the App to store another person's information without appropriate permission.</p>
 
-    <h2>9. Changes and contact</h2>
+    <h2>10. Changes and contact</h2>
     <p>We may update this policy when the App's data practices change. The effective date above will be updated with material changes.</p>
     <p>For privacy questions, contact <a href="mailto:privacy@appvexis.com">privacy@appvexis.com</a>. Verify this address and publish this policy at a stable public URL before submitting the App to Google Play.</p>
 </body>

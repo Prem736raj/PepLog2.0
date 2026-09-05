@@ -44,8 +44,9 @@ interface LogDao {
     @Update
     suspend fun updateDoseLog(log: DoseLogEntity)
 
-    @Query("DELETE FROM dose_log WHERE id = :id")
-    suspend fun deleteDoseLog(id: String)
+    /** Prevents a concurrent completion from deleting a dose after inventory was deducted. */
+    @Query("DELETE FROM dose_log WHERE id = :id AND status != 'TAKEN'")
+    suspend fun deleteDoseLogIfNotTaken(id: String): Int
 
     @Query("DELETE FROM dose_log")
     suspend fun deleteAllDoseLogs()

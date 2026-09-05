@@ -2,6 +2,7 @@ package com.appvexis.peptidetracker.core.model.repository
 
 import com.appvexis.peptidetracker.core.model.Protocol
 import com.appvexis.peptidetracker.core.model.ProtocolCompound
+import com.appvexis.peptidetracker.core.model.DoseLog
 import com.appvexis.peptidetracker.core.model.ProtocolWithCompounds
 import kotlinx.coroutines.flow.Flow
 
@@ -17,6 +18,7 @@ interface ProtocolRepository {
     suspend fun updateProtocol(protocol: Protocol)
     suspend fun deleteProtocol(id: String)
     suspend fun insertCompound(compound: ProtocolCompound)
+    suspend fun insertCompoundWithDoseSchedule(compound: ProtocolCompound, doseLogs: List<DoseLog>)
     suspend fun updateCompound(compound: ProtocolCompound)
     suspend fun deleteCompound(id: String)
 }

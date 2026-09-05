@@ -32,4 +32,12 @@ interface PeptideDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(peptides: List<PeptideEntity>)
+
+    /** Removes only user-created catalog entries; built-in reference data stays seeded. */
+    @Query("DELETE FROM peptide WHERE id LIKE 'custom-%'")
+    suspend fun deleteCustomPeptides()
+
+    /** Synchronous snapshot used when validating a portable restore. */
+    @Query("SELECT * FROM peptide ORDER BY name ASC")
+    suspend fun getAllPeptidesSync(): List<PeptideEntity>
 }

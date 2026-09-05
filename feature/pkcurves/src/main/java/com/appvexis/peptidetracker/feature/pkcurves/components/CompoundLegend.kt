@@ -64,7 +64,11 @@ fun CompoundLegend(
         )
 
         compounds.forEach { compound ->
-            val rowAlpha = if (compound.isVisible) 1f else 0.4f
+            val rowAlpha = when {
+                !compound.isPkAvailable -> 0.82f
+                compound.isVisible -> 1f
+                else -> 0.4f
+            }
             val bgColor by animateColorAsState(
                 targetValue = if (compound.isVisible)
                     compound.color.copy(alpha = 0.08f)
@@ -79,7 +83,9 @@ fun CompoundLegend(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
                     .background(bgColor)
-                    .clickable { onToggleVisibility(compound.compoundId) }
+                    .clickable(enabled = compound.isPkAvailable) {
+                        onToggleVisibility(compound.compoundId)
+                    }
                     .padding(horizontal = 12.dp, vertical = 10.dp)
                     .alpha(rowAlpha),
                 verticalAlignment = Alignment.CenterVertically
@@ -105,18 +111,37 @@ fun CompoundLegend(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Text(
-                        text = "t½ = ${formatHalfLife(compound.halfLifeHours)} · ${compound.doseAmountMg} ${compound.doseUnit}",
-                        fontSize = 11.sp,
-                        color = PepLogTheme.colors.textSecondary,
-                        maxLines = 1
-                    )
+                    if (compound.isPkAvailable) {
+                        Text(
+                            text = "t½ = ${formatHalfLife(compound.halfLifeHours)} · last ${formatDose(compound.doseAmount)} ${compound.doseUnit}",
+                            fontSize = 11.sp,
+                            color = PepLogTheme.colors.textSecondary,
+                            maxLines = 1
+                        )
+                    } else {
+                        Text(
+                            text = compound.unavailableReason ?: "Estimate unavailable",
+                            fontSize = 11.sp,
+                            color = PepLogTheme.colors.accent,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    compound.dataWarning?.let { warning ->
+                        Text(
+                            text = warning,
+                            fontSize = 10.sp,
+                            color = PepLogTheme.colors.accent,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
 
                 // Current level
-                if (compound.isVisible) {
+                if (compound.isPkAvailable && compound.isVisible) {
                     Text(
-                        text = formatConcentrationDisplay(compound.currentLevel),
+                        text = formatRelativeDisplay(compound.currentLevel),
                         fontFamily = OutfitFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 13.sp,
@@ -125,15 +150,17 @@ fun CompoundLegend(
                     Spacer(modifier = Modifier.width(8.dp))
                 }
 
-                // Visibility toggle
-                Icon(
-                    imageVector = if (compound.isVisible) Icons.Default.Visibility
-                    else Icons.Default.VisibilityOff,
-                    contentDescription = if (compound.isVisible) "Hide" else "Show",
-                    tint = if (compound.isVisible) compound.color
-                    else PepLogTheme.colors.textSecondary,
-                    modifier = Modifier.size(20.dp)
-                )
+                if (compound.isPkAvailable) {
+                    // Visibility toggle
+                    Icon(
+                        imageVector = if (compound.isVisible) Icons.Default.Visibility
+                        else Icons.Default.VisibilityOff,
+                        contentDescription = if (compound.isVisible) "Hide" else "Show",
+                        tint = if (compound.isVisible) compound.color
+                        else PepLogTheme.colors.textSecondary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }
@@ -159,7 +186,7 @@ fun PKInfoCards(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = "Current Levels",
+            text = "Current estimates",
             fontFamily = OutfitFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
@@ -189,7 +216,7 @@ fun PKInfoCards(
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = "Now: ${formatConcentrationDisplay(compound.currentLevel)}",
+                        text = "Now: ${formatRelativeDisplay(compound.currentLevel)}",
                         fontSize = 11.sp,
                         color = compound.color,
                         fontWeight = FontWeight.SemiBold
@@ -198,14 +225,14 @@ fun PKInfoCards(
                 Column(horizontalAlignment = Alignment.End) {
                     if (peak != null) {
                         Text(
-                            text = "Peak: ${formatConcentrationDisplay(peak.concentration)}",
+                            text = "Peak: ${formatRelativeDisplay(peak.concentration)}",
                             fontSize = 11.sp,
                             color = PepLogTheme.colors.success
                         )
                     }
                     if (trough != null) {
                         Text(
-                            text = "Trough: ${formatConcentrationDisplay(trough.concentration)}",
+                            text = "Trough: ${formatRelativeDisplay(trough.concentration)}",
                             fontSize = 11.sp,
                             color = PepLogTheme.colors.accent
                         )
@@ -225,12 +252,18 @@ private fun formatHalfLife(hours: Double): String {
     }
 }
 
-private fun formatConcentrationDisplay(value: Double): String {
+private fun formatDose(value: Double): String = when {
+    value >= 100.0 -> "%.0f".format(value)
+    value >= 1.0 -> "%.1f".format(value)
+    else -> "%.2f".format(value)
+}
+
+private fun formatRelativeDisplay(value: Double): String {
     return when {
-        value >= 100.0 -> "${value.toInt()} mg"
-        value >= 1.0 -> "%.1f mg".format(value)
-        value >= 0.01 -> "%.2f mg".format(value)
-        value > 0.0 -> "< 0.01 mg"
-        else -> "0 mg"
+        value >= 100.0 -> "${value.toInt()} rel"
+        value >= 1.0 -> "%.1f rel".format(value)
+        value >= 0.01 -> "%.2f rel".format(value)
+        value > 0.0 -> "< 0.01 rel"
+        else -> "0 rel"
     }
 }

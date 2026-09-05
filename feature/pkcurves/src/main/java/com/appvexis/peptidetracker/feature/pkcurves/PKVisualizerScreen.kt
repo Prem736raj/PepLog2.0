@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.appvexis.peptidetracker.core.ui.components.PepLogChip
+import com.appvexis.peptidetracker.core.ui.components.PepLogCard
 import com.appvexis.peptidetracker.core.ui.theme.OutfitFontFamily
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
 import com.appvexis.peptidetracker.feature.pkcurves.components.CompoundLegend
@@ -137,7 +138,14 @@ fun PKVisualizerScreen(
             }
 
             !uiState.hasData -> {
-                PKEmptyState(modifier = Modifier.fillMaxSize())
+                if (uiState.hasUnavailableData) {
+                    PKUnavailableState(
+                        compounds = uiState.compounds,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    PKEmptyState(modifier = Modifier.fillMaxSize())
+                }
             }
 
             else -> {
@@ -154,6 +162,24 @@ fun PKVisualizerScreen(
                         activeWindow = uiState.activeTimeWindow,
                         onWindowSelected = { viewModel.setTimeWindow(it) }
                     )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    PepLogCard(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Estimated relative amount",
+                            fontFamily = OutfitFontFamily,
+                            fontWeight = FontWeight.SemiBold,
+                            color = PepLogTheme.colors.textPrimary
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "This is a first-order elimination estimate, not a measured blood level or treatment recommendation. Solid lines show logged doses; dashed lines show scheduled-dose forecasts.",
+                            color = PepLogTheme.colors.textSecondary,
+                            fontSize = 12.sp,
+                            lineHeight = 18.sp
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -272,5 +298,36 @@ private fun PKEmptyState(modifier: Modifier = Modifier) {
             color = PepLogTheme.colors.primary.copy(alpha = 0.7f),
             textAlign = TextAlign.Center
         )
+    }
+}
+
+@Composable
+private fun PKUnavailableState(
+    compounds: List<com.appvexis.peptidetracker.feature.pkcurves.model.CompoundCurveData>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = PepLogTheme.spacing.medium, vertical = PepLogTheme.spacing.large),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        PepLogCard(isGlassmorphic = true, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "No mass-based estimate available",
+                fontFamily = OutfitFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = PepLogTheme.colors.textPrimary
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Your records are safe. IU doses and compounds without a validated half-life are shown below, but PepLog will not invent a conversion or a pharmacokinetic value.",
+                color = PepLogTheme.colors.textSecondary,
+                fontSize = 14.sp,
+                lineHeight = 20.sp
+            )
+        }
+        CompoundLegend(compounds = compounds, onToggleVisibility = {})
     }
 }

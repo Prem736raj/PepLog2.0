@@ -1,6 +1,7 @@
 package com.appvexis.peptidetracker.core.backup.model
 
 import kotlinx.serialization.Serializable
+import com.appvexis.peptidetracker.core.model.Peptide
 import com.appvexis.peptidetracker.core.model.TitrationStep
 
 /**
@@ -12,6 +13,10 @@ data class BackupData(
     val version: Int = CURRENT_VERSION,
     val createdAt: Long = System.currentTimeMillis(),
     val appVersion: String = "",
+    /** User-created catalog entries; built-in encyclopedia data is seeded by the app. */
+    val customPeptides: List<Peptide> = emptyList(),
+    /** Names keep exports readable without duplicating the built-in catalog. */
+    val peptideNames: Map<String, String> = emptyMap(),
     val protocols: List<ProtocolBackup> = emptyList(),
     val protocolCompounds: List<ProtocolCompoundBackup> = emptyList(),
     val doseLogs: List<DoseLogBackup> = emptyList(),
@@ -170,5 +175,6 @@ sealed class BackupStatus {
     data object Idle : BackupStatus()
     data class InProgress(val progress: Float, val message: String) : BackupStatus()
     data class Success(val timestamp: Long, val sizeBytes: Long) : BackupStatus()
+    data class Restored(val timestamp: Long, val recordCount: Int) : BackupStatus()
     data class Error(val message: String) : BackupStatus()
 }

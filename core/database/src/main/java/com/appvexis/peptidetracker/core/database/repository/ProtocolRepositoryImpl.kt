@@ -1,11 +1,15 @@
 package com.appvexis.peptidetracker.core.database.repository
 
+import androidx.room.withTransaction
+import com.appvexis.peptidetracker.core.database.PepLogDatabase
 import com.appvexis.peptidetracker.core.database.dao.ProtocolDao
 import com.appvexis.peptidetracker.core.database.entity.toDomain
 import com.appvexis.peptidetracker.core.database.entity.toEntity
 import com.appvexis.peptidetracker.core.model.Protocol
 import com.appvexis.peptidetracker.core.model.ProtocolCompound
 import com.appvexis.peptidetracker.core.model.ProtocolWithCompounds
+import com.appvexis.peptidetracker.core.model.DoseLog
+import com.appvexis.peptidetracker.core.model.DoseStatus
 import com.appvexis.peptidetracker.core.model.FrequencyType
 import com.appvexis.peptidetracker.core.model.repository.AnalyticsRepository
 import com.appvexis.peptidetracker.core.model.repository.ProtocolRepository
@@ -21,7 +25,8 @@ import javax.inject.Singleton
 @Singleton
 class ProtocolRepositoryImpl @Inject constructor(
     private val protocolDao: ProtocolDao,
-    private val analyticsRepository: AnalyticsRepository
+    private val analyticsRepository: AnalyticsRepository,
+    private val database: PepLogDatabase
 ) : ProtocolRepository {
 
     override fun getAllProtocols(): Flow<List<Protocol>> {
@@ -55,13 +60,43 @@ class ProtocolRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteProtocol(id: String) {
-        protocolDao.deleteProtocol(id)
-        // Cascade deletes will clean up the db tables, but we can clean summaries too
+        // "Delete" is intentionally an archive operation. Hard-deleting the
+        // parent would cascade through dose_log and erase completed history.
+        protocolDao.archiveProtocol(id, System.currentTimeMillis())
     }
 
     override suspend fun insertCompound(compound: ProtocolCompound) {
         validateCompound(compound)
         protocolDao.insertCompound(compound.toEntity())
+        analyticsRepository.recomputeAnalyticsForProtocol(compound.protocolId)
+    }
+
+    override suspend fun insertCompoundWithDoseSchedule(compound: ProtocolCompound, doseLogs: List<DoseLog>) {
+        validateCompound(compound)
+        require(doseLogs.map { it.id }.distinct().size == doseLogs.size) {
+            "Generated dose rows must have unique IDs"
+        }
+        require(doseLogs.all { it.protocolCompoundId == compound.id }) {
+            "Generated dose rows must reference the new compound"
+        }
+        doseLogs.forEach { doseLog ->
+            require(doseLog.status == DoseStatus.PENDING && doseLog.actualTime == null) {
+                "A new schedule can only contain pending doses"
+            }
+            require(doseLog.id.isNotBlank()) { "A generated dose must have an ID" }
+            require(doseLog.scheduledTime >= 0L && doseLog.createdAt >= 0L) {
+                "Generated dose timestamps are invalid"
+            }
+            require(doseLog.doseAmount.isFinite() && doseLog.doseAmount > 0.0) {
+                "Generated dose amount is invalid"
+            }
+        }
+        database.withTransaction {
+            protocolDao.insertCompound(compound.toEntity())
+            if (doseLogs.isNotEmpty()) {
+                database.logDao().insertDoseLogs(doseLogs.map { it.toEntity() })
+            }
+        }
         analyticsRepository.recomputeAnalyticsForProtocol(compound.protocolId)
     }
 
@@ -74,6 +109,7 @@ class ProtocolRepositoryImpl @Inject constructor(
     private fun validateCompound(compound: ProtocolCompound) {
         require(compound.protocolId.isNotBlank()) { "A compound must reference a protocol" }
         require(compound.peptideId.isNotBlank()) { "A compound must reference a peptide" }
+        require(compound.timeOfDay.isNotBlank()) { "A compound must include a dose time" }
         require(compound.doseAmount.isFinite() && compound.doseAmount > 0.0) {
             "Dose amount must be a finite value greater than zero"
         }
@@ -98,11 +134,24 @@ class ProtocolRepositoryImpl @Inject constructor(
                 "Frequency days must use the Sunday=1 through Saturday=7 convention"
             }
         }
+        if (compound.titrationEnabled) {
+            val steps = compound.titrationSchedule.orEmpty()
+            require(steps.isNotEmpty()) { "Titration requires at least one step" }
+            require(steps.map { it.week }.distinct().size == steps.size && steps.any { it.week == 1 }) {
+                "Titration weeks must be unique and start at week 1"
+            }
+            require(steps.all { it.week in 1..52 && it.doseAmount.isFinite() && it.doseAmount > 0.0 }) {
+                "Titration steps must use valid weeks and doses"
+            }
+        }
     }
 
     override suspend fun deleteCompound(id: String) {
         val compound = protocolDao.getCompoundById(id)
-        protocolDao.deleteCompound(id)
+        // Keep the parent row so completed dose logs remain valid and visible
+        // in history. The relation mapper hides inactive compounds from the
+        // active protocol screen.
+        protocolDao.deactivateCompound(id)
         compound?.let {
             analyticsRepository.recomputeAnalyticsForProtocol(it.protocolId)
         }

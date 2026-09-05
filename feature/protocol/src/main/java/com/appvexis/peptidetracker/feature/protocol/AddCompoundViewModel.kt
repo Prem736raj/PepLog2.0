@@ -8,7 +8,7 @@ import com.appvexis.peptidetracker.core.model.DoseUnit
 import com.appvexis.peptidetracker.core.model.FrequencyType
 import com.appvexis.peptidetracker.core.model.Peptide
 import com.appvexis.peptidetracker.core.model.ProtocolCompound
-import com.appvexis.peptidetracker.core.model.repository.LogRepository
+import com.appvexis.peptidetracker.core.model.TitrationStep
 import com.appvexis.peptidetracker.core.model.repository.PeptideRepository
 import com.appvexis.peptidetracker.core.model.repository.ProtocolRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,6 @@ import javax.inject.Inject
 class AddCompoundViewModel @Inject constructor(
     private val protocolRepository: ProtocolRepository,
     private val peptideRepository: PeptideRepository,
-    private val logRepository: LogRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -40,6 +39,62 @@ class AddCompoundViewModel @Inject constructor(
 
     fun updatePeptideId(id: String) {
         _uiState.update { it.copy(peptideId = id) }
+    }
+
+    fun addCustomPeptide(
+        nameInput: String,
+        categoryInput: String,
+        onCreated: (Peptide) -> Unit,
+    ) {
+        if (_uiState.value.isCreatingCustomPeptide) return
+        val name = nameInput.trim()
+        val category = categoryInput.trim().ifBlank { "Custom" }
+        when {
+            name.isBlank() || name.length > 80 -> {
+                _uiState.update { it.copy(errorMessage = "Enter a compound name between 1 and 80 characters") }
+                return
+            }
+            category.length > 40 -> {
+                _uiState.update { it.copy(errorMessage = "Category must be 40 characters or fewer") }
+                return
+            }
+        }
+
+        val peptide = Peptide(
+            id = "custom-${UUID.randomUUID()}",
+            name = name,
+            category = category,
+            description = "User-created compound. No validated reference data is available.",
+            halfLifeHours = null,
+            halfLifeDisplay = null,
+            adminRoute = null,
+            typicalFrequency = null,
+            typicalDoseRange = null,
+            storageInfo = null,
+            tags = listOf("custom"),
+        )
+
+        _uiState.update { it.copy(isCreatingCustomPeptide = true, errorMessage = null) }
+        viewModelScope.launch {
+            runCatching { peptideRepository.addCustomPeptide(peptide) }
+                .onSuccess {
+                    _uiState.update { state ->
+                        state.copy(
+                            peptideId = peptide.id,
+                            isCreatingCustomPeptide = false,
+                        )
+                    }
+                    onCreated(peptide)
+                }
+                .onFailure { error ->
+                    _uiState.update { state ->
+                        state.copy(
+                            isCreatingCustomPeptide = false,
+                            errorMessage = error.message ?: "Could not add the custom compound",
+                        )
+                    }
+                }
+        }
     }
 
     fun updateDoseAmount(amount: String) {
@@ -75,6 +130,45 @@ class AddCompoundViewModel @Inject constructor(
         _uiState.update { it.copy(adminRoute = route) }
     }
 
+    fun updateTimeOfDay(timeOfDay: String) {
+        _uiState.update { it.copy(timeOfDay = timeOfDay) }
+    }
+
+    fun setTitrationEnabled(enabled: Boolean) {
+        _uiState.update { it.copy(titrationEnabled = enabled) }
+    }
+
+    fun updateTitrationWeek(index: Int, value: String) {
+        _uiState.update { state ->
+            state.copy(titrationSteps = state.titrationSteps.updateAt(index) {
+                it.copy(week = value)
+            })
+        }
+    }
+
+    fun updateTitrationDose(index: Int, value: String) {
+        _uiState.update { state ->
+            state.copy(titrationSteps = state.titrationSteps.updateAt(index) {
+                it.copy(doseAmount = value)
+            })
+        }
+    }
+
+    fun addTitrationStep() {
+        _uiState.update { state ->
+            val nextWeek = (state.titrationSteps.mapNotNull { it.week.toIntOrNull() }.maxOrNull() ?: 0) + 1
+            if (nextWeek > MAX_TITRATION_WEEKS) state
+            else state.copy(titrationSteps = state.titrationSteps + TitrationDraft(nextWeek.toString(), ""))
+        }
+    }
+
+    fun removeTitrationStep(index: Int) {
+        _uiState.update { state ->
+            if (index !in state.titrationSteps.indices || state.titrationSteps.size == 1) state
+            else state.copy(titrationSteps = state.titrationSteps.toMutableList().apply { removeAt(index) })
+        }
+    }
+
     fun saveCompound(onSuccess: () -> Unit) {
         if (_uiState.value.isSaving) return
 
@@ -86,6 +180,15 @@ class AddCompoundViewModel @Inject constructor(
         val route = state.adminRoute.toAdminRouteOrNull()
         val cycleOnDays = state.cycleOnDays.toIntOrNull()
         val cycleOffDays = state.cycleOffDays.toIntOrNull()
+        val titrationSteps = state.titrationSteps.mapNotNull { draft ->
+            val week = draft.week.toIntOrNull()
+            val doseAmount = draft.doseAmount.toDoubleOrNull()
+            if (week != null && doseAmount != null && doseAmount.isFinite() && doseAmount > 0.0) {
+                TitrationStep(week = week, doseAmount = doseAmount)
+            } else {
+                null
+            }
+        }
 
         when {
             selectedPeptide == null -> {
@@ -118,6 +221,27 @@ class AddCompoundViewModel @Inject constructor(
                 _uiState.update { it.copy(errorMessage = "Cycle days must be on 1-$MAX_CYCLE_DAYS and off 0-$MAX_CYCLE_DAYS") }
                 return
             }
+            state.timeOfDay.toLocalTimeOrNull() == null -> {
+                _uiState.update { it.copy(errorMessage = "Choose a valid dose time") }
+                return
+            }
+            state.titrationEnabled && titrationSteps.size != state.titrationSteps.size -> {
+                _uiState.update { it.copy(errorMessage = "Enter a valid dose for every titration week") }
+                return
+            }
+            state.titrationEnabled && titrationSteps.isEmpty() -> {
+                _uiState.update { it.copy(errorMessage = "Add at least one titration week") }
+                return
+            }
+            state.titrationEnabled && (
+                titrationSteps.any { it.week !in 1..MAX_TITRATION_WEEKS } ||
+                    titrationSteps.map { it.week }.distinct().size != titrationSteps.size ||
+                    titrationSteps.none { it.week == 1 } ||
+                    titrationSteps.any { it.doseAmount > MAX_DOSE_AMOUNT }
+                ) -> {
+                _uiState.update { it.copy(errorMessage = "Titration weeks must be unique, start at week 1, stay within 1-$MAX_TITRATION_WEEKS, and use valid doses") }
+                return
+            }
         }
 
         val scheduleDays = when (frequency) {
@@ -135,10 +259,10 @@ class AddCompoundViewModel @Inject constructor(
             doseUnit = unit,
             frequencyType = frequency,
             frequencyDays = scheduleDays,
-            timeOfDay = DEFAULT_TIME_OF_DAY,
+            timeOfDay = state.timeOfDay,
             adminRoute = route,
-            titrationEnabled = false,
-            titrationSchedule = null,
+            titrationEnabled = state.titrationEnabled,
+            titrationSchedule = titrationSteps.sortedBy { it.week }.takeIf { state.titrationEnabled },
             startDate = now,
             endDate = null,
             isActive = true,
@@ -148,10 +272,13 @@ class AddCompoundViewModel @Inject constructor(
         _uiState.update { it.copy(isSaving = true, errorMessage = null) }
         viewModelScope.launch {
             try {
-                protocolRepository.insertCompound(compound)
-                // A compound without dose rows never appears in the daily log.
-                // Generate a bounded local schedule immediately after the FK exists.
-                logRepository.insertDoseLogs(DoseScheduleGenerator.generate(compound, now))
+                // Insert the compound and its generated rows atomically so a
+                // failed schedule write cannot leave an apparently configured
+                // compound that never appears in Daily Logs.
+                protocolRepository.insertCompoundWithDoseSchedule(
+                    compound,
+                    DoseScheduleGenerator.generate(compound, now)
+                )
                 _uiState.update { it.copy(isSaving = false) }
                 onSuccess()
             } catch (e: Exception) {
@@ -183,10 +310,17 @@ class AddCompoundViewModel @Inject constructor(
         else -> runCatching { AdminRoute.valueOf(trim().uppercase()) }.getOrNull()
     }
 
+    private fun String.toLocalTimeOrNull() = runCatching {
+        java.time.LocalTime.parse(trim())
+    }.getOrNull()
+
+    private fun <T> List<T>.updateAt(index: Int, transform: (T) -> T): List<T> =
+        if (index !in indices) this else toMutableList().apply { set(index, transform(this[index])) }
+
     companion object {
         private const val MAX_DOSE_AMOUNT = 1_000_000.0
         private const val MAX_CYCLE_DAYS = 365
-        private const val DEFAULT_TIME_OF_DAY = "Morning"
+        private const val MAX_TITRATION_WEEKS = 52
     }
 }
 
@@ -199,6 +333,15 @@ data class AddCompoundUiState(
     val cycleOnDays: String = "5",
     val cycleOffDays: String = "2",
     val adminRoute: String = "Subcutaneous",
+    val timeOfDay: String = "08:00",
+    val titrationEnabled: Boolean = false,
+    val titrationSteps: List<TitrationDraft> = listOf(TitrationDraft(week = "1", doseAmount = "")),
+    val isCreatingCustomPeptide: Boolean = false,
     val isSaving: Boolean = false,
     val errorMessage: String? = null
+)
+
+data class TitrationDraft(
+    val week: String,
+    val doseAmount: String
 )

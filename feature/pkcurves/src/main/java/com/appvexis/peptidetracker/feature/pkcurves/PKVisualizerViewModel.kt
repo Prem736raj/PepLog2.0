@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appvexis.peptidetracker.core.model.DoseLog
 import com.appvexis.peptidetracker.core.model.DoseStatus
+import com.appvexis.peptidetracker.core.model.DoseUnit
 import com.appvexis.peptidetracker.core.model.Peptide
 import com.appvexis.peptidetracker.core.model.ProtocolWithCompounds
 import com.appvexis.peptidetracker.core.model.repository.LogRepository
@@ -44,13 +45,12 @@ class PKVisualizerViewModel @Inject constructor(
     private val _animationProgress = MutableStateFlow(0f)
     private val _crosshairTime = MutableStateFlow<Double?>(null)
 
-    // Dose logs: use a very wide window to capture all relevant doses
-    // (30 days back + 10 half-lives of the longest compound)
-    private val thirtyDaysAgoMs = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000)
-
     val uiState: StateFlow<PKVisualizerUiState> = combine(
         protocolRepository.getActiveProtocols(),
-        logRepository.getDoseLogs(thirtyDaysAgoMs, Long.MAX_VALUE),
+        // The engine needs older doses for long half-lives. The database is already
+        // local and schedule generation is bounded, so retaining the full history
+        // here is more accurate than silently dropping doses after 30 days.
+        logRepository.getDoseLogs(0L, Long.MAX_VALUE),
         peptideRepository.getAllPeptides(),
         _timeWindow,
         _visibilityMap
@@ -73,41 +73,80 @@ class PKVisualizerViewModel @Inject constructor(
         visibilityMap: Map<String, Boolean>
     ): PKVisualizerUiState {
         val peptideMap = allPeptides.associateBy { it.id }
-        val doseLogsByCompound = allDoseLogs
-            .filter { it.status == DoseStatus.TAKEN && it.actualTime != null }
-            .groupBy { it.protocolCompoundId }
-
         val nowMs = System.currentTimeMillis()
         val nowHours = nowMs.toDouble() / (1000.0 * 3600.0) // epoch hours
-        val windowEndHours = nowHours
-        val windowStartHours = nowHours - timeWindow.hours
+        // Reserve part of the chart for history and part for a clearly marked
+        // scheduled-dose forecast. This is still an elimination-only estimate.
+        val historyHours = timeWindow.hours * 0.7
+        val windowStartHours = nowHours - historyHours
+        val windowEndHours = nowHours + (timeWindow.hours - historyHours)
 
         val compoundCurves = mutableListOf<CompoundCurveData>()
         var colorIndex = 0
 
         for (protocol in protocols) {
             for (compound in protocol.compounds) {
+                val compoundDoseLogs = allDoseLogs
+                    .filter { it.protocolCompoundId == compound.id }
+                    .filter { log ->
+                        log.status == DoseStatus.TAKEN && log.actualTime != null ||
+                            log.status == DoseStatus.PENDING && log.scheduledTime >= nowMs
+                    }
+                if (compoundDoseLogs.isEmpty()) continue
+
                 val peptide = peptideMap[compound.peptideId]
                 val halfLife = peptide?.halfLifeHours
                     ?.takeIf { it.isFinite() && it > 0.0 }
-                    ?: continue // Skip compounds with no valid PK data
+                val hasIuDoses = compoundDoseLogs.any { it.doseUnit == DoseUnit.IU }
 
-                val compoundDoseLogs = doseLogsByCompound[compound.id] ?: emptyList()
-                if (compoundDoseLogs.isEmpty()) continue
+                if (halfLife == null) {
+                    compoundCurves.add(
+                        unavailableCurve(
+                            compoundId = compound.id,
+                            peptideId = compound.peptideId,
+                            peptideName = peptide?.name ?: "Unknown compound",
+                            doseAmount = compoundDoseLogs.last().doseAmount,
+                            doseUnit = compoundDoseLogs.last().doseUnit.name,
+                            color = PKChartColors.getColor(colorIndex),
+                            reason = "No validated half-life is available for this compound."
+                        )
+                    )
+                    colorIndex++
+                    continue
+                }
 
-                // PKEngine expects a mass amount. IU has no universal conversion
-                // to mass, so do not draw a misleading mg-equivalent curve.
                 val doseSamples = compoundDoseLogs.mapNotNull { log ->
-                    val actualTime = log.actualTime ?: return@mapNotNull null
+                    val eventTime = when (log.status) {
+                        DoseStatus.TAKEN -> log.actualTime
+                        DoseStatus.PENDING -> log.scheduledTime.takeIf { it >= nowMs }
+                        else -> null
+                    } ?: return@mapNotNull null
                     val doseAmountMg = when (log.doseUnit) {
-                        com.appvexis.peptidetracker.core.model.DoseUnit.MG -> log.doseAmount
-                        com.appvexis.peptidetracker.core.model.DoseUnit.MCG -> log.doseAmount / 1000.0
-                        com.appvexis.peptidetracker.core.model.DoseUnit.IU -> return@mapNotNull null
+                        DoseUnit.MG -> log.doseAmount
+                        DoseUnit.MCG -> log.doseAmount / 1000.0
+                        // IU has no universal conversion to mass, so do not
+                        // draw a fabricated mg-equivalent curve.
+                        DoseUnit.IU -> return@mapNotNull null
                     }
                     if (!doseAmountMg.isFinite() || doseAmountMg <= 0.0) return@mapNotNull null
-                    actualTime.toDouble() / (1000.0 * 3600.0) to doseAmountMg
+                    eventTime.toDouble() / (1000.0 * 3600.0) to doseAmountMg
+                }.sortedBy { it.first }
+
+                if (doseSamples.isEmpty()) {
+                    compoundCurves.add(
+                        unavailableCurve(
+                            compoundId = compound.id,
+                            peptideId = compound.peptideId,
+                            peptideName = peptide?.name ?: "Unknown compound",
+                            doseAmount = compoundDoseLogs.last().doseAmount,
+                            doseUnit = compoundDoseLogs.last().doseUnit.name,
+                            color = PKChartColors.getColor(colorIndex),
+                            reason = "IU doses are recorded, but IU cannot be converted to mass safely."
+                        )
+                    )
+                    colorIndex++
+                    continue
                 }
-                if (doseSamples.isEmpty()) continue
                 val doseTimesHours = doseSamples.map { it.first }
                 val doseAmounts = doseSamples.map { it.second }
 
@@ -133,7 +172,7 @@ class PKVisualizerViewModel @Inject constructor(
                 )
 
                 val isVisible = visibilityMap.getOrDefault(compound.id, true)
-                val doseUnitDisplay = "mg"
+                val doseUnitDisplay = "normalized mg"
 
                 compoundCurves.add(
                     CompoundCurveData(
@@ -141,13 +180,17 @@ class PKVisualizerViewModel @Inject constructor(
                         peptideId = compound.peptideId,
                         peptideName = peptide.name,
                         halfLifeHours = halfLife,
-                        doseAmountMg = doseAmounts.last(),
+                        doseAmount = doseAmounts.last(),
                         doseUnit = doseUnitDisplay,
                         color = PKChartColors.getColor(colorIndex),
                         points = curvePoints,
                         markers = markers,
                         currentLevel = currentLevel,
-                        isVisible = isVisible
+                        isVisible = isVisible,
+                        dataWarning = if (hasIuDoses) {
+                            "IU doses are not included because there is no universal IU-to-mass conversion."
+                        } else null,
+                        projectionStartHours = historyHours
                     )
                 )
                 colorIndex++
@@ -155,19 +198,43 @@ class PKVisualizerViewModel @Inject constructor(
         }
 
         val maxConc = PKEngine.maxConcentration(
-            compoundCurves.filter { it.isVisible }.map { it.points }
+            compoundCurves.filter { it.isPkAvailable && it.isVisible }.map { it.points }
         )
 
         return PKVisualizerUiState(
             isLoading = false,
             activeTimeWindow = timeWindow,
             compounds = compoundCurves,
-            hasData = compoundCurves.isNotEmpty(),
+            hasData = compoundCurves.any { it.isPkAvailable && it.points.isNotEmpty() },
+            hasUnavailableData = compoundCurves.any { !it.isPkAvailable },
             animationProgress = _animationProgress.value,
             crosshairTimeHours = _crosshairTime.value,
             maxConcentration = maxConc * 1.1 // 10% headroom
         )
     }
+
+    private fun unavailableCurve(
+        compoundId: String,
+        peptideId: String,
+        peptideName: String,
+        doseAmount: Double,
+        doseUnit: String,
+        color: androidx.compose.ui.graphics.Color,
+        reason: String
+    ) = CompoundCurveData(
+        compoundId = compoundId,
+        peptideId = peptideId,
+        peptideName = peptideName,
+        halfLifeHours = 0.0,
+        doseAmount = doseAmount,
+        doseUnit = doseUnit,
+        color = color,
+        points = emptyList(),
+        markers = emptyList(),
+        currentLevel = 0.0,
+        isPkAvailable = false,
+        unavailableReason = reason
+    )
 
     fun setTimeWindow(window: TimeWindow) {
         _timeWindow.value = window

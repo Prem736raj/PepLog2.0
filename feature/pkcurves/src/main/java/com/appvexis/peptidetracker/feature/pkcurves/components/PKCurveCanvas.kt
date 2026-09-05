@@ -160,7 +160,8 @@ fun PKCurveCanvas(
             for (compound in visibleCompounds) {
                 drawCompoundCurve(
                     compound, chartLeft, chartTop, chartWidth, chartHeight,
-                    timeWindow.hours, safeMaxConc, animationProgress
+                    timeWindow.hours, safeMaxConc, animationProgress,
+                    compound.projectionStartHours
                 )
             }
 
@@ -171,6 +172,20 @@ fun PKCurveCanvas(
                     timeWindow.hours, safeMaxConc, animationProgress, markerLabelPaint
                 )
             }
+
+            // Scheduled future doses are a forecast. Mark the boundary so the
+            // elimination estimate cannot be mistaken for an observed reading.
+            drawNowMarker(
+                chartLeft = chartLeft,
+                chartTop = chartTop,
+                chartBottom = chartBottom,
+                chartWidth = chartWidth,
+                windowHours = timeWindow.hours,
+                nowHours = visibleCompounds.firstOrNull()?.projectionStartHours
+                    ?: timeWindow.hours * 0.7,
+                textColor = textColor,
+                textPaint = textPaint
+            )
 
             // --- Crosshair ---
             crosshairX?.let { cx ->
@@ -287,19 +302,25 @@ private fun DrawScope.drawCompoundCurve(
     chartLeft: Float, chartTop: Float,
     chartWidth: Float, chartHeight: Float,
     windowHours: Double, maxConc: Double,
-    animationProgress: Float
+    animationProgress: Float,
+    projectionStartHours: Double
 ) {
     val points = compound.points
     if (points.isEmpty()) return
 
     val chartBottom = chartTop + chartHeight
 
-    // Build the line path
-    val linePath = Path()
+    // Keep observed history solid and scheduled future doses dashed.
+    val historyPath = Path()
+    val forecastPath = Path()
     val fillPath = Path()
-    var started = false
+    var historyStarted = false
+    var forecastStarted = false
+    var lastHistoryX = 0f
+    var lastHistoryY = 0f
 
-    val animatedPointCount = (points.size * animationProgress).toInt().coerceAtLeast(1)
+    val animatedPointCount = (points.size * animationProgress).toInt()
+        .coerceIn(1, points.size)
 
     for (i in 0 until animatedPointCount) {
         val pt = points[i]
@@ -309,41 +330,80 @@ private fun DrawScope.drawCompoundCurve(
         val x = chartLeft + (xNorm * chartWidth).toFloat()
         val y = chartBottom - (yNorm * chartHeight).toFloat()
 
-        if (!started) {
-            linePath.moveTo(x, y)
-            fillPath.moveTo(x, chartBottom) // start fill from bottom
-            fillPath.lineTo(x, y)
-            started = true
+        if (pt.timeHours <= projectionStartHours) {
+            if (!historyStarted) {
+                historyPath.moveTo(x, y)
+                fillPath.moveTo(x, chartBottom) // start fill from bottom
+                fillPath.lineTo(x, y)
+                historyStarted = true
+            } else {
+                historyPath.lineTo(x, y)
+                fillPath.lineTo(x, y)
+            }
+            lastHistoryX = x
+            lastHistoryY = y
         } else {
-            linePath.lineTo(x, y)
-            fillPath.lineTo(x, y)
+            if (!forecastStarted) {
+                if (historyStarted) forecastPath.moveTo(lastHistoryX, lastHistoryY)
+                else forecastPath.moveTo(x, y)
+                forecastStarted = true
+            }
+            forecastPath.lineTo(x, y)
         }
     }
 
-    // Close the fill path
-    if (animatedPointCount > 0) {
-        val lastPt = points[animatedPointCount - 1]
-        val lastX = chartLeft + ((lastPt.timeHours / windowHours).coerceIn(0.0, 1.0) * chartWidth).toFloat()
-        fillPath.lineTo(lastX, chartBottom)
+    // Fill only the observed portion; the forecast remains visually lighter.
+    if (historyStarted) {
+        fillPath.lineTo(lastHistoryX, chartBottom)
         fillPath.close()
     }
 
-    // Subtle fill under the curve keeps the chart legible without a decorative glow.
-    drawPath(
-        path = fillPath,
-        color = compound.color.copy(alpha = 0.08f)
-    )
-
-    // The curve line itself
-    drawPath(
-        path = linePath,
-        color = compound.color,
-        style = Stroke(
-            width = 2.5f,
-            cap = StrokeCap.Round,
-            join = StrokeJoin.Round
+    if (historyStarted) {
+        drawPath(path = fillPath, color = compound.color.copy(alpha = 0.08f))
+        drawPath(
+            path = historyPath,
+            color = compound.color,
+            style = Stroke(width = 2.5f, cap = StrokeCap.Round, join = StrokeJoin.Round)
         )
+    }
+
+    if (forecastStarted) {
+        drawPath(
+            path = forecastPath,
+            color = compound.color.copy(alpha = 0.72f),
+            style = Stroke(
+                width = 2.5f,
+                cap = StrokeCap.Round,
+                join = StrokeJoin.Round,
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 6f))
+            )
+        )
+    }
+}
+
+private fun DrawScope.drawNowMarker(
+    chartLeft: Float,
+    chartTop: Float,
+    chartBottom: Float,
+    chartWidth: Float,
+    windowHours: Double,
+    nowHours: Double,
+    textColor: Color,
+    textPaint: android.graphics.Paint
+) {
+    val x = chartLeft + (nowHours / windowHours).coerceIn(0.0, 1.0).toFloat() * chartWidth
+    drawLine(
+        color = textColor.copy(alpha = 0.7f),
+        start = Offset(x, chartTop),
+        end = Offset(x, chartBottom),
+        strokeWidth = 1.4f,
+        pathEffect = PathEffect.dashPathEffect(floatArrayOf(5f, 5f))
     )
+    val labelPaint = android.graphics.Paint(textPaint).apply {
+        color = textColor.toArgb()
+        textAlign = android.graphics.Paint.Align.CENTER
+    }
+    drawContext.canvas.nativeCanvas.drawText("Now", x, chartTop - 5f, labelPaint)
 }
 
 /**

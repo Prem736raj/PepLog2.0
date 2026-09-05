@@ -7,6 +7,8 @@ import com.appvexis.peptidetracker.core.analytics.worker.AnalyticsWorkerSchedule
 import com.appvexis.peptidetracker.core.billing.SubscriptionManager
 import com.appvexis.peptidetracker.core.common.security.TamperDetectionManager
 import com.appvexis.peptidetracker.feature.health.worker.HealthSyncScheduler
+import com.appvexis.peptidetracker.feature.inventory.notification.InventoryNotificationScheduler
+import com.appvexis.peptidetracker.feature.log.notification.DoseReminderScheduler
 import com.appvexis.peptidetracker.logging.CrashReportingTree
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
@@ -23,6 +25,12 @@ class PepLogApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var healthSyncScheduler: HealthSyncScheduler
+
+    @Inject
+    lateinit var inventoryNotificationScheduler: InventoryNotificationScheduler
+
+    @Inject
+    lateinit var doseReminderScheduler: DoseReminderScheduler
 
     @Inject
     lateinit var tamperDetectionManager: TamperDetectionManager
@@ -54,5 +62,7 @@ class PepLogApplication : Application(), Configuration.Provider {
         analyticsWorkerScheduler.scheduleNightlyRecompute()
         // Schedule periodic Health Connect sync (every 6 hours)
         healthSyncScheduler.schedulePeriodicSync()
+        inventoryNotificationScheduler.scheduleDailyCheck()
+        doseReminderScheduler.schedule()
     }
 }

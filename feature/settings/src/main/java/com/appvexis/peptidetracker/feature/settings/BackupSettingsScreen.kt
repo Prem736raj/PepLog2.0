@@ -2,6 +2,8 @@ package com.appvexis.peptidetracker.feature.settings
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +24,7 @@ import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,8 +37,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.core.content.FileProvider
 import com.appvexis.peptidetracker.core.backup.model.BackupStatus
+import com.appvexis.peptidetracker.core.backup.BackupConfig
 import com.appvexis.peptidetracker.core.ui.components.PepLogBrandMark
 import com.appvexis.peptidetracker.core.ui.components.PepLogCard
 import com.appvexis.peptidetracker.core.ui.theme.PepLogTheme
@@ -66,6 +73,12 @@ fun BackupSettingsScreen(
     val shareRequest by viewModel.shareRequest.collectAsState()
     val context = LocalContext.current
     val colors = PepLogTheme.colors
+    var showRestoreConfirmation by remember { mutableStateOf(false) }
+    val restoreLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let(viewModel::restoreFromUri)
+    }
 
     LaunchedEffect(shareRequest) {
         val request = shareRequest ?: return@LaunchedEffect
@@ -92,6 +105,27 @@ fun BackupSettingsScreen(
         } finally {
             viewModel.clearShareRequest()
         }
+    }
+
+    if (showRestoreConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showRestoreConfirmation = false },
+            title = { Text("Replace local records?") },
+            text = {
+                Text("Restoring will replace PepLog's current local records with the selected backup. Export your current data first if you may need it later.")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showRestoreConfirmation = false
+                        restoreLauncher.launch(arrayOf(BackupConfig.MIME_TYPE_ARCHIVE, BackupConfig.MIME_TYPE_JSON))
+                    }
+                ) { Text("Choose backup") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRestoreConfirmation = false }) { Text("Cancel") }
+            }
+        )
     }
 
     Scaffold(
@@ -164,9 +198,44 @@ fun BackupSettingsScreen(
                 ExportOptionCard(
                     icon = Icons.Default.Description,
                     iconTint = colors.secondary,
-                    title = "Full JSON archive",
-                    description = "One complete portable snapshot of your records. Best for keeping a personal archive.",
+                    title = "Full JSON snapshot",
+                    description = "One complete record snapshot. Best for a text archive or moving data without photos.",
                     onClick = viewModel::exportJson,
+                )
+            }
+            item {
+                ExportOptionCard(
+                    icon = Icons.Default.Description,
+                    iconTint = colors.accent,
+                    title = "Clinician summary PDF",
+                    description = "A concise, readable summary of protocols, dose history, symptoms, biomarkers, and imported health metrics. No photos or recommendations.",
+                    onClick = viewModel::exportPdf,
+                )
+            }
+            item {
+                ExportOptionCard(
+                    icon = Icons.Default.Description,
+                    iconTint = colors.primary,
+                    title = "Portable backup with photos",
+                    description = "A single restore-ready file containing your records and private progress-photo copies.",
+                    onClick = viewModel::exportArchive,
+                )
+            }
+
+            item {
+                Text(
+                    text = "Restore a backup",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+            item {
+                ExportOptionCard(
+                    icon = Icons.Default.Description,
+                    iconTint = colors.accent,
+                    title = "Choose a PepLog backup",
+                    description = "Replaces current local records with a validated JSON or photo-inclusive ZIP backup. This cannot be undone.",
+                    onClick = { showRestoreConfirmation = true },
                 )
             }
 
@@ -242,12 +311,24 @@ private fun ExportStatusCard(status: BackupStatus, onDismiss: () -> Unit) {
                 }
             }
 
+            is BackupStatus.Restored -> {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Check, contentDescription = null, tint = colors.success)
+                    Spacer(Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Backup restored", style = MaterialTheme.typography.titleSmall, color = colors.success)
+                        Text("${status.recordCount} records restored", style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
+                    }
+                    TextButton(onClick = onDismiss) { Text("Dismiss") }
+                }
+            }
+
             is BackupStatus.Error -> {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Warning, contentDescription = null, tint = colors.accent)
                     Spacer(Modifier.width(10.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Export could not be created", style = MaterialTheme.typography.titleSmall, color = colors.accent)
+                        Text("Backup operation failed", style = MaterialTheme.typography.titleSmall, color = colors.accent)
                         Text(status.message, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
                     }
                     TextButton(onClick = onDismiss) { Text("Dismiss") }

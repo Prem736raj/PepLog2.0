@@ -23,6 +23,7 @@ fun PepLogTextField(
     trailingIcon: (@Composable () -> Unit)? = null,
     isError: Boolean = false,
     errorMessage: String? = null,
+    enabled: Boolean = true,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -33,6 +34,7 @@ fun PepLogTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
+        enabled = enabled,
         modifier = modifier.fillMaxWidth(),
         label = { Text(label, style = MaterialTheme.typography.bodyMedium) },
         placeholder = placeholder?.let { { Text(it, style = MaterialTheme.typography.bodyMedium) } },

@@ -6,22 +6,23 @@ It is a record-keeping and calculation aid, not medical advice. It does not diag
 
 ## What the app includes
 
-- Protocols with real peptide/compound selection, dose units, administration route, schedule times, custom weekly days, and on/off cycles.
+- Protocols with catalog or user-created compound selection, dose units, administration route, schedule times, titration steps, custom weekly days, and on/off cycles.
 - A 365-day schedule preview with daily dose logging and inventory deduction.
 - Idempotent dose completion so repeated taps do not consume the same inventory twice.
 - Vial inventory, expiration reminders, lot notes, remaining-volume adjustments, and reconstitution records.
 - Injection-site rotation history with pain, healing, and site-status tracking.
 - A reconstitution calculator for concentration, draw volume, and syringe units.
 - A local progress area for biomarkers, wellness entries, body metrics, and private progress-photo copies.
-- A reference encyclopedia, pharmacokinetic visualization, and adherence/trend reports.
+- A reference encyclopedia, an elimination-only relative-amount PK visualization with honest forecast labeling, and adherence/trend reports.
 - Optional Health Connect import when the user grants permissions.
-- Local CSV/JSON export through Android's system share sheet. PepLog does not upload exports by itself.
+- Local CSV/JSON export, a clinician summary PDF, and a photo-inclusive restore-ready ZIP through Android's system share sheet. PepLog does not upload exports by itself.
+- Optional local dose reminders and background inventory checks when notification permission is granted.
 
 ## Privacy and security posture
 
 - PepLog has no PepLog-operated account or application server.
 - App data is kept in private Android storage and excluded from Android backup extraction by default.
-- The app requests notification and Health Connect permissions only for the corresponding features; Internet is used for Google Play billing and the optional Drive integration.
+- The app requests notification and Health Connect permissions only for the corresponding features; Internet is used for Google Play billing. PepLog has no cloud-sync integration in this build.
 - Exports use Android `FileProvider` URIs rather than exposing filesystem paths.
 - The app does not claim custom SQLCipher database encryption. Users should protect the device with Android security controls and treat shared exports as sensitive.
 - Read the in-app policy in `app/src/main/assets/privacy_policy.html` and replace its contact/hosted-policy placeholders before release.

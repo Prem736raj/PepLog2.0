@@ -42,6 +42,12 @@ class HealthConnectManager @Inject constructor(
         HealthPermission.getReadPermission(RestingHeartRateRecord::class)
     )
 
+    /** Additional consent required only for WorkManager reads while the app is backgrounded. */
+    val backgroundReadPermission: String = HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
+
+    /** Permissions requested by the connection flow; foreground access remains usable if background consent is denied. */
+    val requestedPermissions: Set<String> = requiredPermissions + backgroundReadPermission
+
     /**
      * Check if Health Connect is available on this device.
      */
@@ -83,6 +89,9 @@ class HealthConnectManager @Inject constructor(
         val granted = getGrantedPermissions()
         return requiredPermissions.all { it in granted }
     }
+
+    suspend fun hasBackgroundReadPermission(): Boolean =
+        backgroundReadPermission in getGrantedPermissions()
 
     // ========= Data Reading Functions =========
 

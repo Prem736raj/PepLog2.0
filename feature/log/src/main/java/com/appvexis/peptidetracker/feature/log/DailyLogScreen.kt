@@ -1,5 +1,10 @@
 package com.appvexis.peptidetracker.feature.log
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +38,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
@@ -44,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,6 +60,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.core.content.ContextCompat
 import com.appvexis.peptidetracker.core.model.DoseLog
 import com.appvexis.peptidetracker.core.model.DoseStatus
 import com.appvexis.peptidetracker.core.ui.components.PepLogCard
@@ -72,11 +80,25 @@ fun DailyLogScreen(
     val currentDate by viewModel.currentDate.collectAsState()
     val actionError by viewModel.actionError.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { }
 
     val df = SimpleDateFormat("EEEE, MMM d", Locale.getDefault())
     val dateStr = df.format(Date(currentDate))
     
     var showManualLogDialog by remember { mutableStateOf(false) }
+
+    val pendingCount = (uiState as? DailyLogUiState.Success)
+        ?.logs
+        ?.count { it.status == DoseStatus.PENDING }
+        ?: 0
+    val notificationsAllowed = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
 
     LaunchedEffect(actionError) {
         actionError?.let {
@@ -158,6 +180,35 @@ fun DailyLogScreen(
             }
             
             Spacer(modifier = Modifier.height(PepLogTheme.spacing.medium))
+
+            if (pendingCount > 0 && !notificationsAllowed) {
+                PepLogCard(
+                    modifier = Modifier.padding(horizontal = PepLogTheme.spacing.medium),
+                    isGlassmorphic = true
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Want a reminder before a dose?",
+                                fontWeight = FontWeight.SemiBold,
+                                color = PepLogTheme.colors.textPrimary
+                            )
+                            Text(
+                                text = "PepLog checks locally and sends an optional reminder when a scheduled dose is close.",
+                                fontSize = 12.sp,
+                                lineHeight = 18.sp,
+                                color = PepLogTheme.colors.textSecondary
+                            )
+                        }
+                        TextButton(onClick = {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }
+                        }) { Text("Enable") }
+                    }
+                }
+                Spacer(modifier = Modifier.height(PepLogTheme.spacing.small))
+            }
 
             when (val state = uiState) {
                 is DailyLogUiState.Loading -> {

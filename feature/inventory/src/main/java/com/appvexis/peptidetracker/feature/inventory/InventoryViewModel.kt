@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -69,15 +68,6 @@ class InventoryViewModel @Inject constructor(
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
-    init {
-        viewModelScope.launch {
-            allVials
-                .collect { vials ->
-                    InventoryNotificationHelper.checkAndNotifyInventoryAlerts(context, vials)
-                }
-        }
-    }
 
     val uiState: StateFlow<InventoryUiState> = combine(
         allVials,

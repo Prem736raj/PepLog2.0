@@ -12,7 +12,9 @@ import com.appvexis.peptidetracker.core.backup.model.ProtocolBackup
 import com.appvexis.peptidetracker.core.backup.model.ProtocolCompoundBackup
 import com.appvexis.peptidetracker.core.backup.model.SideEffectLogBackup
 import com.appvexis.peptidetracker.core.database.PepLogDatabase
+import com.appvexis.peptidetracker.core.model.repository.PeptideRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -27,7 +29,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class DatabaseExporter @Inject constructor(
-    private val database: PepLogDatabase
+    private val database: PepLogDatabase,
+    private val peptideRepository: PeptideRepository,
 ) {
     private val json = Json {
         prettyPrint = true
@@ -54,6 +57,13 @@ class DatabaseExporter @Inject constructor(
                 updatedAt = entity.updatedAt
             )
         }
+
+        // Export can be the first feature opened after install. Use the
+        // repository flow so its lazy built-in catalog seed completes before
+        // readable names and foreign-key references are captured.
+        val allPeptides = peptideRepository.getAllPeptides().first()
+        val customPeptides = allPeptides.filter { it.id.startsWith("custom-") }
+        val peptideNames = allPeptides.associate { it.id to it.name }
 
         val compounds = database.protocolDao().getAllCompoundsSync().map { entity ->
             ProtocolCompoundBackup(
@@ -187,6 +197,8 @@ class DatabaseExporter @Inject constructor(
         }
 
         val backupData = BackupData(
+            customPeptides = customPeptides,
+            peptideNames = peptideNames,
             protocols = protocols,
             protocolCompounds = compounds,
             doseLogs = doseLogs,

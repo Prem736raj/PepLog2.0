@@ -20,5 +20,7 @@ data class ProtocolWithCompoundsEntity(
 
 fun ProtocolWithCompoundsEntity.toDomain() = ProtocolWithCompounds(
     protocol = protocol.toDomain(),
-    compounds = compounds.map { it.toDomain() }
+    // Inactive compounds remain in Room for dose-history referential
+    // integrity, but should not appear in active protocol editing surfaces.
+    compounds = compounds.filter { it.isActive }.map { it.toDomain() }
 )

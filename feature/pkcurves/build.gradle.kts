@@ -68,4 +68,7 @@ dependencies {
     // Base core dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // Regression coverage for the unit-safe PK engine.
+    testImplementation(libs.junit)
 }
