@@ -180,7 +180,7 @@ private fun ReportsEmptyState(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Create a protocol and start logging doses, side effects, and biomarker labs to unlock comprehensive analytics and trend charts.",
+            text = "Create a protocol and start logging doses, side effects, and biomarker labs to see analytics and trend charts.",
             style = MaterialTheme.typography.bodyMedium,
             color = PepLogTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
