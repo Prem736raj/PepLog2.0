@@ -13,11 +13,11 @@ import androidx.compose.ui.graphics.Color
 private val DarkColorScheme = darkColorScheme(
     primary = DarkColors.primary,
     onPrimary = DarkColors.background,
-    primaryContainer = Color(0xFF254A41),
+    primaryContainer = Color(0xFF3730A3),
     onPrimaryContainer = DarkColors.textPrimary,
     secondary = DarkColors.secondary,
     onSecondary = DarkColors.background,
-    secondaryContainer = Color(0xFF2A3530),
+    secondaryContainer = Color(0xFF164E63),
     onSecondaryContainer = DarkColors.textPrimary,
     tertiary = DarkColors.warning,
     onTertiary = DarkColors.background,
@@ -29,18 +29,18 @@ private val DarkColorScheme = darkColorScheme(
     onSurfaceVariant = DarkColors.textSecondary,
     error = DarkColors.accent,
     onError = DarkColors.background,
-    outline = Color(0xFF33413A),
-    outlineVariant = Color(0xFF27332D),
+    outline = Color(0xFF475569),
+    outlineVariant = Color(0xFF334155),
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = LightColors.primary,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFFDDEDE7),
+    primaryContainer = Color(0xFFE0E7FF),
     onPrimaryContainer = LightColors.primaryVariant,
     secondary = LightColors.secondary,
     onSecondary = Color.White,
-    secondaryContainer = Color(0xFFE4E9E2),
+    secondaryContainer = Color(0xFFCCFBF1),
     onSecondaryContainer = LightColors.textPrimary,
     tertiary = LightColors.warning,
     onTertiary = Color.White,
@@ -52,8 +52,8 @@ private val LightColorScheme = lightColorScheme(
     onSurfaceVariant = LightColors.textSecondary,
     error = LightColors.accent,
     onError = Color.White,
-    outline = Color(0xFFC8CEC7),
-    outlineVariant = Color(0xFFDEE2DB),
+    outline = Color(0xFF94A3B8),
+    outlineVariant = Color(0xFFCBD5E1),
 )
 
 @Composable

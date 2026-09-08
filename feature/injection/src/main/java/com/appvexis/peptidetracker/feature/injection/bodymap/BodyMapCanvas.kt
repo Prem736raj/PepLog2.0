@@ -30,11 +30,11 @@ import com.appvexis.peptidetracker.feature.injection.model.ReadinessLevel
 import com.appvexis.peptidetracker.feature.injection.model.SiteStatus
 
 // Color constants for zone readiness
-private val RecentColor = Color(0xFFB85E3C)       // Terracotta — used within 48h
-private val HealingColor = Color(0xFF99681F)      // Ochre — 2-7 days
-private val ReadyColor = Color(0xFF2F7656)        // Evergreen — ready
-private val UnusedColor = Color(0xFF7D8A82)       // Slate — never used
-private val SelectedRingColor = Color(0xFF1E625D) // Mineral teal — selected
+private val RecentColor = Color(0xFFF43F5E)       // Rose 500 — used within 48h
+private val HealingColor = Color(0xFFF59E0B)      // Amber 500 — 2-7 days
+private val ReadyColor = Color(0xFF10B981)        // Emerald 500 — ready
+private val UnusedColor = Color(0xFF94A3B8)       // Slate 400 — never used
+private val SelectedRingColor = Color(0xFF6366F1) // Indigo 500 — selected
 
 /**
  * Interactive body map Canvas composable for the FRONT body view.

@@ -71,14 +71,14 @@ fun WellnessTrendsView(
                     title = "Mood",
                     score = wellnessData.moodScore,
                     delta = wellnessData.moodDelta,
-                    color = Color(0xFF5E9D90),
+                    color = Color(0xFF10B981),
                     modifier = Modifier.weight(1f)
                 )
                 WellnessScoreCard(
                     title = "Energy",
                     score = wellnessData.energyScore,
                     delta = wellnessData.energyDelta,
-                    color = Color(0xFFC39755),
+                    color = Color(0xFFF59E0B),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -92,14 +92,14 @@ fun WellnessTrendsView(
                     title = "Sleep Quality",
                     score = wellnessData.sleepScore,
                     delta = wellnessData.sleepDelta,
-                    color = Color(0xFF7A8C83),
+                    color = Color(0xFF3B82F6),
                     modifier = Modifier.weight(1f)
                 )
                 WellnessScoreCard(
                     title = "Pain Level",
                     score = wellnessData.painScore,
                     delta = wellnessData.painDelta,
-                    color = Color(0xFFC66F52),
+                    color = Color(0xFFF43F5E),
                     isPain = true,
                     modifier = Modifier.weight(1f)
                 )
@@ -114,7 +114,7 @@ fun WellnessTrendsView(
                     title = "Libido",
                     score = wellnessData.libidoScore,
                     delta = wellnessData.libidoDelta,
-                    color = Color(0xFF9B7381),
+                    color = Color(0xFF8B5CF6),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -157,11 +157,11 @@ fun WellnessTrendsView(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LegendDot(name = "Mood", color = Color(0xFF5E9D90))
-                    LegendDot(name = "Energy", color = Color(0xFFC39755))
-                    LegendDot(name = "Sleep", color = Color(0xFF7A8C83))
-                    LegendDot(name = "Pain", color = Color(0xFFC66F52))
-                    LegendDot(name = "Libido", color = Color(0xFF9B7381))
+                    LegendDot(name = "Mood", color = Color(0xFF10B981))
+                    LegendDot(name = "Energy", color = Color(0xFFF59E0B))
+                    LegendDot(name = "Sleep", color = Color(0xFF3B82F6))
+                    LegendDot(name = "Pain", color = Color(0xFFF43F5E))
+                    LegendDot(name = "Libido", color = Color(0xFF8B5CF6))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -356,11 +356,11 @@ private fun WellnessMultiLineCanvas(
         }
 
         // Draw lines for each metric
-        drawMetricLine(points.map { it.mood }, Color(0xFF5E9D90))
-        drawMetricLine(points.map { it.energy }, Color(0xFFC39755))
-        drawMetricLine(points.map { it.sleep }, Color(0xFF7A8C83))
-        drawMetricLine(points.map { it.pain }, Color(0xFFC66F52))
-        drawMetricLine(points.map { it.libido }, Color(0xFF9B7381))
+        drawMetricLine(points.map { it.mood }, Color(0xFF10B981))
+        drawMetricLine(points.map { it.energy }, Color(0xFFF59E0B))
+        drawMetricLine(points.map { it.sleep }, Color(0xFF3B82F6))
+        drawMetricLine(points.map { it.pain }, Color(0xFFF43F5E))
+        drawMetricLine(points.map { it.libido }, Color(0xFF8B5CF6))
 
         // Draw date labels
         points.forEachIndexed { i, pt ->

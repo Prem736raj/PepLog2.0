@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,10 +59,11 @@ fun PKCurveCanvas(
     animationProgress: Float,
     onCrosshairUpdate: (Double?) -> Unit,
     modifier: Modifier = Modifier,
-    surfaceColor: Color = Color(0xFF151D19),
-    gridColor: Color = Color(0xFF2A3530),
-    textColor: Color = Color(0xFFA6B0AA),
-    axisColor: Color = Color(0xFF526159)
+    surfaceColor: Color = MaterialTheme.colorScheme.surface,
+    gridColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    textColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    axisColor: Color = MaterialTheme.colorScheme.outline,
+    errorColor: Color = MaterialTheme.colorScheme.error
 ) {
     val density = LocalDensity.current
     val textPaint = remember(textColor, density) {
@@ -169,7 +171,7 @@ fun PKCurveCanvas(
             for (compound in visibleCompounds) {
                 drawMarkers(
                     compound, chartLeft, chartTop, chartWidth, chartHeight,
-                    timeWindow.hours, safeMaxConc, animationProgress, markerLabelPaint
+                    timeWindow.hours, safeMaxConc, animationProgress, markerLabelPaint, errorColor
                 )
             }
 
@@ -415,7 +417,8 @@ private fun DrawScope.drawMarkers(
     chartWidth: Float, chartHeight: Float,
     windowHours: Double, maxConc: Double,
     animationProgress: Float,
-    labelPaint: android.graphics.Paint
+    labelPaint: android.graphics.Paint,
+    errorColor: Color
 ) {
     val chartBottom = chartTop + chartHeight
     val animatedTimeLimit = windowHours * animationProgress
@@ -430,7 +433,7 @@ private fun DrawScope.drawMarkers(
 
         // Inner filled circle
         drawCircle(
-            color = if (marker.isPeak) compound.color else Color(0xFFC66F52),
+            color = if (marker.isPeak) compound.color else errorColor,
             radius = 4.5f,
             center = Offset(x, y)
         )
@@ -451,7 +454,7 @@ private fun DrawScope.drawMarkers(
         }
         drawPath(
             path = triPath,
-            color = if (marker.isPeak) compound.color else Color(0xFFC66F52)
+            color = if (marker.isPeak) compound.color else errorColor
         )
     }
 }
